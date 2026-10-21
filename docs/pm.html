@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>조사 자료는 보고서로 · 오후</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#16142B; --ink-soft:#4A4766; --mut:#8E8AAC;
+    --violet:#5B3DF5; --violet-700:#3A1FC9; --violet-300:#B7A9FF;
+    --wash:#F4F1FF; --wash-2:#FAF9FF; --line:#E8E4F8;
+    --paper:#FFFFFF; --mint:#0FB5A1; --mint-soft:#E4F8F4;
+    --amber:#F4A93C; --rose:#E8537A;
+    --code-bg:#1C1933; --code-ink:#ECEAFF; --code-dim:#9C97D6;
+    --sw:1280px; --sh:720px;
+    --shadow:0 24px 60px -24px rgba(43,28,120,.45);
+    --serif: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif); color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #ECE7FF 0%, rgba(236,231,255,0) 60%),
+      radial-gradient(1000px 700px at 110% 10%, #F0EBFF 0%, rgba(240,235,255,0) 55%),
+      #EAE7F4;
+    min-height:100vh; -webkit-font-smoothing:antialiased;
+  }
+  .progress{position:fixed; top:0; left:0; right:0; height:3px; z-index:60; background:transparent;}
+  .progress .fill{height:100%; width:0; background:linear-gradient(90deg,var(--violet),#9B7BFF); transition:width .2s ease;}
+
+  .stage{
+    position:fixed; inset:0 0 0 0; z-index:10;
+    display:flex; justify-content:safe center; align-items:safe center;
+    overflow:auto; padding:30px 30px 96px;
+  }
+  .sizer{position:relative;}
+  .scaler{ width:var(--sw); height:var(--sh); transform-origin:top left; position:relative; }
+
+  .slide{
+    width:var(--sw); height:var(--sh);
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:22px; box-shadow:var(--shadow);
+    overflow:hidden; display:none; flex-direction:column;
+    padding:50px 60px 46px; position:relative;
+  }
+  .slide.active{display:flex;}
+
+  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.04em; color:var(--violet); text-transform:uppercase;}
+  .eyebrow .tag{color:#fff; background:var(--violet); border-radius:6px; padding:3px 8px; font-size:11px; letter-spacing:.05em;}
+  .eyebrow .tag.mint{background:var(--mint);}
+  .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--violet-300);}
+  .coord{position:absolute; top:30px; right:40px; font-family:var(--mono); font-size:12px; color:var(--mut); font-weight:600; letter-spacing:.05em;}
+  .coord b{color:var(--ink);}
+
+  .s-title{font-size:39px; line-height:1.12; letter-spacing:-.025em; font-weight:800; margin:14px 0 4px;}
+  .s-title.sm{font-size:32px;} .s-title.xs{font-size:28px;}
+  .s-sub{font-size:17px; color:var(--ink-soft); font-weight:500; line-height:1.5; max-width:64ch;}
+  .rule{height:4px; width:54px; border-radius:3px; background:var(--violet); margin:13px 0 6px;}
+  .body{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center;}
+  .body.top{justify-content:flex-start; padding-top:6px;}
+
+  .slide.cover{ padding:0; justify-content:center;
+    background:
+      radial-gradient(900px 520px at 100% 0%, #6B4BFF 0%, rgba(107,75,255,0) 58%),
+      radial-gradient(700px 600px at -5% 110%, #3A1FC9 0%, rgba(58,31,201,0) 55%),
+      linear-gradient(135deg,#2A1B8C 0%, #4226D6 48%, #5B3DF5 100%);
+    color:#fff; border:none; }
+  .cover .aperture{position:absolute; top:-120px; right:-120px; width:460px; height:460px; border-radius:50%; background:radial-gradient(circle at 35% 35%, rgba(255,255,255,.5), rgba(255,255,255,0) 62%); filter:blur(2px);}
+  .cover .ring{position:absolute; right:60px; top:60px; width:120px; height:120px; border-radius:50%; border:1.5px solid rgba(255,255,255,.4);}
+  .cover .ring::after{content:""; position:absolute; inset:18px; border-radius:50%; border:1.5px dashed rgba(255,255,255,.35);}
+  .cover .wrap{padding:60px 70px; position:relative; z-index:2; width:100%;}
+  .cover .kick{font-family:var(--mono); letter-spacing:.18em; font-size:13.5px; font-weight:600; color:rgba(255,255,255,.86); text-transform:uppercase; display:flex; align-items:center; gap:14px;}
+  .cover .kick .pill{border:1px solid rgba(255,255,255,.45); border-radius:999px; padding:4px 12px;}
+  .cover h1{font-size:58px; line-height:1.08; letter-spacing:-.03em; font-weight:800; margin:24px 0 16px; max-width:21ch;}
+  .cover .lead{font-size:18px; line-height:1.55; color:rgba(255,255,255,.9); max-width:56ch; font-weight:400;}
+  .cover .meta{margin-top:36px; display:flex; gap:24px; flex-wrap:wrap; font-size:14px;}
+  .cover .meta .it{display:flex; flex-direction:column; gap:3px;}
+  .cover .meta .it .k{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:rgba(255,255,255,.6); text-transform:uppercase;}
+  .cover .meta .it .v{font-size:15px; font-weight:700; color:#fff;}
+
+  .slide.section{ background:linear-gradient(140deg,#3A1FC9 0%, #5B3DF5 70%, #7A5BFF 100%); color:#fff; border:none; justify-content:center; padding:60px 70px; }
+  .slide.section.mintbg{ background:linear-gradient(140deg,#0A8A7A 0%, #0FB5A1 70%, #34D6C2 100%); }
+  .slide.section .ghost{position:absolute; right:34px; bottom:-66px; font-family:var(--mono); font-weight:700; font-size:330px; line-height:.8; color:rgba(255,255,255,.10); letter-spacing:-.04em;}
+  .slide.section .lab-flag{display:inline-flex; align-items:center; gap:9px; align-self:flex-start; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.4); padding:7px 14px; border-radius:999px; font-weight:700; font-size:13px; font-family:var(--mono); letter-spacing:.06em;}
+  .slide.section .lab-flag .sq{width:9px;height:9px;border-radius:3px;background:#fff;}
+  .slide.section .seyebrow{font-family:var(--mono); letter-spacing:.16em; font-size:14px; color:rgba(255,255,255,.85); text-transform:uppercase; margin-bottom:14px;}
+  .slide.section h2{font-size:48px; line-height:1.1; letter-spacing:-.025em; font-weight:800; margin:0 0 14px; max-width:24ch; position:relative; z-index:2;}
+  .slide.section p{font-size:18px; color:rgba(255,255,255,.92); max-width:54ch; line-height:1.55; position:relative; z-index:2;}
+  .slide.section .agenda{display:flex; gap:10px; flex-wrap:wrap; margin-top:22px; position:relative; z-index:2;}
+  .slide.section .agenda span{font-size:13px; font-weight:600; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); padding:6px 12px; border-radius:999px;}
+
+  .cards{display:grid; gap:16px;}
+  .cards.c2{grid-template-columns:repeat(2,1fr);} .cards.c3{grid-template-columns:repeat(3,1fr);} .cards.c4{grid-template-columns:repeat(4,1fr);}
+  .card{background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--violet); border-radius:4px; padding:17px 19px; display:flex; flex-direction:column; gap:7px; position:relative;}
+  .card .ic{width:38px; height:38px; border-radius:4px; display:grid; place-items:center; background:transparent; border:1.5px solid var(--violet-300); color:var(--violet); margin-bottom:3px;}
+  .card .ic svg{width:20px;height:20px;}
+  .card h3{font-size:17px; font-weight:800; letter-spacing:-.01em; margin:0 0 1px; padding-bottom:8px; border-bottom:1px solid var(--line);}
+  .card p{font-size:14px; color:var(--ink-soft); line-height:1.5; margin:0;}
+  .card .n{font-family:var(--mono); font-size:11.5px; color:var(--violet); font-weight:700;}
+
+  .biglist{display:flex; flex-direction:column; gap:13px;}
+  .biglist .li{display:flex; gap:15px; align-items:flex-start;}
+  .biglist .li .num{flex:none; width:34px; height:34px; border-radius:10px; background:var(--violet); color:#fff; font-family:var(--mono); font-weight:700; display:grid; place-items:center; font-size:14px; margin-top:1px;}
+  .biglist .li .tx h4{margin:0 0 3px; font-size:17.5px; font-weight:800;}
+  .biglist .li .tx p{margin:0; font-size:14px; color:var(--ink-soft); line-height:1.5;}
+
+  .phase-label{font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.08em; color:var(--violet); text-transform:uppercase; margin:0 0 10px; display:flex; align-items:center; gap:9px;}
+  .phase-label .ln{height:1px; flex:1; background:var(--line);}
+  .pipe{display:flex; align-items:stretch; gap:0; margin-bottom:20px;}
+  .pipe .step{flex:1; background:var(--paper); border:1px solid var(--line); border-top:3px solid var(--violet); border-radius:4px; padding:12px 10px; text-align:center; min-width:0;}
+  .pipe .step .si{font-family:var(--mono); font-size:11px; color:var(--violet); font-weight:700;}
+  .pipe .step .sn{font-size:14.5px; font-weight:800; margin-top:3px; letter-spacing:-.01em;}
+  .pipe .step .sd{font-size:11px; color:var(--mut); margin-top:2px; line-height:1.3;}
+  .pipe .arrow{display:flex; align-items:center; padding:0 5px; color:var(--violet-300);}
+  .pipe .arrow svg{width:17px;height:17px;}
+  .pipe.q .step{background:var(--paper); border-color:var(--line); border-top-color:var(--mint);} .pipe.q .step .si{color:var(--mint);} .pipe.q .arrow{color:#8AD7CC;}
+
+  .code{background:var(--code-bg); border-radius:14px; overflow:hidden; border:1px solid #2A2548; box-shadow:0 18px 40px -22px rgba(28,25,51,.7);}
+  .code .bar{display:flex; align-items:center; gap:7px; padding:10px 15px; border-bottom:1px solid #2A2548; background:#171430;}
+  .code .bar .dot{width:11px;height:11px;border-radius:50%;}
+  .code .bar .r{background:#FF6058;} .code .bar .y{background:#FFC130;} .code .bar .g{background:#28CA42;}
+  .code .bar .copybtn{margin-left:auto; font:600 12px var(--sans, sans-serif); color:#fff; background:#F28C28; border:0; border-radius:6px; padding:4px 10px; cursor:pointer;}
+  .code .bar .copybtn.done{background:#28CA42;}
+  .code .bar .savebtn{margin-left:6px; font:600 12px var(--sans, sans-serif); color:#1F3A5F; background:#fff; border:0; border-radius:6px; padding:4px 10px; cursor:pointer;}
+  @media print{.code .bar .savebtn{display:none}}
+  @media print{.code .bar .copybtn{display:none}}
+  .code .bar .copybtn, .code .bar .savebtn{flex:none; white-space:nowrap;}
+  .code .bar .fn{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-left:8px; font-family:var(--mono); font-size:12px; color:var(--code-dim);}
+  .code pre{margin:0; padding:16px 18px; overflow:auto;}
+  .code code{font-family:var(--mono); font-size:13px; line-height:1.6; color:var(--code-ink); white-space:pre;}
+  .code.sm code{font-size:12px; line-height:1.55;}
+  .cm{color:#7D78B8;} .kw{color:#C792FF;} .st{color:#9DE39A;} .fn2{color:#82D3FF;} .nm{color:#FFD479;}
+
+  .callout{border-radius:4px; padding:15px 18px; display:flex; gap:13px; align-items:flex-start; background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--violet);}
+  .callout .ci{flex:none; width:34px;height:34px;border-radius:4px;background:var(--violet);color:#fff;display:grid;place-items:center;}
+  .callout .ci svg{width:18px;height:18px;}
+  .callout .ct h4{margin:0 0 3px; font-size:15.5px; font-weight:800;}
+  .callout .ct p{margin:0; font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
+  .callout.mint{border-left-color:var(--mint);} .callout.mint .ci{background:var(--mint);}
+  .callout.amber{border-left-color:var(--amber);} .callout.amber .ci{background:var(--amber);}
+  .callout.rose{border-left-color:var(--rose);} .callout.rose .ci{background:var(--rose);}
+
+  .lab-badge{display:inline-flex; align-items:center; gap:9px; background:var(--mint-soft); color:#0A7F70; border:1px solid #BFE9E1; padding:7px 13px; border-radius:999px; font-weight:700; font-size:13px; font-family:var(--mono); letter-spacing:.04em;}
+  .lab-badge .sq{width:9px;height:9px;border-radius:3px;background:var(--mint);}
+
+  .twocol{display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start;}
+  .twocol.w{grid-template-columns:1.15fr .85fr;} .twocol.w2{grid-template-columns:.85fr 1.15fr;}
+
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{font-size:12.5px; font-weight:600; color:var(--ink-soft); background:#fff; border:1px solid var(--line); padding:6px 12px; border-radius:999px;}
+  .chip b{color:var(--violet);}
+
+  .deliv{background:var(--paper); border:1px dashed var(--violet-300); border-left:3px solid var(--violet); border-radius:4px; padding:15px 18px; display:flex; align-items:center; gap:13px;}
+  .deliv .di{flex:none;width:36px;height:36px;border-radius:4px;background:var(--violet);color:#fff;display:grid;place-items:center;}
+  .deliv .di svg{width:19px;height:19px;}
+  .deliv .dt b{display:block;font-size:11px;font-family:var(--mono);letter-spacing:.08em;color:var(--violet);text-transform:uppercase;}
+  .deliv .dt span{font-size:15px;font-weight:700;}
+
+  .vlist{display:flex;flex-direction:column;gap:10px;}
+  .vlist .v{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;color:var(--ink-soft);line-height:1.45;}
+  .vlist .v .b{flex:none;width:22px;height:22px;border-radius:7px;background:var(--wash);color:var(--violet);display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700;margin-top:1px;}
+  .vlist .v b{color:var(--ink);font-weight:700;}
+
+  .keymsg{margin-top:auto; background:var(--ink); color:#fff; border-radius:4px; padding:15px 20px; display:flex; gap:13px; align-items:center; font-size:15px; line-height:1.5;}
+  .keymsg .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--violet-300);text-transform:uppercase;flex:none;}
+  .keymsg b{color:#fff;}
+
+  .formula{display:flex; flex-direction:column; gap:10px; background:var(--code-bg); border-radius:13px; padding:20px; color:#fff; font-family:var(--mono);}
+  .formula .big{font-size:21px; text-align:center;}
+
+  .ctable{width:100%; border-collapse:separate; border-spacing:0; font-size:14px; border:1px solid var(--line); border-radius:13px; overflow:hidden;}
+  .ctable th,.ctable td{padding:13px 16px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top;}
+  .ctable thead th{background:var(--wash); color:var(--violet); font-family:var(--mono); font-size:12px; letter-spacing:.04em; text-transform:uppercase; font-weight:700;}
+  .ctable tbody tr:last-child td{border-bottom:none;}
+  .ctable td b{color:var(--ink);} .ctable .hl{color:var(--violet); font-weight:700;}
+  .ctable .yes{color:var(--mint); font-weight:700;} .ctable .no{color:var(--rose); font-weight:700;}
+
+  .timeline{display:flex; gap:0; align-items:stretch; margin-top:6px;}
+  .timeline .t{flex:1; position:relative; padding:0 6px;}
+  .timeline .t .yr{font-family:var(--mono); font-size:13px; font-weight:700; color:var(--violet);}
+  .timeline .t .ev{font-size:13px; font-weight:700; margin-top:30px; line-height:1.3;}
+  .timeline .t .ds{font-size:11.5px; color:var(--mut); margin-top:3px; line-height:1.35;}
+  .timeline .t::before{content:""; position:absolute; left:0; right:0; top:26px; height:2px; background:var(--line);}
+  .timeline .t::after{content:""; position:absolute; left:8px; top:21px; width:12px; height:12px; border-radius:50%; background:var(--violet); border:3px solid #fff; box-shadow:0 0 0 1px var(--violet-300);}
+
+  .quote{background:var(--wash-2); border-left:4px solid var(--violet); border-radius:0 13px 13px 0; padding:18px 22px;}
+  .quote p{margin:0; font-size:18px; line-height:1.5; font-weight:600; color:var(--ink);}
+  .quote .src{margin-top:10px; font-size:12.5px; color:var(--mut); font-family:var(--mono);}
+  .refbox{background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--violet); border-radius:4px; padding:14px 16px; display:flex; gap:12px; align-items:flex-start;}
+  .refbox .rk{font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; color:var(--violet); text-transform:uppercase; font-weight:700;}
+  .refbox h4{margin:2px 0 3px; font-size:14.5px; font-weight:800;}
+  .refbox p{margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.45;}
+  .refbox .ri{flex:none;width:30px;height:30px;border-radius:8px;background:var(--violet);color:#fff;display:grid;place-items:center;}
+  .refbox .ri svg{width:16px;height:16px;}
+
+  .arch{display:flex; align-items:center; gap:18px; justify-content:center; margin:6px 0;}
+  .arch .box{border:1.5px solid var(--line); border-radius:14px; padding:18px 20px; text-align:center; background:var(--wash-2); min-width:160px;}
+  .arch .box .bt{font-size:15px; font-weight:800;} .arch .box .bs{font-size:12px; color:var(--mut); margin-top:3px; line-height:1.35;}
+  .arch .box.local{border-style:dashed; border-color:var(--violet-300); background:#fff;}
+  .arch .box.api{background:linear-gradient(135deg,#EFEAFF,#F8F5FF); border-color:var(--violet-300);}
+  .arch .conn{display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--violet); font-family:var(--mono); font-size:11px; font-weight:700;}
+  .arch .conn svg{width:34px;height:18px;}
+
+  .stat-row{display:flex; gap:16px;}
+  .stat{flex:1; background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--violet); border-radius:4px; padding:16px 18px;}
+  .stat .num{font-size:30px; font-weight:800; letter-spacing:-.02em; color:var(--violet); font-family:var(--mono);}
+  .stat .lab{font-size:13px; color:var(--ink-soft); margin-top:4px; line-height:1.4;}
+
+  .twopane{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .pane{border:1px solid var(--line); border-radius:4px; padding:16px 18px; background:var(--paper);}
+  .pane.bad{border-left:3px solid var(--rose);} .pane.good{border-left:3px solid var(--mint);}
+  .pane h4{margin:0 0 9px; font-size:14px; font-weight:800; display:flex; align-items:center; gap:7px;}
+  .pane.bad h4{color:#C9405B;} .pane.good h4{color:#0E9E6E;}
+  .pane p{margin:0; font-size:13px; color:var(--ink-soft); line-height:1.5;}
+  .mini{font-family:var(--mono); font-size:13.5px; background:#16142B; border:1px solid #2A2545; border-radius:6px; padding:13px 15px; color:#E8E4F5; line-height:1.7; white-space:pre-wrap;}
+  .pane .mini{font-family:var(--mono); font-size:12px; background:var(--wash-2); border:1px solid var(--line); border-radius:3px; padding:8px 10px; color:var(--ink-soft); line-height:1.5; margin-top:8px;}
+
+  .controlbar{
+    position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:70;
+    display:flex; align-items:center; gap:4px;
+    background:#2B2B2E; border-radius:999px; padding:8px 10px;
+    box-shadow:0 16px 40px -12px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04) inset;
+  }
+  .controlbar button{appearance:none; border:none; background:transparent; cursor:pointer; color:#C9C9D2; display:grid; place-items:center; border-radius:999px; transition:.12s ease; font-family:var(--serif);}
+  .controlbar .ico{width:38px; height:38px;}
+  .controlbar .ico svg{width:19px;height:19px;}
+  .controlbar .ico:hover{color:#fff; background:rgba(255,255,255,.1);}
+  .controlbar .ico:disabled{color:#5C5C66; cursor:not-allowed; background:transparent;}
+  .controlbar .sep{width:1px; height:24px; background:rgba(255,255,255,.16); margin:0 6px;}
+  .controlbar .count{ color:#EDEDF2; font-style:italic; font-family:Georgia,'Times New Roman',serif; font-size:17px; min-width:78px; text-align:center; letter-spacing:.02em; user-select:none;}
+  .controlbar .count b{font-style:italic; font-weight:600;}
+  .controlbar .zoom{width:32px;height:38px; color:#9A9AA6; font-size:18px;}
+  .controlbar .zoom:hover{color:#fff;}
+  .controlbar .zoom svg{width:17px;height:17px;}
+  .controlbar .pdf{
+    margin-left:6px; background:#7CB342; color:#fff; font-weight:800; font-size:14px; letter-spacing:.06em;
+    padding:0 22px; height:38px; border-radius:999px; display:flex; align-items:center;
+    box-shadow:0 6px 16px -6px rgba(124,179,66,.8);
+  }
+  .controlbar .pdf:hover{background:#86BD4B; color:#fff;}
+
+  .overview{position:fixed; inset:0; z-index:80; background:rgba(22,20,43,.55); backdrop-filter:blur(8px); display:none; padding:40px; overflow:auto;}
+  .overview.on{display:block;}
+  .overview .head{display:flex; align-items:center; justify-content:space-between; max-width:1100px; margin:0 auto 18px; color:#fff;}
+  .overview .head h3{margin:0; font-size:18px; font-weight:800;}
+  .overview .head button{appearance:none;border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff; border-radius:10px; padding:8px 14px; cursor:pointer; font-family:var(--serif); font-weight:700; font-size:13px;}
+  .ovgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; max-width:1100px; margin:0 auto;}
+  .ovcard{background:#fff; border:1px solid var(--line); border-radius:11px; padding:13px 15px; cursor:pointer; transition:.12s; text-align:left;}
+  .ovcard:hover{transform:translateY(-2px); box-shadow:0 12px 22px -12px rgba(0,0,0,.4); border-color:var(--violet);}
+  .ovcard .ovn{font-family:var(--mono); font-size:11px; color:var(--violet); font-weight:700;}
+  .ovcard .ovt{font-size:13.5px; font-weight:700; margin-top:4px; line-height:1.3; color:var(--ink);}
+
+  .hint{position:fixed; left:18px; bottom:24px; z-index:65; font-size:11px; color:var(--mut); font-family:var(--mono);}
+
+
+  /* ===== 이미지 / 도해 컴포넌트 (덱 하네스 추가분) ===== */
+  .figure{border:1px solid var(--line); border-radius:4px; background:var(--wash-2); overflow:hidden; display:flex; flex-direction:column; min-height:0;}
+  .figure img{display:block; width:100%; height:auto; object-fit:contain; min-height:0;}
+  .figure figcaption{font-family:var(--mono); font-size:11px; color:var(--mut); padding:7px 11px; border-top:1px solid var(--line); background:#fff;}
+  .figure.tight img{max-height:330px; object-fit:contain; background:#fff;}
+  /* 원본이 검은 여백을 달고 있는 캡처용 */
+  .figure.dark{background:#16142B; border-color:#2A2548;}
+  .figure.dark img{background:#16142B;}
+  .figure.dark figcaption{background:#1C1933; color:#9C97D6; border-top-color:#2A2548;}
+
+  /* 스크린샷: 창 프레임을 씌워 원본 캡처임을 드러낸다 */
+  .shot{border:1px solid var(--line); border-radius:9px; overflow:hidden; background:#fff; box-shadow:0 10px 26px -18px rgba(28,25,51,.6); display:flex; flex-direction:column; min-height:0;}
+  .shot .sbar{display:flex; align-items:center; gap:6px; padding:7px 11px; background:var(--wash); border-bottom:1px solid var(--line);}
+  .shot .sbar .d{width:9px;height:9px;border-radius:50%;background:var(--violet-300);}
+  .shot .sbar .t{margin-left:6px; font-family:var(--mono); font-size:11px; color:var(--mut);}
+  .shot img{display:block; width:100%; height:auto; max-height:400px; object-fit:contain; min-height:0;}
+
+  /* 도구 두 가지를 나란히 처음 보여줄 때 — 그림과 한 줄만 */
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:30px;}
+  .duo .side{border:1px solid var(--line); border-radius:18px; background:var(--wash-2);
+    padding:34px 30px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:20px; text-align:center;}
+  .duo .side img{max-height:92px; max-width:78%; width:auto; display:block;}
+  .duo .side .tagline{font-family:var(--mono); font-size:11.5px; letter-spacing:.12em;
+    color:var(--violet); text-transform:uppercase; font-weight:700;}
+  .duo .side h3{margin:0; font-size:23px; font-weight:800; letter-spacing:-.02em;}
+  .duo .side p{margin:0; font-size:15px; color:var(--ink-soft); line-height:1.55; max-width:30ch;}
+
+  /* 제품·도구 로고 — 작은 브랜드 마크 */
+  .brandmark{display:flex; align-items:center; gap:15px; margin-bottom:18px;}
+  .brandmark img{height:46px; width:auto; display:block;}
+  .brandmark .bt{font-size:13.5px; color:var(--ink-soft); line-height:1.45;}
+  .brandmark .bt b{color:var(--ink);}
+
+  /* 채워야 할 이미지 자리 — 인쇄에도 남으므로 발표 전 반드시 교체 */
+  .need-img{border:2px dashed var(--violet-300); border-radius:4px; background:repeating-linear-gradient(135deg,#FBFAFF,#FBFAFF 10px,#F4F1FF 10px,#F4F1FF 20px);
+    display:flex; flex-direction:column; justify-content:center; gap:6px; padding:20px 22px; min-height:150px;}
+  .need-img .nk{font-family:var(--mono); font-size:10.5px; font-weight:700; letter-spacing:.1em; color:var(--violet); text-transform:uppercase;}
+  .need-img .nd{font-size:14px; font-weight:700; color:var(--ink); line-height:1.4;}
+  .need-img .nm2{font-family:var(--mono); font-size:11.5px; color:var(--mut);}
+  .need-img.sm{min-height:92px; padding:14px 16px; align-items:center; text-align:center;}
+
+  /* 코드 실행 결과 */
+  .code .out{border-top:1px dashed #38325C; background:#141127; padding:11px 18px; font-family:var(--mono); font-size:12.5px; line-height:1.55; color:#9DE39A; white-space:pre; overflow:auto;}
+  .code .out .ol{color:#7D78B8;}
+  .code .err{color:#FF8E8E;}
+
+  /* 메모리 슬롯 도해 */
+  .slots{display:flex; gap:8px; flex-wrap:wrap; align-items:flex-start;}
+  .slot{border:1.5px solid var(--line); border-radius:8px; min-width:74px; padding:9px 11px; text-align:center; background:#fff;}
+  .slot .adr{font-family:var(--mono); font-size:10px; color:var(--mut); letter-spacing:.02em;}
+  .slot .val{font-family:var(--mono); font-size:15px; font-weight:700; color:var(--ink); margin-top:2px;}
+  .slot .nm{font-size:11px; color:var(--violet); font-weight:700; margin-top:3px;}
+  .slot.ref{border-style:dashed; border-color:var(--violet-300); background:var(--wash-2);}
+  .slot.dim{opacity:.45;}
+  .ptr{display:grid; place-items:center; color:var(--violet); font-family:var(--mono); font-size:18px; font-weight:700; padding:0 2px; align-self:center;}
+
+  /* 인라인 SVG 차트 */
+  .plot{background:var(--wash-2); border:1px solid var(--line); border-radius:4px; padding:14px; display:grid; place-items:center; min-height:0;}
+  .plot svg{width:100%; height:auto; display:block; max-height:300px;}
+  .plot .cap{font-family:var(--mono); font-size:11px; color:var(--mut); margin-top:8px; text-align:center;}
+  .formula .cap{font-family:var(--mono); font-size:11.5px; color:var(--code-dim); text-align:center;}
+
+  /* 수정·보강 표시 (원본 pptx에 없던 내용) */
+  .newmark{position:absolute; top:30px; right:112px; font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.08em;
+    color:var(--mint); border:1px solid #BFE9E1; background:var(--mint-soft); border-radius:999px; padding:3px 9px;}
+
+  @media print{
+    @page{ size:1280px 720px; margin:0; }
+    body{background:#fff !important;}
+    .controlbar,.progress,.hint,.overview{display:none !important;}
+    .stage{position:static; inset:auto; overflow:visible; display:block; padding:0;}
+    .sizer{width:auto !important; height:auto !important;}
+    .scaler{transform:none !important; width:auto !important; height:auto !important;}
+    .slide{ display:flex !important; width:1280px !important; height:720px !important;
+      border-radius:0 !important; border:none !important; box-shadow:none !important;
+      page-break-after:always; break-after:page;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .slide:last-child{page-break-after:auto;}
+  }
+  /* ===== 코리안리 교육 테마: 흰 바탕 · 검정 제목 · 빨강 강조 ===== */
+  :root{
+    --ink:#111111; --ink-soft:#4B4B52; --mut:#8C8C94;
+    --violet:#E8002D; --violet-700:#B50023; --violet-300:#F7A8B8;
+    --wash:#F5F5F7; --wash-2:#FAFAFB; --line:#E6E6EA;
+    --mint:#13A06B; --mint-soft:#E6F6EF; --amber:#F2A100; --rose:#E8002D;
+    --shadow:0 20px 50px -28px rgba(0,0,0,.35);
+  }
+  body{background:#EDEDF0;}
+  .progress .fill{background:var(--violet);}
+  .slide{border-radius:14px; padding:34px 60px 40px;}
+  .topbar{display:flex; justify-content:space-between; align-items:center; font-size:12.5px; font-weight:700; color:var(--ink); padding-bottom:14px; margin-bottom:16px; border-bottom:1px solid var(--line); position:relative;}
+  .topbar::before{content:""; position:absolute; left:-60px; top:-34px; width:120px; height:4px; background:var(--violet);}
+  .topbar .coord{position:static; font-family:var(--mono); font-size:12px; color:var(--mut);}
+  .kick{font-size:14px; font-weight:800; color:var(--violet); letter-spacing:-.01em;}
+  .s-title{font-size:36px; margin:6px 0 2px; letter-spacing:-.03em;}
+  .rule{background:var(--ink); height:3px; width:44px; margin:12px 0 4px;}
+  .s-sub{font-size:16.5px; margin-top:4px;}
+
+  .slide.cover{background:#fff; color:var(--ink); border:1px solid var(--line); padding:0;}
+  .cover .wrap{padding:70px 80px;}
+  .cover .ckick{display:flex; align-items:center; gap:12px; font-size:15px; font-weight:800;}
+  .cover .ckick .bar{width:46px; height:5px; background:var(--violet);}
+  .cover h1{font-size:76px; line-height:1.08; letter-spacing:-.045em; font-weight:900; margin:34px 0 22px; max-width:none;}
+  .cover h1 em{font-style:normal; color:var(--violet);}
+  .cover .lead{font-size:20px; color:var(--ink-soft); max-width:60ch;}
+  .cover .meta{margin-top:44px; padding-top:20px; border-top:1px solid var(--line); gap:40px;}
+  .cover .meta .it .k{color:var(--mut); font-family:var(--serif); font-size:13px; letter-spacing:0;}
+  .cover .meta .it .v{color:var(--ink); font-size:17px;}
+
+  .slide.section{background:#111; color:#fff; padding:70px 80px; justify-content:center;}
+  .slide.section .ghost{color:rgba(255,255,255,.06); font-family:var(--serif); font-weight:900;}
+  .slide.section .sno{font-size:20px; font-weight:900; color:var(--violet); margin-bottom:14px; font-family:var(--mono);}
+  .slide.section h2{font-size:54px; font-weight:900;}
+  .slide.section .stime{margin-top:26px; display:inline-block; align-self:flex-start; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:7px 16px; font-size:14px; font-weight:700;}
+
+  .labcover .labwrap{flex:1; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;}
+  .labcover .lflag{display:inline-block; background:var(--violet); color:#fff; font-weight:800; font-size:14px; padding:7px 14px; border-radius:6px;}
+  .labcover h2{font-size:40px; letter-spacing:-.03em; margin:18px 0 12px; line-height:1.15;}
+  .labcover .goal{font-size:17px; color:var(--ink-soft); line-height:1.55; margin:0 0 24px;}
+  .labcover .lout{background:#FFF0F3; border-radius:10px; padding:14px 18px; font-size:15.5px; font-weight:700;}
+  .labcover .lout span{display:block; font-size:12.5px; color:var(--violet); margin-bottom:4px;}
+  .labcover .labr{border:1px solid var(--line); border-radius:12px; padding:22px 26px;}
+  .labcover .lh{font-size:13px; font-weight:800; color:var(--mut); margin-bottom:8px;}
+  .labcover ol{margin:0; padding-left:22px; display:flex; flex-direction:column; gap:12px; font-size:16px; font-weight:600; line-height:1.4;}
+  .labcover ol li::marker{color:var(--violet); font-weight:800;}
+
+  .card{border-left:none; border-top:3px solid var(--ink); border-radius:6px;}
+  .card .n{color:var(--violet);}
+  .card h3{border-bottom:none; padding-bottom:0;}
+  .biglist .li .num{background:var(--violet); border-radius:50%;}
+  .pipe .step{border-top-color:var(--ink);}
+  .pipe .step.hl{border-top-color:var(--violet); background:#FFF5F7;}
+  .pipe .arrow{color:var(--mut); font-size:18px;}
+  .ctable{border-radius:8px; font-size:14.5px;}
+  .ctable thead th{background:#fff; color:var(--ink); font-family:var(--serif); font-size:13px; border-bottom:2px solid var(--ink);}
+  .ctable td{line-height:1.45;}
+  .ctable.tools td:first-child{font-weight:800; width:20%;}
+  .tg{font-weight:800;} .tg.g{color:var(--violet);} .tg.c{color:#B4572E;} .tg.m{color:#2F6BD8;}
+  .code{border-radius:10px;}
+  .code.prompt{background:#1B1B1F; border-color:#2B2B31;}
+  .code.prompt .bar{background:#151518; border-bottom-color:#2B2B31;}
+  .code.prompt .plabel{font-size:12.5px; font-weight:800; color:#FF5B7A;}
+  .code.prompt code{font-family:var(--serif); font-size:15px; line-height:1.65; white-space:pre-wrap; color:#F1F1F4;}
+  .code.prompt pre{max-height:400px;}
+  .code .bar .copybtn{background:var(--violet);}
+  .note{display:flex; gap:12px; align-items:baseline; margin-top:14px; font-size:15px; line-height:1.5; color:var(--ink-soft);}
+  .note .nk{flex:none; background:var(--ink); color:#fff; font-size:12.5px; font-weight:800; padding:3px 10px; border-radius:5px;}
+  .note.red .nk{background:var(--violet);}
+  .note.ok .nk{background:var(--mint);}
+  .note b{color:var(--ink);}
+  .twocol{gap:28px;}
+  .threecol{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  .pane{border-radius:10px; padding:18px 20px;}
+  .pane h4{font-size:16px;}
+  .pane.bad{border-left:4px solid #9A9AA2;} .pane.bad h4{color:#55555C;}
+  .pane.good{border-left:4px solid var(--violet);} .pane.good h4{color:var(--violet);}
+  .ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:7px; font-size:15px; line-height:1.5; color:var(--ink-soft);}
+  .ul b{color:var(--ink);}
+  .need-img{border-color:#F3B3C1; background:repeating-linear-gradient(135deg,#FFFAFB,#FFFAFB 10px,#FFF1F4 10px,#FFF1F4 20px); border-radius:10px;}
+  .need-img .nk{color:var(--violet);}
+  .stat{border-left:none; border-top:3px solid var(--violet); border-radius:8px;}
+  .stat .num{color:var(--ink); font-family:var(--serif); font-weight:900;}
+  .chat{display:flex; flex-direction:column; gap:12px;}
+  .chat .u,.chat .a{display:flex; gap:10px; align-items:flex-start;}
+  .chat .who{flex:none; width:30px; height:30px; border-radius:50%; background:#2F6BD8; color:#fff; font-size:12px; font-weight:800; display:grid; place-items:center;}
+  .chat .who.ai{background:var(--ink);}
+  .chat .bub{background:var(--wash); border-radius:10px; padding:11px 15px; font-size:14.5px; line-height:1.55;}
+  .chat .a .bub{background:#fff; border:1px solid var(--line);}
+  .chk{display:flex; flex-direction:column; gap:9px; font-size:15px;}
+  .chk div::before{content:"✓"; color:var(--violet); font-weight:900; margin-right:9px;}
+  .hl{color:var(--violet); font-weight:800;}
+  /* 큰 강의장용 글자 크기 */
+  .ctable{font-size:17px;} .ctable th,.ctable td{padding:13px 16px;} .ctable thead th{font-size:14.5px;}
+  .card{padding:20px 22px;} .card h3{font-size:21px;} .card p{font-size:16px; line-height:1.5;}
+  .biglist{gap:18px;} .biglist .li .num{width:36px; height:36px; font-size:16px;} .biglist .li .tx h4{font-size:20px;} .biglist .li .tx p{font-size:16px;}
+  .ul{font-size:17.5px; gap:9px;}
+  .pane h4{font-size:19px;}
+  .note{font-size:17px;} .note .nk{font-size:14px;}
+  .code.prompt code{font-size:16.5px;}
+  .code.prompt pre{max-height:470px;}
+  .chat .bub{font-size:17px;}
+  .chk{font-size:18px; gap:12px;}
+  .pipe .step{padding:16px 12px;} .pipe .step .sn{font-size:18px;} .pipe .step .sd{font-size:13.5px;} .pipe .step .si{font-size:13px;}
+  .stat .num{font-size:36px;} .stat .lab{font-size:16px;}
+  .need-img .nd{font-size:16px;}
+  .labcover ol{font-size:19px;} .labcover .goal{font-size:19px;} .labcover .lout{font-size:18px;}
+  .s-sub{font-size:18px;}
+  .code.prompt.sm code{font-size:13.5px; line-height:1.55;} .code.prompt.sm pre{max-height:520px; padding:12px 16px;}
+  .ctable td:first-child{white-space:nowrap;}
+
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="fill" id="pfill"></div></div>
+
+<main class="stage" id="stage">
+  <div class="sizer" id="sizer">
+    <div class="scaler" id="scaler">
+
+
+
+<!-- ============================================================
+     슬라이드는 여기부터. 규격: 1280x720 고정.
+     첫 장은 slide cover active, 나머지는 active 없이.
+     ============================================================ -->
+
+<section class="slide cover active" data-title="표지"><div class="wrap"><div class="ckick"><span class="bar"></span>코리안리재보험 AI 업무도구 제작 교육 · 오후</div><h1>조사 자료는<br><em>보고서</em>로</h1><p class="lead">공개 웹 데이터로 대시보드를 만들고, 출처와 수치를 확인한 보고용 HTML까지 만드는 4시간</p><div class="meta"><div class="it"><span class="k">시간</span><span class="v">13:00 ~ 17:00 · 4H</span></div><div class="it"><span class="k">기준 툴</span><span class="v">ChatGPT</span></div><div class="it"><span class="k">데이터</span><span class="v">공개 웹 데이터</span></div></div></div></section>
+
+<section class="slide" data-title="오늘 손에 쥐고 나가는 것"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">오늘 손에 쥐고 나가는 것</h2><div class="rule"></div><div class="body"><div class="cards c4"><div class="card"><span class="n">01</span><h3>첫 HTML 파일</h3><p>브라우저에서 바로 열리는 한 장</p></div><div class="card"><span class="n">02</span><h3>공통 대시보드</h3><p>지표 카드 · 차트 · 필터</p></div><div class="card"><span class="n">03</span><h3>보고용 HTML</h3><p>요약 · 근거 · 차트 · 출처</p></div><div class="card"><span class="n">04</span><h3>내 주제 보고서</h3><p>웹 검색 → 대시보드 → 보고서</p></div></div><div class="note red"><span class="nk">핵심</span><span class="nt"><b>결과물은 HTML 한 파일</b> · 어느 툴로 만들어도 같은 물건 · 설치 없이 열림</span></div></div></section>
+
+<section class="slide" data-title="진행 순서"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">진행 순서</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>시간</th><th>블록</th><th>결과</th></tr></thead><tbody><tr><td>13:00</td><td><b>01</b> 툴 비교 · 업무별 선택 기준</td><td>—</td></tr><tr><td>13:30</td><td><b>02</b> 업무 도구 제작 시작</td><td>첫 HTML 파일</td></tr><tr><td>14:00</td><td><b>03</b> 공통 실습: 리서치 데이터 대시보드</td><td>공통 대시보드 HTML</td></tr><tr><td>15:00</td><td><b>04</b> 보고용 HTML 변환</td><td>보고용 HTML 1건</td></tr><tr><td>15:30</td><td><b>05</b> 본인 주제 보고서</td><td>내 주제 HTML 보고서 1건</td></tr><tr><td>16:30</td><td><b>06</b> 결과물 시연 · 사용 기준</td><td>사용 기준 1장</td></tr></tbody></table></div></section>
+
+<section class="slide" data-title="실습 준비"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">실습 준비</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="chk"><div>개인 노트북 · 외부망 연결</div><div>ChatGPT 유료 계정 로그인</div><div>크롬 또는 엣지 브라우저</div><div>실습 자료 링크에서 CSV 받기</div></div></div><div><div class="pane good"><h4>Claude · Gemini 사용자</h4><ul class='ul'><li>화면은 ChatGPT 기준으로 진행</li><li>요청문은 <b>그대로 복사</b>해 내 툴에 붙여 넣기</li><li>결과 미리보기 위치만 다름 (위치표)</li><li>막히면 손 들기 (튜터)</li></ul></div></div></div></div></section>
+
+<section class="slide" data-title="정보 취급 기준"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">시작 전</div><h2 class="s-title">정보 취급 기준</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th></th><th>기준</th></tr></thead><tbody><tr><td><b>데이터</b></td><td>공개 웹 데이터만 · <span class='hl'>회사 내부 자료 · 실데이터 금지</span></td></tr><tr><td><b>주제</b></td><td>시장 · 제도 · 업계 동향처럼 공개 자료로 확인되는 것</td></tr><tr><td><b>수치</b></td><td>출처 없는 숫자는 보고서에 넣지 않음</td></tr><tr><td><b>사이트</b></td><td>검색은 ChatGPT가 · 출처 확인은 링크를 직접 열어서</td></tr><tr><td><b>결과물</b></td><td>AI 결과는 초안 · 공유 전 확인 책임은 작성자</td></tr></tbody></table></div></section>
+
+<section class="slide section" data-title="01. 툴 비교 · 업무별 선택 기준"><div class="ghost">01</div><div class="sno">01</div><h2>툴 비교 · 업무별 선택 기준</h2><p>세 툴이 공통으로 하는 일과 화면이 다른 곳</p><div class="stime">13:00 ~ 13:30</div></section>
+
+<section class="slide" data-title="세 툴이 공통으로 하는 일"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">세 툴이 공통으로 하는 일</h2><div class="rule"></div><div class="body"><div class="cards c4"><div class="card"><span class="n">1</span><h3>대화</h3><p>요청 · 수정 · 질문</p></div><div class="card"><span class="n">2</span><h3>파일 분석</h3><p>CSV · 엑셀 · PDF 읽기</p></div><div class="card"><span class="n">3</span><h3>웹 검색</h3><p>최신 공개 자료 찾기 · 출처 링크</p></div><div class="card"><span class="n">4</span><h3>결과물 미리보기</h3><p>HTML을 화면에 바로 띄우기</p></div></div><div class="note red"><span class="nk">오늘 쓰는 것</span><span class="nt">네 가지 모두 · 툴 이름보다 <b>이 기능이 어디 있는지</b></span></div></div></section>
+
+<section class="slide" data-title="같은 기능, 다른 위치"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">같은 기능, 다른 위치</h2><div class="rule"></div><div class="body"><table class="ctable tools"><thead><tr><th></th><th><span class="tg g">ChatGPT · 기준</span></th><th><span class="tg c">Claude</span></th><th><span class="tg m">Gemini</span></th></tr></thead><tbody><tr><td>파일 첨부</td><td>입력창 <b>+</b> → 파일</td><td>입력창 <b>+</b> → 파일</td><td>입력창 <b>+</b> → 파일</td></tr><tr><td>웹 검색</td><td>입력창 <b>+</b> → 웹 검색 · 심층 리서치</td><td>검색 · 리서치 켜기</td><td>자동 검색 · Deep Research</td></tr><tr><td>결과 미리보기</td><td>Canvas</td><td>Artifacts</td><td>Canvas</td></tr><tr><td>HTML 내려받기</td><td>Canvas 오른쪽 위 · 다운로드</td><td>Artifact 오른쪽 위 · 다운로드</td><td>Canvas 오른쪽 위 · 공유 · 다운로드</td></tr></tbody></table><div class="note "><span class="nk">확인</span><span class="nt">툴 업데이트로 버튼 위치가 바뀔 수 있음 · 현장 화면 기준으로 안내</span></div></div></section>
+
+<section class="slide" data-title="업무별로 고르는 기준"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">업무별로 고르는 기준</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>업무</th><th>필요한 기능</th><th>확인할 것</th></tr></thead><tbody><tr><td><b>문서 작성</b></td><td>지침 저장 · 파일 첨부</td><td>양식 · 문체 유지</td></tr><tr><td><b>자료 조사</b></td><td>웹 검색 · 리서치</td><td>출처 링크 · 발표 날짜</td></tr><tr><td><b>데이터 정리</b></td><td>파일 분석</td><td>건수 · 합계 대조</td></tr><tr><td><b>화면 · 보고서 제작</b></td><td>결과물 미리보기</td><td>브라우저에서 열리는지 · 인쇄</td></tr></tbody></table><div class="note "><span class="nk">원칙</span><span class="nt">툴은 <b>이미 쓰는 것</b>으로 · 기능이 없을 때만 다른 툴</span></div></div></section>
+
+<section class="slide section" data-title="02. 업무 도구 제작 시작"><div class="ghost">02</div><div class="sno">02</div><h2>업무 도구 제작 시작</h2><p>완성본을 먼저 보고, 첫 HTML 파일을 만들어 브라우저로 열기</p><div class="stime">13:30 ~ 14:00</div></section>
+
+<section class="slide" data-title="4시간 뒤 손에 있을 것"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">4시간 뒤 손에 있을 것</h2><div class="rule"></div><div class="body"><div class="twocol w2"><div><div class="need-img"><span class="nk">화면 캡처 자리</span><span class="nd">완성 보고서 HTML 시연 · 지표 카드 · 차트 · 출처 각주</span><span class="nm2">img/pm_final_demo.png</span></div></div><div><ul class='ul'><li><b>요약</b> → 근거 → 차트 순서</li><li>숫자마다 <b>출처</b> 각주</li><li>필터로 구분별 보기</li><li>메일 첨부 · 인쇄 그대로</li><li>파일 아래 <b>「다시 고칠 때 쓸 요청문」</b></li></ul></div></div></div></section>
+
+<section class="slide" data-title="HTML 한 파일이란"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">HTML 한 파일이란</h2><div class="rule"></div><div class="body"><div class="threecol"><div><div class="pane good"><h4>한 파일</h4><ul class='ul'><li>화면 · 데이터 · 차트가 파일 하나에</li><li>폴더 · 설치 필요 없음</li></ul></div></div><div><div class="pane good"><h4>브라우저로 열림</h4><ul class='ul'><li>더블클릭 → 크롬 · 엣지</li><li>누구에게 보내도 같은 화면</li></ul></div></div><div><div class="pane good"><h4>다시 고치기 쉬움</h4><ul class='ul'><li>파일을 다시 첨부</li><li>「여기만 바꿔 줘」</li></ul></div></div></div><div class="note red"><span class="nk">코드는 몰라도 됨</span><span class="nt"><b>요청문과 확인</b>만 · 코드는 AI가 작성</span></div></div></section>
+
+<section class="slide labcover" data-title="[실습 1] 첫 HTML 파일 만들기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="labwrap"><div class="labl"><div class="lflag">실습 1 · 20분</div><h2>첫 HTML 파일 만들기</h2><p class="goal">간단한 페이지를 만들어 미리보기 → 내려받기 → 브라우저로 열기까지 한 번에</p><div class="lout"><span>산출물</span>브라우저에서 열리는 첫 HTML 파일</div></div><div class="labr"><div class="lh">순서</div><ol><li>요청문 붙여 넣기</li><li>Canvas에서 미리보기</li><li>HTML 파일로 내려받기</li><li>더블클릭으로 브라우저에서 열기</li></ol></div></div></section>
+
+<section class="slide" data-title="① 요청문"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 1</div><h2 class="s-title">① 요청문</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="code prompt"><div class="bar"><span class="plabel">실습 1 · 요청문</span></div><pre><code>우리 팀 이번 주 할 일 3개를 보여 주는 HTML 페이지를 만들어 줘.
+
+- 위쪽: 제목 「이번 주 팀 할 일」과 오늘 날짜
+- 가운데: 할 일 카드 3개 (업무명 · 담당 · 마감일)
+- 파일 하나로, 외부 라이브러리 없이 브라우저에서 바로 열리게</code></pre></div></div><div><div class="biglist"><div class="li"><span class="num">1</span><div class="tx"><h4>붙여 넣기</h4><p>새 대화에 요청문</p></div></div><div class="li"><span class="num">2</span><div class="tx"><h4>미리보기</h4><p>Canvas가 열리면 화면 확인 · 안 열리면 「Canvas로 보여 줘」</p></div></div><div class="li"><span class="num">3</span><div class="tx"><h4>고쳐 보기</h4><p>「카드 색을 파란색으로 바꿔 줘」 한 줄</p></div></div></div></div></div></div></section>
+
+<section class="slide" data-title="② 내려받아 열기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 1</div><h2 class="s-title">② 내려받아 열기</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="biglist"><div class="li"><span class="num">1</span><div class="tx"><h4>내려받기</h4><p>Canvas 오른쪽 위 → 다운로드 · 없으면 「HTML 파일로 내려받게 해 줘」</p></div></div><div class="li"><span class="num">2</span><div class="tx"><h4>이름 정하기</h4><p>이번주_할일.html</p></div></div><div class="li"><span class="num">3</span><div class="tx"><h4>열기</h4><p>파일 더블클릭 → 브라우저</p></div></div><div class="li"><span class="num">4</span><div class="tx"><h4>확인</h4><p>미리보기와 같은 화면인지</p></div></div></div></div><div><div class="need-img"><span class="nk">화면 캡처 자리</span><span class="nd">Canvas 다운로드 버튼 · 브라우저에서 연 화면</span><span class="nm2">img/pm_canvas_download.png</span></div></div></div><div class="note red"><span class="nk">막히면</span><span class="nt">내려받기가 안 되면 코드를 복사 → 메모장 → 「이름.html」로 저장</span></div></div></section>
+
+<section class="slide section" data-title="03. 공통 실습:&lt;br&gt;리서치 데이터 대시보드"><div class="ghost">03</div><div class="sno">03</div><h2>공통 실습:<br>리서치 데이터 대시보드</h2><p>강사가 미리 모은 공개 데이터로 전원이 같은 대시보드 만들기</p><div class="stime">14:00 ~ 15:00</div></section>
+
+<section class="slide" data-title="오늘의 공통 데이터"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">오늘의 공통 데이터</h2><div class="rule"></div><div class="s-sub">출처 링크는 파일 안 출처 문서</div><div class="body"><div class="twocol "><div><table class="ctable "><thead><tr><th>항목</th><th>내용</th></tr></thead><tbody><tr><td><b>주제</b></td><td>직장인의 생성형 AI 활용</td></tr><tr><td><b>출처</b></td><td>과학기술정보통신부 · 한국지능정보사회진흥원<br>「2025 인터넷이용실태조사」 (2026.3.31 발표) 외 2건</td></tr><tr><td><b>지표</b></td><td>생성형 AI 경험률 · AI 서비스 경험률 · 유료 구독률 · ChatGPT 이용 목적 등 7개</td></tr><tr><td><b>구분</b></td><td>전체 · 성별 · 연령 · <b>직업(사무직 등)</b></td></tr><tr><td><b>파일</b></td><td>오후_공통데이터.csv · 지표 · 구분 · 연도 · 값 · 단위 · 출처키</td></tr></tbody></table></div><div><div class="stat-row"><div class="stat"><div class="num">44.5%</div><div class="lab">생성형 AI 경험률 (2025)</div></div><div class="stat"><div class="num">71.9%</div><div class="lab">사무직 생성형 AI 경험률</div></div></div><div class="note red"><span class="nk">주의</span><span class="nt">유료 구독률은 「전체 기준」과 「경험자 중」 모수가 달라 한 차트에 섞지 않기</span></div></div></div></div></section>
+
+<section class="slide labcover" data-title="[실습 2] 리서치 데이터 대시보드"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="labwrap"><div class="labl"><div class="lflag">실습 2 · 50분</div><h2>리서치 데이터 대시보드</h2><p class="goal">공개 데이터 CSV로 지표 카드 · 추이 차트 · 필터가 있는 대시보드를 만들고, 의도와 다른 부분을 한 번에 하나씩 고치기</p><div class="lout"><span>산출물</span>공통 대시보드 HTML</div></div><div class="labr"><div class="lh">순서</div><ol><li>CSV 첨부 + 요청문</li><li>화면 확인 · 의도와 다른 곳 찾기</li><li>한 번에 하나씩 수정 요청</li><li>오류는 메시지 그대로 전달</li><li>최종 파일 저장 · 다시 열기</li></ol></div></div></section>
+
+<section class="slide" data-title="① 첨부하고 요청"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">① 첨부하고 요청</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="code prompt"><div class="bar"><span class="plabel">실습 2 · 요청문</span></div><pre><code>첨부한 오후_공통데이터.csv 로 「직장인의 생성형 AI 활용」 대시보드를 HTML 한 파일로 만들어 줘.
+
+- 위쪽: 지표 카드 4개 (가장 최근 연도 값 · 전년 대비 증감)
+- 가운데: 연도별 추이 차트
+- 필터: 구분별로 바꿔 보기
+- 아래: 원본 데이터 표와 출처
+- CSV에 없는 숫자는 만들지 마
+- 차트는 외부 라이브러리 없이 (인터넷 연결 없이도 열리게)</code></pre></div></div><div><div class="biglist"><div class="li"><span class="num">1</span><div class="tx"><h4>CSV 첨부</h4><p>입력창 <b>+</b> → 오후_공통데이터.csv</p></div></div><div class="li"><span class="num">2</span><div class="tx"><h4>요청문 붙여 넣기</h4><p>그대로</p></div></div><div class="li"><span class="num">3</span><div class="tx"><h4>미리보기 확인</h4><p>카드 4개 · 차트 · 필터 · 표</p></div></div></div></div></div></div></section>
+
+<section class="slide" data-title="② 의도와 다른 곳 찾기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">② 의도와 다른 곳 찾기</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>볼 곳</th><th>확인</th><th>다르면</th></tr></thead><tbody><tr><td><b>지표 카드</b></td><td>CSV 최근 연도 값과 같은가</td><td>「○○ 카드 값이 CSV와 달라. CSV 기준으로」</td></tr><tr><td><b>차트</b></td><td>연도 순서 · 단위</td><td>「연도를 오래된 순으로」</td></tr><tr><td><b>필터</b></td><td>바꾸면 카드 · 차트가 같이 바뀌나</td><td>「필터가 카드에도 적용되게」</td></tr><tr><td><b>표 · 출처</b></td><td>원본 줄 수 · 출처 표시</td><td>「표 아래에 출처 기관 · 링크」</td></tr></tbody></table></div></section>
+
+<section class="slide" data-title="③ 한 번에 하나씩"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">③ 한 번에 하나씩</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="code prompt"><div class="bar"><span class="plabel">실습 2 · 수정 요청 예</span></div><pre><code># 한 번에 하나씩 요청
+1. 지표 카드 순서를 ○○ · ○○ · ○○ · ○○ 로 바꿔 줘
+2. 차트를 막대 그래프로 바꾸고 최근 연도만 강조해 줘
+3. 필터를 바꾸면 지표 카드 숫자도 같이 바뀌게 해 줘
+4. 숫자는 소수점 첫째 자리까지, 단위를 붙여 줘</code></pre></div></div><div><ul class='ul'><li>한 번에 여러 개 → 고친 곳이 다른 곳을 망가뜨림</li><li>하나 고치고 → 확인 → 다음</li><li>망가지면 「바로 전 버전으로 되돌려 줘」</li></ul></div></div></div></section>
+
+<section class="slide" data-title="④ 오류가 나면"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">④ 오류가 나면</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="code prompt"><div class="bar"><span class="plabel">실습 2 · 오류 전달</span></div><pre><code>이 HTML을 열었더니 아래처럼 나와. 고쳐서 다시 파일로 줘.
+
+[보이는 증상] 〈예: 차트 자리가 비어 있음 · 필터를 눌러도 안 바뀜〉
+[오류 메시지] 〈화면이나 F12 콘솔의 빨간 글씨를 그대로 붙여 넣기〉</code></pre></div></div><div><ul class='ul'><li><b>설명보다 메시지 그대로</b>가 빠름</li><li>F12 → Console 탭 → 빨간 글씨 복사</li><li>빈 화면 · 차트 없음 · 필터 무반응이 흔한 증상</li></ul></div></div><div class="note red"><span class="nk">저장</span><span class="nt">고친 최종본을 내려받아 다시 열어 보기 → <b>공통대시보드.html</b></span></div></div></section>
+
+<section class="slide section" data-title="04. 보고용 HTML 변환"><div class="ghost">04</div><div class="sno">04</div><h2>보고용 HTML 변환</h2><p>대시보드를 읽는 보고서로: 요약 · 근거 · 차트 · 출처</p><div class="stime">15:00 ~ 15:30</div></section>
+
+<section class="slide" data-title="대시보드와 보고서"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">대시보드와 보고서</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="pane bad"><h4>대시보드</h4><ul class='ul'><li>보는 사람이 직접 탐색</li><li>필터 · 카드 중심</li><li>숫자가 주인공</li></ul></div></div><div><div class="pane good"><h4>보고서</h4><ul class='ul'><li>읽는 순서가 정해짐</li><li><b>요약 → 근거 → 차트</b></li><li>숫자마다 <b>출처</b> · 결론이 주인공</li></ul></div></div></div></div></section>
+
+<section class="slide labcover" data-title="[실습 3] 보고용 HTML 변환"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="labwrap"><div class="labl"><div class="lflag">실습 3 · 25분</div><h2>보고용 HTML 변환</h2><p class="goal">대시보드를 요약 · 근거 · 차트 순 보고서로 바꾸고, 출처 표기 · 수치 대조 · 인쇄까지 확인</p><div class="lout"><span>산출물</span>보고용 HTML 1건</div></div><div class="labr"><div class="lh">순서</div><ol><li>변환 요청문</li><li>출처 각주 확인</li><li>핵심 수치 3개를 CSV와 대조</li><li>인쇄 미리보기로 잘림 확인</li></ol></div></div></section>
+
+<section class="slide" data-title="① 보고서로 바꾸기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">① 보고서로 바꾸기</h2><div class="rule"></div><div class="body"><div class="code prompt"><div class="bar"><span class="plabel">실습 3 · 요청문</span></div><pre><code>방금 만든 대시보드를 보고용 HTML로 바꿔 줘.
+
+- 순서: 요약 3줄 → 근거(지표별 설명) → 차트 → 원본 표
+- 요약의 모든 숫자 뒤에 [출처] 각주, 문서 끝에 출처 목록(기관 · 자료명 · 링크)
+- CSV에 없는 해석 · 숫자는 넣지 말고, 필요하면 「추가 확인 필요」로 표시
+- 인쇄하면 A4 세로에 잘리지 않게 (표 · 차트가 페이지 경계에서 나뉘지 않게)</code></pre></div></div></section>
+
+<section class="slide" data-title="② 수치 대조"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">② 수치 대조</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>#</th><th>확인</th><th>방법</th></tr></thead><tbody><tr><td>1</td><td>요약의 숫자 3개</td><td>CSV에서 같은 줄 찾아 값 · 연도 · 단위 비교</td></tr><tr><td>2</td><td>출처 각주</td><td>각주 번호 → 출처 목록 → 링크가 실제로 열리는지</td></tr><tr><td>3</td><td>해석 문장</td><td>「증가했다」 「가장 높다」가 표와 맞는지</td></tr></tbody></table><div class="note red"><span class="nk">다르면</span><span class="nt">「요약 2번째 숫자가 CSV와 달라. CSV 값으로 고치고 각주도 맞춰 줘」</span></div></div></section>
+
+<section class="slide" data-title="③ 인쇄 · 공유 확인"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">③ 인쇄 · 공유 확인</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="biglist"><div class="li"><span class="num">1</span><div class="tx"><h4>인쇄 미리보기</h4><p>브라우저에서 Ctrl+P (맥 ⌘+P)</p></div></div><div class="li"><span class="num">2</span><div class="tx"><h4>잘림 확인</h4><p>오른쪽 잘림 · 표가 페이지 중간에서 나뉨</p></div></div><div class="li"><span class="num">3</span><div class="tx"><h4>PDF로 저장</h4><p>대상 → PDF로 저장 · 메일 첨부용</p></div></div></div></div><div><div class="code prompt"><div class="bar"><span class="plabel">잘리면 · 요청문</span></div><pre><code>이 보고서를 인쇄하면 오른쪽이 잘리고 표가 페이지 중간에서 나뉘어.
+A4 세로 · 여백 15mm 기준 인쇄용 설정을 넣어서 다시 파일로 줘.</code></pre></div></div></div></div></section>
+
+<section class="slide section" data-title="05. 본인 주제 보고서"><div class="ghost">05</div><div class="sno">05</div><h2>본인 주제 보고서</h2><p>담당 업무와 관련된 공개 주제 하나로, 자료 수집부터 보고서까지</p><div class="stime">15:30 ~ 16:30</div></section>
+
+<section class="slide" data-title="주제 고르기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">주제 고르기</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="pane good"><h4>좋은 주제</h4><ul class='ul'><li>공개 자료로 확인 가능</li><li>연도별 숫자가 있음</li><li>담당 업무와 관련</li><li>예: 업계 디지털 전환 · 근무제도 변화 · 사무 자동화 도입 · 에너지 가격</li></ul></div></div><div><div class="pane bad"><h4>피할 주제</h4><ul class='ul'><li>회사 내부 실적 · 고객 정보</li><li>숫자 없는 의견 · 전망만</li><li>출처가 블로그 · 커뮤니티뿐</li><li>너무 넓은 주제 (「AI 전체」)</li></ul></div></div></div></div></section>
+
+<section class="slide labcover" data-title="[실습 4] 내 주제 HTML 보고서"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="labwrap"><div class="labl"><div class="lflag">실습 4 · 50분</div><h2>내 주제 HTML 보고서</h2><p class="goal">웹 검색으로 공개 자료를 모으고, 지표 3~4개 대시보드와 보고서를 한 파일로 만들기</p><div class="lout"><span>산출물</span>본인 주제 HTML 보고서 1건</div></div><div class="labr"><div class="lh">순서</div><ol><li>웹 검색으로 자료 수집</li><li>링크 열어 숫자 확인</li><li>대시보드 + 보고서 한 번에</li><li>다시 고칠 요청문을 파일 안에</li><li>수치 대조 · 인쇄 확인</li></ol></div></div></section>
+
+<section class="slide" data-title="① 웹 검색으로 자료 모으기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 4</div><h2 class="s-title">① 웹 검색으로 자료 모으기</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="code prompt"><div class="bar"><span class="plabel">실습 4 · 〈 〉만 내 주제로</span></div><pre><code>「〈내 주제〉」에 대해 최근 3년 공개 자료를 찾아 줘.
+
+- 정부 · 공공기관 · 국제기구 · 업계 협회 공식 자료 우선
+- 지표 3~4개를 연도별 표로 (지표 · 연도 · 값 · 단위 · 출처 기관 · 링크 · 발표일)
+- 확인되지 않은 값은 비워 두고 「미확인」
+- 마지막에 표를 CSV로 내려받게 해 줘</code></pre></div></div><div><ul class='ul'><li>입력창 <b>+</b> → 웹 검색 (깊게: 심층 리서치)</li><li>표 · 링크가 나오면 다음 단계</li><li>숫자가 없으면 주제를 좁히기</li></ul></div></div></div></section>
+
+<section class="slide" data-title="② 링크를 열어 확인"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 4</div><h2 class="s-title">② 링크를 열어 확인</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>확인</th><th>버릴 자료</th></tr></thead><tbody><tr><td>링크가 실제로 열리고 그 숫자가 있는가</td><td>링크가 없거나 숫자가 안 보임</td></tr><tr><td>발표 기관 · 발표일</td><td>출처가 개인 블로그 · 커뮤니티</td></tr><tr><td>최신 자료인가</td><td>3년 이상 지난 값만 있음</td></tr><tr><td>원 자료인가</td><td>언론 · 블로그 재인용만</td></tr></tbody></table><div class="note red"><span class="nk">원칙</span><span class="nt"><b>확인한 숫자만</b> 보고서에 · 나머지는 「미확인」</span></div></div></section>
+
+<section class="slide" data-title="③ 대시보드 + 보고서"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 4</div><h2 class="s-title">③ 대시보드 + 보고서</h2><div class="rule"></div><div class="body"><div class="code prompt"><div class="bar"><span class="plabel">실습 4 · 요청문</span></div><pre><code>찾은 자료(CSV)로 대시보드와 보고용 HTML을 한 파일로 만들어 줘.
+
+- 위: 지표 카드 3~4개 · 가운데: 추이 차트 · 아래: 보고서(요약 → 근거 → 차트)
+- 모든 숫자에 출처 각주, 끝에 출처 목록
+- 맨 아래 「다시 고칠 때 쓸 요청문」 칸: 이 파일을 다시 첨부해 수정할 때 쓸 요청문 3개
+- A4 인쇄에서 잘리지 않게
+- 외부 라이브러리 없이 한 파일로</code></pre></div></div></section>
+
+<section class="slide" data-title="④ 다시 고칠 요청문 남기기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 4</div><h2 class="s-title">④ 다시 고칠 요청문 남기기</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="need-img"><span class="nk">화면 캡처 자리</span><span class="nd">보고서 맨 아래 「다시 고칠 때 쓸 요청문」 칸 예시</span><span class="nm2">img/pm_reprompt_box.png</span></div></div><div><ul class='ul'><li>다음 달 같은 보고서 → 파일 첨부 + 요청문 그대로</li><li>예: 「2026년 값이 나오면 표와 차트에 추가해 줘」</li><li>예: 「출처 링크가 열리는지 다시 확인해 줘」</li><li>내가 아니어도 이어서 고칠 수 있음</li></ul></div></div><div class="note red"><span class="nk">마무리</span><span class="nt">수치 대조 · 인쇄 확인 후 <b>내주제_보고서.html</b>로 저장</span></div></div></section>
+
+<section class="slide section" data-title="06. 결과물 시연 · 사용 기준"><div class="ghost">06</div><div class="sno">06</div><h2>결과물 시연 · 사용 기준</h2><p>튜터가 미리 확인한 결과물 5~6건 · 실무에서 쓸 기준 정리</p><div class="stime">16:30 ~ 17:00</div></section>
+
+<section class="slide" data-title="시연에서 볼 것"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">시연에서 볼 것</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>볼 점</th><th>질문</th></tr></thead><tbody><tr><td><b>요청문</b></td><td>어떤 요청문이 결과를 갈랐나</td></tr><tr><td><b>출처</b></td><td>숫자마다 출처 · 링크가 열리나</td></tr><tr><td><b>고친 과정</b></td><td>몇 번 고쳤고 무엇을 바꿨나</td></tr><tr><td><b>다른 업무로</b></td><td>내 업무에 바꿔 쓰면 무엇을 바꾸나</td></tr></tbody></table><div class="note "><span class="nk">진행</span><span class="nt">주제 · 툴이 겹치지 않게 5~6건 · 건당 3~4분</span></div></div></section>
+
+<section class="slide" data-title="사용 기준 1장"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">사용 기준 1장</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>#</th><th>기준</th></tr></thead><tbody><tr><td>1</td><td><b>반입 금지</b>: 회사 실데이터 · 고객 · 개인정보는 외부 AI에 넣지 않는다</td></tr><tr><td>2</td><td><b>출처</b>: 보고서의 모든 숫자에 출처 · 확인 못 한 값은 「미확인」</td></tr><tr><td>3</td><td><b>대조</b>: 공유 전 핵심 수치 3개 이상을 원문과 직접 대조</td></tr><tr><td>4</td><td><b>검수 책임</b>: AI 결과는 초안 · 최종 확인과 책임은 작성자</td></tr><tr><td>5</td><td><b>재사용</b>: 다시 고칠 요청문을 파일에 남겨 다음 작성자에게</td></tr></tbody></table><div class="note red"><span class="nk">저장</span><span class="nt">이 표를 내 부서 기준으로 고쳐 1장으로</span></div></div></section>
+
+<section class="slide" data-title="막힐 때"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">막힐 때</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>상황</th><th>대처</th></tr></thead><tbody><tr><td>Canvas가 안 열림</td><td>「Canvas로 보여 줘」 · 안 되면 코드를 메모장에 붙여 .html로 저장</td></tr><tr><td>화면이 비어 있음</td><td>F12 → Console 빨간 글씨를 그대로 붙여 넣기</td></tr><tr><td>숫자가 CSV와 다름</td><td>「CSV 값 기준으로 다시」 · 해당 줄을 붙여 넣기</td></tr><tr><td>웹 검색 결과에 숫자가 없음</td><td>주제를 좁히기 · 「공식 통계표 링크만」</td></tr><tr><td>네트워크가 느림</td><td>강사 배포 완성본 · CSV로 진행</td></tr></tbody></table><div class="note red"><span class="nk">그래도 안 되면</span><span class="nt">손 들기 · 튜터가 자리로</span></div></div></section>
+
+<section class="slide" data-title="오늘 만든 것"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">오늘 만든 것</h2><div class="rule"></div><div class="body"><div class="stat-row"><div class="stat"><div class="num">첫 HTML</div><div class="lab">브라우저에서 열리는 한 장</div></div><div class="stat"><div class="num">대시보드</div><div class="lab">카드 · 차트 · 필터</div></div><div class="stat"><div class="num">보고서</div><div class="lab">요약 · 근거 · 출처</div></div><div class="stat"><div class="num">내 주제</div><div class="lab">웹 검색 → 보고서</div></div></div><div class="note "><span class="nk">다음부터</span><span class="nt">같은 보고서는 <b>파일 첨부 + 남겨 둔 요청문</b>으로</span></div></div></section>
+
+<section class="slide section" data-title="Q&A. 질문"><div class="ghost">Q&A</div><div class="sno">Q&A</div><h2>질문</h2><p>실습 자료 · 요청문은 자료 링크에서 다시 받기</p></section>
+
+    </div>
+  </div>
+</main>
+<div class="overview" id="overview">
+  <div class="head"><h3>슬라이드 목차</h3><button id="ovClose">닫기 ✕</button></div>
+  <div class="ovgrid" id="ovgrid"></div>
+</div>
+
+<div class="controlbar">
+  <button class="ico" id="btnMenu" title="목차"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <span class="sep"></span>
+  <button class="ico" id="btnPrev" title="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <span class="count"><b id="cur">1</b> / <span id="tot2">75</span></span>
+  <button class="ico" id="btnNext" title="다음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg></button>
+  <span class="sep"></span>
+  <button class="zoom" id="btnOut" title="축소"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14"/></svg></button>
+  <button class="zoom" id="btnIn" title="확대"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button class="zoom" id="btnFit" title="화면 맞춤"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 4H5a1 1 0 0 0-1 1v4M15 4h4a1 1 0 0 1 1 1v4M9 20H5a1 1 0 0 1-1-1v-4M15 20h4a1 1 0 0 0 1-1v-4"/></svg></button>
+  <button class="pdf" id="btnPdf" title="PDF로 저장 (인쇄 → PDF로 저장)">PDF</button>
+</div>
+
+<div class="hint">← → 또는 Space · 목차(≡) · 줌(−/+) · 숫자 입력 후 Enter로 이동</div>
+<div id="jumpHint"></div>
+<style>
+  #jumpHint{position:fixed; left:50%; bottom:74px; transform:translateX(-50%) translateY(6px); z-index:75;
+    background:#2B2B2E; color:#fff; font-family:Georgia,'Times New Roman',serif; font-style:italic;
+    font-size:20px; letter-spacing:.04em; padding:8px 20px; border-radius:999px;
+    box-shadow:0 12px 28px -10px rgba(0,0,0,.55); opacity:0; pointer-events:none;
+    transition:opacity .12s ease, transform .12s ease;}
+  #jumpHint.on{opacity:1; transform:translateX(-50%) translateY(0);}
+  @media print{ #jumpHint{display:none !important;} }
+</style>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const scaler = document.getElementById('scaler');
+  const sizer  = document.getElementById('sizer');
+  const stage  = document.getElementById('stage');
+  const total  = slides.length;
+  let idx = 0, userZoom = 1;
+  const BW = 1280, BH = 720;
+
+  document.getElementById('tot2').textContent = total;
+  slides.forEach((s, i) => {
+    const c = s.querySelector('.coord b');     if (c) c.textContent = String(i + 1).padStart(2, '0');
+    const t = s.querySelector('.coord .tot');  if (t) t.textContent = total;
+  });
+
+  const ovgrid = document.getElementById('ovgrid');
+  slides.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'ovcard';
+    b.innerHTML = '<div class="ovn">' + String(i + 1).padStart(2, '0') + '</div><div class="ovt">' + (s.dataset.title || '') + '</div>';
+    b.addEventListener('click', () => { go(i); closeOverview(); });
+    ovgrid.appendChild(b);
+  });
+  const overview = document.getElementById('overview');
+  function openOverview(){ overview.classList.add('on'); }
+  function closeOverview(){ overview.classList.remove('on'); }
+  document.getElementById('btnMenu').addEventListener('click', openOverview);
+  document.getElementById('ovClose').addEventListener('click', closeOverview);
+  overview.addEventListener('click', (e) => { if (e.target === overview) closeOverview(); });
+
+  function fitScale(){
+    const availW = stage.clientWidth  - 60;
+    const availH = stage.clientHeight - 60;
+    return Math.min(availW / BW, availH / BH);
+  }
+  function applyScale(){
+    const eff = fitScale() * userZoom;
+    scaler.style.transform = 'scale(' + eff + ')';
+    sizer.style.width  = (BW * eff) + 'px';
+    sizer.style.height = (BH * eff) + 'px';
+  }
+  window.addEventListener('resize', applyScale);
+
+  function go(n){
+    idx = Math.max(0, Math.min(total - 1, n));
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('btnPrev').disabled = idx === 0;
+    document.getElementById('btnNext').disabled = idx === total - 1;
+    document.getElementById('pfill').style.width = (idx / (total - 1) * 100) + '%';
+    applyScale();
+    stage.scrollTop = 0; stage.scrollLeft = 0;
+  }
+  document.getElementById('btnPrev').addEventListener('click', () => go(idx - 1));
+  document.getElementById('btnNext').addEventListener('click', () => go(idx + 1));
+  document.getElementById('btnIn').addEventListener('click',  () => { userZoom = Math.min(2.4, userZoom + 0.15); applyScale(); });
+  document.getElementById('btnOut').addEventListener('click', () => { userZoom = Math.max(0.5, userZoom - 0.15); applyScale(); });
+  document.getElementById('btnFit').addEventListener('click', () => { userZoom = 1; applyScale(); });
+  document.getElementById('btnPdf').addEventListener('click', () => window.print());
+
+  // ---- 슬라이드 번호 입력 → Enter 로 점프 ----
+  let jumpBuf = '', jumpTimer = null;
+  const jumpHint = document.getElementById('jumpHint');
+  function showJump(){
+    if (!jumpHint) return;
+    if (jumpBuf){ jumpHint.textContent = '→ ' + jumpBuf; jumpHint.classList.add('on'); }
+    else { jumpHint.classList.remove('on'); }
+  }
+  function clearJump(){ jumpBuf = ''; if (jumpTimer) clearTimeout(jumpTimer); showJump(); }
+  function commitJump(){
+    if (jumpBuf){ const n = parseInt(jumpBuf, 10); if (!isNaN(n)) go(n - 1); }
+    clearJump();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (overview.classList.contains('on')) { if (e.key === 'Escape') closeOverview(); return; }
+    if (/^[0-9]$/.test(e.key)){
+      e.preventDefault();
+      jumpBuf = (jumpBuf + e.key).slice(0, 3);
+      showJump();
+      if (jumpTimer) clearTimeout(jumpTimer);
+      jumpTimer = setTimeout(clearJump, 1600);
+      return;
+    }
+    if (e.key === 'Enter'){ e.preventDefault(); commitJump(); return; }
+    if (e.key === 'Escape'){ clearJump(); }
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); clearJump(); go(idx + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp'){ e.preventDefault(); clearJump(); go(idx - 1); }
+    if (e.key === 'Home'){ clearJump(); go(0); } if (e.key === 'End'){ clearJump(); go(total - 1); }
+    if (e.key === '+' || e.key === '='){ userZoom = Math.min(2.4, userZoom + 0.15); applyScale(); }
+    if (e.key === '-'){ userZoom = Math.max(0.5, userZoom - 0.15); applyScale(); }
+  });
+
+  applyScale(); go(0);
+</script>
+<script>
+// 코드 블록마다 「복사」 버튼
+document.querySelectorAll('.code').forEach(function (box) {
+  var bar = box.querySelector('.bar'), code = box.querySelector('pre');
+  if (!bar || !code) return;
+  var b = document.createElement('button');
+  b.className = 'copybtn'; b.type = 'button'; b.textContent = '복사';
+  b.addEventListener('click', function (ev) {
+    ev.stopPropagation();
+    var text = code.innerText.replace(/\n$/, '');
+    var ok = function () { b.textContent = '복사됨'; b.classList.add('done'); setTimeout(function () { b.textContent = '복사'; b.classList.remove('done'); }, 1500); };
+    if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(ok); }
+    else { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch (e) {} ta.remove(); }
+  });
+  bar.appendChild(b);
+  if (box.dataset.file) {                       // 템플릿은 파일로 바로 저장
+    var sv = document.createElement('button');
+    sv.className = 'savebtn'; sv.type = 'button'; sv.textContent = '파일로 저장';
+    sv.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      var blob = new Blob([code.innerText.replace(/\n$/, '') + '\n'], {type: 'text/plain;charset=utf-8'});
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = box.dataset.file;
+      document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    });
+    bar.appendChild(sv);
+  }
+});
+</script>
+
+</body>
+</html>

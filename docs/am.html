@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>반복 지시는 스킬로 · 오전</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#16142B; --ink-soft:#4A4766; --mut:#8E8AAC;
+    --violet:#5B3DF5; --violet-700:#3A1FC9; --violet-300:#B7A9FF;
+    --wash:#F4F1FF; --wash-2:#FAF9FF; --line:#E8E4F8;
+    --paper:#FFFFFF; --mint:#0FB5A1; --mint-soft:#E4F8F4;
+    --amber:#F4A93C; --rose:#E8537A;
+    --code-bg:#1C1933; --code-ink:#ECEAFF; --code-dim:#9C97D6;
+    --sw:1280px; --sh:720px;
+    --shadow:0 24px 60px -24px rgba(43,28,120,.45);
+    --serif: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif); color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #ECE7FF 0%, rgba(236,231,255,0) 60%),
+      radial-gradient(1000px 700px at 110% 10%, #F0EBFF 0%, rgba(240,235,255,0) 55%),
+      #EAE7F4;
+    min-height:100vh; -webkit-font-smoothing:antialiased;
+  }
+  .progress{position:fixed; top:0; left:0; right:0; height:3px; z-index:60; background:transparent;}
+  .progress .fill{height:100%; width:0; background:linear-gradient(90deg,var(--violet),#9B7BFF); transition:width .2s ease;}
+
+  .stage{
+    position:fixed; inset:0 0 0 0; z-index:10;
+    display:flex; justify-content:safe center; align-items:safe center;
+    overflow:auto; padding:30px 30px 96px;
+  }
+  .sizer{position:relative;}
+  .scaler{ width:var(--sw); height:var(--sh); transform-origin:top left; position:relative; }
+
+  .slide{
+    width:var(--sw); height:var(--sh);
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:22px; box-shadow:var(--shadow);
+    overflow:hidden; display:none; flex-direction:column;
+    padding:50px 60px 46px; position:relative;
+  }
+  .slide.active{display:flex;}
+
+  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.04em; color:var(--violet); text-transform:uppercase;}
+  .eyebrow .tag{color:#fff; background:var(--violet); border-radius:6px; padding:3px 8px; font-size:11px; letter-spacing:.05em;}
+  .eyebrow .tag.mint{background:var(--mint);}
+  .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--violet-300);}
+  .coord{position:absolute; top:30px; right:40px; font-family:var(--mono); font-size:12px; color:var(--mut); font-weight:600; letter-spacing:.05em;}
+  .coord b{color:var(--ink);}
+
+  .s-title{font-size:39px; line-height:1.12; letter-spacing:-.025em; font-weight:800; margin:14px 0 4px;}
+  .s-title.sm{font-size:32px;} .s-title.xs{font-size:28px;}
+  .s-sub{font-size:17px; color:var(--ink-soft); font-weight:500; line-height:1.5; max-width:64ch;}
+  .rule{height:4px; width:54px; border-radius:3px; background:var(--violet); margin:13px 0 6px;}
+  .body{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center;}
+  .body.top{justify-content:flex-start; padding-top:6px;}
+
+  .slide.cover{ padding:0; justify-content:center;
+    background:
+      radial-gradient(900px 520px at 100% 0%, #6B4BFF 0%, rgba(107,75,255,0) 58%),
+      radial-gradient(700px 600px at -5% 110%, #3A1FC9 0%, rgba(58,31,201,0) 55%),
+      linear-gradient(135deg,#2A1B8C 0%, #4226D6 48%, #5B3DF5 100%);
+    color:#fff; border:none; }
+  .cover .aperture{position:absolute; top:-120px; right:-120px; width:460px; height:460px; border-radius:50%; background:radial-gradient(circle at 35% 35%, rgba(255,255,255,.5), rgba(255,255,255,0) 62%); filter:blur(2px);}
+  .cover .ring{position:absolute; right:60px; top:60px; width:120px; height:120px; border-radius:50%; border:1.5px solid rgba(255,255,255,.4);}
+  .cover .ring::after{content:""; position:absolute; inset:18px; border-radius:50%; border:1.5px dashed rgba(255,255,255,.35);}
+  .cover .wrap{padding:60px 70px; position:relative; z-index:2; width:100%;}
+  .cover .kick{font-family:var(--mono); letter-spacing:.18em; font-size:13.5px; font-weight:600; color:rgba(255,255,255,.86); text-transform:uppercase; display:flex; align-items:center; gap:14px;}
+  .cover .kick .pill{border:1px solid rgba(255,255,255,.45); border-radius:999px; padding:4px 12px;}
+  .cover h1{font-size:58px; line-height:1.08; letter-spacing:-.03em; font-weight:800; margin:24px 0 16px; max-width:21ch;}
+  .cover .lead{font-size:18px; line-height:1.55; color:rgba(255,255,255,.9); max-width:56ch; font-weight:400;}
+  .cover .meta{margin-top:36px; display:flex; gap:24px; flex-wrap:wrap; font-size:14px;}
+  .cover .meta .it{display:flex; flex-direction:column; gap:3px;}
+  .cover .meta .it .k{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:rgba(255,255,255,.6); text-transform:uppercase;}
+  .cover .meta .it .v{font-size:15px; font-weight:700; color:#fff;}
+
+  .slide.section{ background:linear-gradient(140deg,#3A1FC9 0%, #5B3DF5 70%, #7A5BFF 100%); color:#fff; border:none; justify-content:center; padding:60px 70px; }
+  .slide.section.mintbg{ background:linear-gradient(140deg,#0A8A7A 0%, #0FB5A1 70%, #34D6C2 100%); }
+  .slide.section .ghost{position:absolute; right:34px; bottom:-66px; font-family:var(--mono); font-weight:700; font-size:330px; line-height:.8; color:rgba(255,255,255,.10); letter-spacing:-.04em;}
+  .slide.section .lab-flag{display:inline-flex; align-items:center; gap:9px; align-self:flex-start; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.4); padding:7px 14px; border-radius:999px; font-weight:700; font-size:13px; font-family:var(--mono); letter-spacing:.06em;}
+  .slide.section .lab-flag .sq{width:9px;height:9px;border-radius:3px;background:#fff;}
+  .slide.section .seyebrow{font-family:var(--mono); letter-spacing:.16em; font-size:14px; color:rgba(255,255,255,.85); text-transform:uppercase; margin-bottom:14px;}
+  .slide.section h2{font-size:48px; line-height:1.1; letter-spacing:-.025em; font-weight:800; margin:0 0 14px; max-width:24ch; position:relative; z-index:2;}
+  .slide.section p{font-size:18px; color:rgba(255,255,255,.92); max-width:54ch; line-height:1.55; position:relative; z-index:2;}
+  .slide.section .agenda{display:flex; gap:10px; flex-wrap:wrap; margin-top:22px; position:relative; z-index:2;}
+  .slide.section .agenda span{font-size:13px; font-weight:600; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); padding:6px 12px; border-radius:999px;}
+
+  .cards{display:grid; gap:16px;}
+  .cards.c2{grid-template-columns:repeat(2,1fr);} .cards.c3{grid-template-columns:repeat(3,1fr);} .cards.c4{grid-template-columns:repeat(4,1fr);}
+  .card{background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--violet); border-radius:4px; padding:17px 19px; display:flex; flex-direction:column; gap:7px; position:relative;}
+  .card .ic{width:38px; height:38px; border-radius:4px; display:grid; place-items:center; background:transparent; border:1.5px solid var(--violet-300); color:var(--violet); margin-bottom:3px;}
+  .card .ic svg{width:20px;height:20px;}
+  .card h3{font-size:17px; font-weight:800; letter-spacing:-.01em; margin:0 0 1px; padding-bottom:8px; border-bottom:1px solid var(--line);}
+  .card p{font-size:14px; color:var(--ink-soft); line-height:1.5; margin:0;}
+  .card .n{font-family:var(--mono); font-size:11.5px; color:var(--violet); font-weight:700;}
+
+  .biglist{display:flex; flex-direction:column; gap:13px;}
+  .biglist .li{display:flex; gap:15px; align-items:flex-start;}
+  .biglist .li .num{flex:none; width:34px; height:34px; border-radius:10px; background:var(--violet); color:#fff; font-family:var(--mono); font-weight:700; display:grid; place-items:center; font-size:14px; margin-top:1px;}
+  .biglist .li .tx h4{margin:0 0 3px; font-size:17.5px; font-weight:800;}
+  .biglist .li .tx p{margin:0; font-size:14px; color:var(--ink-soft); line-height:1.5;}
+
+  .phase-label{font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.08em; color:var(--violet); text-transform:uppercase; margin:0 0 10px; display:flex; align-items:center; gap:9px;}
+  .phase-label .ln{height:1px; flex:1; background:var(--line);}
+  .pipe{display:flex; align-items:stretch; gap:0; margin-bottom:20px;}
+  .pipe .step{flex:1; background:var(--paper); border:1px solid var(--line); border-top:3px solid var(--violet); border-radius:4px; padding:12px 10px; text-align:center; min-width:0;}
+  .pipe .step .si{font-family:var(--mono); font-size:11px; color:var(--violet); font-weight:700;}
+  .pipe .step .sn{font-size:14.5px; font-weight:800; margin-top:3px; letter-spacing:-.01em;}
+  .pipe .step .sd{font-size:11px; color:var(--mut); margin-top:2px; line-height:1.3;}
+  .pipe .arrow{display:flex; align-items:center; padding:0 5px; color:var(--violet-300);}
+  .pipe .arrow svg{width:17px;height:17px;}
+  .pipe.q .step{background:var(--paper); border-color:var(--line); border-top-color:var(--mint);} .pipe.q .step .si{color:var(--mint);} .pipe.q .arrow{color:#8AD7CC;}
+
+  .code{background:var(--code-bg); border-radius:14px; overflow:hidden; border:1px solid #2A2548; box-shadow:0 18px 40px -22px rgba(28,25,51,.7);}
+  .code .bar{display:flex; align-items:center; gap:7px; padding:10px 15px; border-bottom:1px solid #2A2548; background:#171430;}
+  .code .bar .dot{width:11px;height:11px;border-radius:50%;}
+  .code .bar .r{background:#FF6058;} .code .bar .y{background:#FFC130;} .code .bar .g{background:#28CA42;}
+  .code .bar .copybtn{margin-left:auto; font:600 12px var(--sans, sans-serif); color:#fff; background:#F28C28; border:0; border-radius:6px; padding:4px 10px; cursor:pointer;}
+  .code .bar .copybtn.done{background:#28CA42;}
+  .code .bar .savebtn{margin-left:6px; font:600 12px var(--sans, sans-serif); color:#1F3A5F; background:#fff; border:0; border-radius:6px; padding:4px 10px; cursor:pointer;}
+  @media print{.code .bar .savebtn{display:none}}
+  @media print{.code .bar .copybtn{display:none}}
+  .code .bar .copybtn, .code .bar .savebtn{flex:none; white-space:nowrap;}
+  .code .bar .fn{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-left:8px; font-family:var(--mono); font-size:12px; color:var(--code-dim);}
+  .code pre{margin:0; padding:16px 18px; overflow:auto;}
+  .code code{font-family:var(--mono); font-size:13px; line-height:1.6; color:var(--code-ink); white-space:pre;}
+  .code.sm code{font-size:12px; line-height:1.55;}
+  .cm{color:#7D78B8;} .kw{color:#C792FF;} .st{color:#9DE39A;} .fn2{color:#82D3FF;} .nm{color:#FFD479;}
+
+  .callout{border-radius:4px; padding:15px 18px; display:flex; gap:13px; align-items:flex-start; background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--violet);}
+  .callout .ci{flex:none; width:34px;height:34px;border-radius:4px;background:var(--violet);color:#fff;display:grid;place-items:center;}
+  .callout .ci svg{width:18px;height:18px;}
+  .callout .ct h4{margin:0 0 3px; font-size:15.5px; font-weight:800;}
+  .callout .ct p{margin:0; font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
+  .callout.mint{border-left-color:var(--mint);} .callout.mint .ci{background:var(--mint);}
+  .callout.amber{border-left-color:var(--amber);} .callout.amber .ci{background:var(--amber);}
+  .callout.rose{border-left-color:var(--rose);} .callout.rose .ci{background:var(--rose);}
+
+  .lab-badge{display:inline-flex; align-items:center; gap:9px; background:var(--mint-soft); color:#0A7F70; border:1px solid #BFE9E1; padding:7px 13px; border-radius:999px; font-weight:700; font-size:13px; font-family:var(--mono); letter-spacing:.04em;}
+  .lab-badge .sq{width:9px;height:9px;border-radius:3px;background:var(--mint);}
+
+  .twocol{display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start;}
+  .twocol.w{grid-template-columns:1.15fr .85fr;} .twocol.w2{grid-template-columns:.85fr 1.15fr;}
+
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{font-size:12.5px; font-weight:600; color:var(--ink-soft); background:#fff; border:1px solid var(--line); padding:6px 12px; border-radius:999px;}
+  .chip b{color:var(--violet);}
+
+  .deliv{background:var(--paper); border:1px dashed var(--violet-300); border-left:3px solid var(--violet); border-radius:4px; padding:15px 18px; display:flex; align-items:center; gap:13px;}
+  .deliv .di{flex:none;width:36px;height:36px;border-radius:4px;background:var(--violet);color:#fff;display:grid;place-items:center;}
+  .deliv .di svg{width:19px;height:19px;}
+  .deliv .dt b{display:block;font-size:11px;font-family:var(--mono);letter-spacing:.08em;color:var(--violet);text-transform:uppercase;}
+  .deliv .dt span{font-size:15px;font-weight:700;}
+
+  .vlist{display:flex;flex-direction:column;gap:10px;}
+  .vlist .v{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;color:var(--ink-soft);line-height:1.45;}
+  .vlist .v .b{flex:none;width:22px;height:22px;border-radius:7px;background:var(--wash);color:var(--violet);display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700;margin-top:1px;}
+  .vlist .v b{color:var(--ink);font-weight:700;}
+
+  .keymsg{margin-top:auto; background:var(--ink); color:#fff; border-radius:4px; padding:15px 20px; display:flex; gap:13px; align-items:center; font-size:15px; line-height:1.5;}
+  .keymsg .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--violet-300);text-transform:uppercase;flex:none;}
+  .keymsg b{color:#fff;}
+
+  .formula{display:flex; flex-direction:column; gap:10px; background:var(--code-bg); border-radius:13px; padding:20px; color:#fff; font-family:var(--mono);}
+  .formula .big{font-size:21px; text-align:center;}
+
+  .ctable{width:100%; border-collapse:separate; border-spacing:0; font-size:14px; border:1px solid var(--line); border-radius:13px; overflow:hidden;}
+  .ctable th,.ctable td{padding:13px 16px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top;}
+  .ctable thead th{background:var(--wash); color:var(--violet); font-family:var(--mono); font-size:12px; letter-spacing:.04em; text-transform:uppercase; font-weight:700;}
+  .ctable tbody tr:last-child td{border-bottom:none;}
+  .ctable td b{color:var(--ink);} .ctable .hl{color:var(--violet); font-weight:700;}
+  .ctable .yes{color:var(--mint); font-weight:700;} .ctable .no{color:var(--rose); font-weight:700;}
+
+  .timeline{display:flex; gap:0; align-items:stretch; margin-top:6px;}
+  .timeline .t{flex:1; position:relative; padding:0 6px;}
+  .timeline .t .yr{font-family:var(--mono); font-size:13px; font-weight:700; color:var(--violet);}
+  .timeline .t .ev{font-size:13px; font-weight:700; margin-top:30px; line-height:1.3;}
+  .timeline .t .ds{font-size:11.5px; color:var(--mut); margin-top:3px; line-height:1.35;}
+  .timeline .t::before{content:""; position:absolute; left:0; right:0; top:26px; height:2px; background:var(--line);}
+  .timeline .t::after{content:""; position:absolute; left:8px; top:21px; width:12px; height:12px; border-radius:50%; background:var(--violet); border:3px solid #fff; box-shadow:0 0 0 1px var(--violet-300);}
+
+  .quote{background:var(--wash-2); border-left:4px solid var(--violet); border-radius:0 13px 13px 0; padding:18px 22px;}
+  .quote p{margin:0; font-size:18px; line-height:1.5; font-weight:600; color:var(--ink);}
+  .quote .src{margin-top:10px; font-size:12.5px; color:var(--mut); font-family:var(--mono);}
+  .refbox{background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--violet); border-radius:4px; padding:14px 16px; display:flex; gap:12px; align-items:flex-start;}
+  .refbox .rk{font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; color:var(--violet); text-transform:uppercase; font-weight:700;}
+  .refbox h4{margin:2px 0 3px; font-size:14.5px; font-weight:800;}
+  .refbox p{margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.45;}
+  .refbox .ri{flex:none;width:30px;height:30px;border-radius:8px;background:var(--violet);color:#fff;display:grid;place-items:center;}
+  .refbox .ri svg{width:16px;height:16px;}
+
+  .arch{display:flex; align-items:center; gap:18px; justify-content:center; margin:6px 0;}
+  .arch .box{border:1.5px solid var(--line); border-radius:14px; padding:18px 20px; text-align:center; background:var(--wash-2); min-width:160px;}
+  .arch .box .bt{font-size:15px; font-weight:800;} .arch .box .bs{font-size:12px; color:var(--mut); margin-top:3px; line-height:1.35;}
+  .arch .box.local{border-style:dashed; border-color:var(--violet-300); background:#fff;}
+  .arch .box.api{background:linear-gradient(135deg,#EFEAFF,#F8F5FF); border-color:var(--violet-300);}
+  .arch .conn{display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--violet); font-family:var(--mono); font-size:11px; font-weight:700;}
+  .arch .conn svg{width:34px;height:18px;}
+
+  .stat-row{display:flex; gap:16px;}
+  .stat{flex:1; background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--violet); border-radius:4px; padding:16px 18px;}
+  .stat .num{font-size:30px; font-weight:800; letter-spacing:-.02em; color:var(--violet); font-family:var(--mono);}
+  .stat .lab{font-size:13px; color:var(--ink-soft); margin-top:4px; line-height:1.4;}
+
+  .twopane{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .pane{border:1px solid var(--line); border-radius:4px; padding:16px 18px; background:var(--paper);}
+  .pane.bad{border-left:3px solid var(--rose);} .pane.good{border-left:3px solid var(--mint);}
+  .pane h4{margin:0 0 9px; font-size:14px; font-weight:800; display:flex; align-items:center; gap:7px;}
+  .pane.bad h4{color:#C9405B;} .pane.good h4{color:#0E9E6E;}
+  .pane p{margin:0; font-size:13px; color:var(--ink-soft); line-height:1.5;}
+  .mini{font-family:var(--mono); font-size:13.5px; background:#16142B; border:1px solid #2A2545; border-radius:6px; padding:13px 15px; color:#E8E4F5; line-height:1.7; white-space:pre-wrap;}
+  .pane .mini{font-family:var(--mono); font-size:12px; background:var(--wash-2); border:1px solid var(--line); border-radius:3px; padding:8px 10px; color:var(--ink-soft); line-height:1.5; margin-top:8px;}
+
+  .controlbar{
+    position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:70;
+    display:flex; align-items:center; gap:4px;
+    background:#2B2B2E; border-radius:999px; padding:8px 10px;
+    box-shadow:0 16px 40px -12px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04) inset;
+  }
+  .controlbar button{appearance:none; border:none; background:transparent; cursor:pointer; color:#C9C9D2; display:grid; place-items:center; border-radius:999px; transition:.12s ease; font-family:var(--serif);}
+  .controlbar .ico{width:38px; height:38px;}
+  .controlbar .ico svg{width:19px;height:19px;}
+  .controlbar .ico:hover{color:#fff; background:rgba(255,255,255,.1);}
+  .controlbar .ico:disabled{color:#5C5C66; cursor:not-allowed; background:transparent;}
+  .controlbar .sep{width:1px; height:24px; background:rgba(255,255,255,.16); margin:0 6px;}
+  .controlbar .count{ color:#EDEDF2; font-style:italic; font-family:Georgia,'Times New Roman',serif; font-size:17px; min-width:78px; text-align:center; letter-spacing:.02em; user-select:none;}
+  .controlbar .count b{font-style:italic; font-weight:600;}
+  .controlbar .zoom{width:32px;height:38px; color:#9A9AA6; font-size:18px;}
+  .controlbar .zoom:hover{color:#fff;}
+  .controlbar .zoom svg{width:17px;height:17px;}
+  .controlbar .pdf{
+    margin-left:6px; background:#7CB342; color:#fff; font-weight:800; font-size:14px; letter-spacing:.06em;
+    padding:0 22px; height:38px; border-radius:999px; display:flex; align-items:center;
+    box-shadow:0 6px 16px -6px rgba(124,179,66,.8);
+  }
+  .controlbar .pdf:hover{background:#86BD4B; color:#fff;}
+
+  .overview{position:fixed; inset:0; z-index:80; background:rgba(22,20,43,.55); backdrop-filter:blur(8px); display:none; padding:40px; overflow:auto;}
+  .overview.on{display:block;}
+  .overview .head{display:flex; align-items:center; justify-content:space-between; max-width:1100px; margin:0 auto 18px; color:#fff;}
+  .overview .head h3{margin:0; font-size:18px; font-weight:800;}
+  .overview .head button{appearance:none;border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff; border-radius:10px; padding:8px 14px; cursor:pointer; font-family:var(--serif); font-weight:700; font-size:13px;}
+  .ovgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; max-width:1100px; margin:0 auto;}
+  .ovcard{background:#fff; border:1px solid var(--line); border-radius:11px; padding:13px 15px; cursor:pointer; transition:.12s; text-align:left;}
+  .ovcard:hover{transform:translateY(-2px); box-shadow:0 12px 22px -12px rgba(0,0,0,.4); border-color:var(--violet);}
+  .ovcard .ovn{font-family:var(--mono); font-size:11px; color:var(--violet); font-weight:700;}
+  .ovcard .ovt{font-size:13.5px; font-weight:700; margin-top:4px; line-height:1.3; color:var(--ink);}
+
+  .hint{position:fixed; left:18px; bottom:24px; z-index:65; font-size:11px; color:var(--mut); font-family:var(--mono);}
+
+
+  /* ===== 이미지 / 도해 컴포넌트 (덱 하네스 추가분) ===== */
+  .figure{border:1px solid var(--line); border-radius:4px; background:var(--wash-2); overflow:hidden; display:flex; flex-direction:column; min-height:0;}
+  .figure img{display:block; width:100%; height:auto; object-fit:contain; min-height:0;}
+  .figure figcaption{font-family:var(--mono); font-size:11px; color:var(--mut); padding:7px 11px; border-top:1px solid var(--line); background:#fff;}
+  .figure.tight img{max-height:330px; object-fit:contain; background:#fff;}
+  /* 원본이 검은 여백을 달고 있는 캡처용 */
+  .figure.dark{background:#16142B; border-color:#2A2548;}
+  .figure.dark img{background:#16142B;}
+  .figure.dark figcaption{background:#1C1933; color:#9C97D6; border-top-color:#2A2548;}
+
+  /* 스크린샷: 창 프레임을 씌워 원본 캡처임을 드러낸다 */
+  .shot{border:1px solid var(--line); border-radius:9px; overflow:hidden; background:#fff; box-shadow:0 10px 26px -18px rgba(28,25,51,.6); display:flex; flex-direction:column; min-height:0;}
+  .shot .sbar{display:flex; align-items:center; gap:6px; padding:7px 11px; background:var(--wash); border-bottom:1px solid var(--line);}
+  .shot .sbar .d{width:9px;height:9px;border-radius:50%;background:var(--violet-300);}
+  .shot .sbar .t{margin-left:6px; font-family:var(--mono); font-size:11px; color:var(--mut);}
+  .shot img{display:block; width:100%; height:auto; max-height:400px; object-fit:contain; min-height:0;}
+
+  /* 도구 두 가지를 나란히 처음 보여줄 때 — 그림과 한 줄만 */
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:30px;}
+  .duo .side{border:1px solid var(--line); border-radius:18px; background:var(--wash-2);
+    padding:34px 30px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:20px; text-align:center;}
+  .duo .side img{max-height:92px; max-width:78%; width:auto; display:block;}
+  .duo .side .tagline{font-family:var(--mono); font-size:11.5px; letter-spacing:.12em;
+    color:var(--violet); text-transform:uppercase; font-weight:700;}
+  .duo .side h3{margin:0; font-size:23px; font-weight:800; letter-spacing:-.02em;}
+  .duo .side p{margin:0; font-size:15px; color:var(--ink-soft); line-height:1.55; max-width:30ch;}
+
+  /* 제품·도구 로고 — 작은 브랜드 마크 */
+  .brandmark{display:flex; align-items:center; gap:15px; margin-bottom:18px;}
+  .brandmark img{height:46px; width:auto; display:block;}
+  .brandmark .bt{font-size:13.5px; color:var(--ink-soft); line-height:1.45;}
+  .brandmark .bt b{color:var(--ink);}
+
+  /* 채워야 할 이미지 자리 — 인쇄에도 남으므로 발표 전 반드시 교체 */
+  .need-img{border:2px dashed var(--violet-300); border-radius:4px; background:repeating-linear-gradient(135deg,#FBFAFF,#FBFAFF 10px,#F4F1FF 10px,#F4F1FF 20px);
+    display:flex; flex-direction:column; justify-content:center; gap:6px; padding:20px 22px; min-height:150px;}
+  .need-img .nk{font-family:var(--mono); font-size:10.5px; font-weight:700; letter-spacing:.1em; color:var(--violet); text-transform:uppercase;}
+  .need-img .nd{font-size:14px; font-weight:700; color:var(--ink); line-height:1.4;}
+  .need-img .nm2{font-family:var(--mono); font-size:11.5px; color:var(--mut);}
+  .need-img.sm{min-height:92px; padding:14px 16px; align-items:center; text-align:center;}
+
+  /* 코드 실행 결과 */
+  .code .out{border-top:1px dashed #38325C; background:#141127; padding:11px 18px; font-family:var(--mono); font-size:12.5px; line-height:1.55; color:#9DE39A; white-space:pre; overflow:auto;}
+  .code .out .ol{color:#7D78B8;}
+  .code .err{color:#FF8E8E;}
+
+  /* 메모리 슬롯 도해 */
+  .slots{display:flex; gap:8px; flex-wrap:wrap; align-items:flex-start;}
+  .slot{border:1.5px solid var(--line); border-radius:8px; min-width:74px; padding:9px 11px; text-align:center; background:#fff;}
+  .slot .adr{font-family:var(--mono); font-size:10px; color:var(--mut); letter-spacing:.02em;}
+  .slot .val{font-family:var(--mono); font-size:15px; font-weight:700; color:var(--ink); margin-top:2px;}
+  .slot .nm{font-size:11px; color:var(--violet); font-weight:700; margin-top:3px;}
+  .slot.ref{border-style:dashed; border-color:var(--violet-300); background:var(--wash-2);}
+  .slot.dim{opacity:.45;}
+  .ptr{display:grid; place-items:center; color:var(--violet); font-family:var(--mono); font-size:18px; font-weight:700; padding:0 2px; align-self:center;}
+
+  /* 인라인 SVG 차트 */
+  .plot{background:var(--wash-2); border:1px solid var(--line); border-radius:4px; padding:14px; display:grid; place-items:center; min-height:0;}
+  .plot svg{width:100%; height:auto; display:block; max-height:300px;}
+  .plot .cap{font-family:var(--mono); font-size:11px; color:var(--mut); margin-top:8px; text-align:center;}
+  .formula .cap{font-family:var(--mono); font-size:11.5px; color:var(--code-dim); text-align:center;}
+
+  /* 수정·보강 표시 (원본 pptx에 없던 내용) */
+  .newmark{position:absolute; top:30px; right:112px; font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.08em;
+    color:var(--mint); border:1px solid #BFE9E1; background:var(--mint-soft); border-radius:999px; padding:3px 9px;}
+
+  @media print{
+    @page{ size:1280px 720px; margin:0; }
+    body{background:#fff !important;}
+    .controlbar,.progress,.hint,.overview{display:none !important;}
+    .stage{position:static; inset:auto; overflow:visible; display:block; padding:0;}
+    .sizer{width:auto !important; height:auto !important;}
+    .scaler{transform:none !important; width:auto !important; height:auto !important;}
+    .slide{ display:flex !important; width:1280px !important; height:720px !important;
+      border-radius:0 !important; border:none !important; box-shadow:none !important;
+      page-break-after:always; break-after:page;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .slide:last-child{page-break-after:auto;}
+  }
+  /* ===== 코리안리 교육 테마: 흰 바탕 · 검정 제목 · 빨강 강조 ===== */
+  :root{
+    --ink:#111111; --ink-soft:#4B4B52; --mut:#8C8C94;
+    --violet:#E8002D; --violet-700:#B50023; --violet-300:#F7A8B8;
+    --wash:#F5F5F7; --wash-2:#FAFAFB; --line:#E6E6EA;
+    --mint:#13A06B; --mint-soft:#E6F6EF; --amber:#F2A100; --rose:#E8002D;
+    --shadow:0 20px 50px -28px rgba(0,0,0,.35);
+  }
+  body{background:#EDEDF0;}
+  .progress .fill{background:var(--violet);}
+  .slide{border-radius:14px; padding:34px 60px 40px;}
+  .topbar{display:flex; justify-content:space-between; align-items:center; font-size:12.5px; font-weight:700; color:var(--ink); padding-bottom:14px; margin-bottom:16px; border-bottom:1px solid var(--line); position:relative;}
+  .topbar::before{content:""; position:absolute; left:-60px; top:-34px; width:120px; height:4px; background:var(--violet);}
+  .topbar .coord{position:static; font-family:var(--mono); font-size:12px; color:var(--mut);}
+  .kick{font-size:14px; font-weight:800; color:var(--violet); letter-spacing:-.01em;}
+  .s-title{font-size:36px; margin:6px 0 2px; letter-spacing:-.03em;}
+  .rule{background:var(--ink); height:3px; width:44px; margin:12px 0 4px;}
+  .s-sub{font-size:16.5px; margin-top:4px;}
+
+  .slide.cover{background:#fff; color:var(--ink); border:1px solid var(--line); padding:0;}
+  .cover .wrap{padding:70px 80px;}
+  .cover .ckick{display:flex; align-items:center; gap:12px; font-size:15px; font-weight:800;}
+  .cover .ckick .bar{width:46px; height:5px; background:var(--violet);}
+  .cover h1{font-size:76px; line-height:1.08; letter-spacing:-.045em; font-weight:900; margin:34px 0 22px; max-width:none;}
+  .cover h1 em{font-style:normal; color:var(--violet);}
+  .cover .lead{font-size:20px; color:var(--ink-soft); max-width:60ch;}
+  .cover .meta{margin-top:44px; padding-top:20px; border-top:1px solid var(--line); gap:40px;}
+  .cover .meta .it .k{color:var(--mut); font-family:var(--serif); font-size:13px; letter-spacing:0;}
+  .cover .meta .it .v{color:var(--ink); font-size:17px;}
+
+  .slide.section{background:#111; color:#fff; padding:70px 80px; justify-content:center;}
+  .slide.section .ghost{color:rgba(255,255,255,.06); font-family:var(--serif); font-weight:900;}
+  .slide.section .sno{font-size:20px; font-weight:900; color:var(--violet); margin-bottom:14px; font-family:var(--mono);}
+  .slide.section h2{font-size:54px; font-weight:900;}
+  .slide.section .stime{margin-top:26px; display:inline-block; align-self:flex-start; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:7px 16px; font-size:14px; font-weight:700;}
+
+  .labcover .labwrap{flex:1; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;}
+  .labcover .lflag{display:inline-block; background:var(--violet); color:#fff; font-weight:800; font-size:14px; padding:7px 14px; border-radius:6px;}
+  .labcover h2{font-size:40px; letter-spacing:-.03em; margin:18px 0 12px; line-height:1.15;}
+  .labcover .goal{font-size:17px; color:var(--ink-soft); line-height:1.55; margin:0 0 24px;}
+  .labcover .lout{background:#FFF0F3; border-radius:10px; padding:14px 18px; font-size:15.5px; font-weight:700;}
+  .labcover .lout span{display:block; font-size:12.5px; color:var(--violet); margin-bottom:4px;}
+  .labcover .labr{border:1px solid var(--line); border-radius:12px; padding:22px 26px;}
+  .labcover .lh{font-size:13px; font-weight:800; color:var(--mut); margin-bottom:8px;}
+  .labcover ol{margin:0; padding-left:22px; display:flex; flex-direction:column; gap:12px; font-size:16px; font-weight:600; line-height:1.4;}
+  .labcover ol li::marker{color:var(--violet); font-weight:800;}
+
+  .card{border-left:none; border-top:3px solid var(--ink); border-radius:6px;}
+  .card .n{color:var(--violet);}
+  .card h3{border-bottom:none; padding-bottom:0;}
+  .biglist .li .num{background:var(--violet); border-radius:50%;}
+  .pipe .step{border-top-color:var(--ink);}
+  .pipe .step.hl{border-top-color:var(--violet); background:#FFF5F7;}
+  .pipe .arrow{color:var(--mut); font-size:18px;}
+  .ctable{border-radius:8px; font-size:14.5px;}
+  .ctable thead th{background:#fff; color:var(--ink); font-family:var(--serif); font-size:13px; border-bottom:2px solid var(--ink);}
+  .ctable td{line-height:1.45;}
+  .ctable.tools td:first-child{font-weight:800; width:20%;}
+  .tg{font-weight:800;} .tg.g{color:var(--violet);} .tg.c{color:#B4572E;} .tg.m{color:#2F6BD8;}
+  .code{border-radius:10px;}
+  .code.prompt{background:#1B1B1F; border-color:#2B2B31;}
+  .code.prompt .bar{background:#151518; border-bottom-color:#2B2B31;}
+  .code.prompt .plabel{font-size:12.5px; font-weight:800; color:#FF5B7A;}
+  .code.prompt code{font-family:var(--serif); font-size:15px; line-height:1.65; white-space:pre-wrap; color:#F1F1F4;}
+  .code.prompt pre{max-height:400px;}
+  .code .bar .copybtn{background:var(--violet);}
+  .note{display:flex; gap:12px; align-items:baseline; margin-top:14px; font-size:15px; line-height:1.5; color:var(--ink-soft);}
+  .note .nk{flex:none; background:var(--ink); color:#fff; font-size:12.5px; font-weight:800; padding:3px 10px; border-radius:5px;}
+  .note.red .nk{background:var(--violet);}
+  .note.ok .nk{background:var(--mint);}
+  .note b{color:var(--ink);}
+  .twocol{gap:28px;}
+  .threecol{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  .pane{border-radius:10px; padding:18px 20px;}
+  .pane h4{font-size:16px;}
+  .pane.bad{border-left:4px solid #9A9AA2;} .pane.bad h4{color:#55555C;}
+  .pane.good{border-left:4px solid var(--violet);} .pane.good h4{color:var(--violet);}
+  .ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:7px; font-size:15px; line-height:1.5; color:var(--ink-soft);}
+  .ul b{color:var(--ink);}
+  .need-img{border-color:#F3B3C1; background:repeating-linear-gradient(135deg,#FFFAFB,#FFFAFB 10px,#FFF1F4 10px,#FFF1F4 20px); border-radius:10px;}
+  .need-img .nk{color:var(--violet);}
+  .stat{border-left:none; border-top:3px solid var(--violet); border-radius:8px;}
+  .stat .num{color:var(--ink); font-family:var(--serif); font-weight:900;}
+  .chat{display:flex; flex-direction:column; gap:12px;}
+  .chat .u,.chat .a{display:flex; gap:10px; align-items:flex-start;}
+  .chat .who{flex:none; width:30px; height:30px; border-radius:50%; background:#2F6BD8; color:#fff; font-size:12px; font-weight:800; display:grid; place-items:center;}
+  .chat .who.ai{background:var(--ink);}
+  .chat .bub{background:var(--wash); border-radius:10px; padding:11px 15px; font-size:14.5px; line-height:1.55;}
+  .chat .a .bub{background:#fff; border:1px solid var(--line);}
+  .chk{display:flex; flex-direction:column; gap:9px; font-size:15px;}
+  .chk div::before{content:"✓"; color:var(--violet); font-weight:900; margin-right:9px;}
+  .hl{color:var(--violet); font-weight:800;}
+  /* 큰 강의장용 글자 크기 */
+  .ctable{font-size:17px;} .ctable th,.ctable td{padding:13px 16px;} .ctable thead th{font-size:14.5px;}
+  .card{padding:20px 22px;} .card h3{font-size:21px;} .card p{font-size:16px; line-height:1.5;}
+  .biglist{gap:18px;} .biglist .li .num{width:36px; height:36px; font-size:16px;} .biglist .li .tx h4{font-size:20px;} .biglist .li .tx p{font-size:16px;}
+  .ul{font-size:17.5px; gap:9px;}
+  .pane h4{font-size:19px;}
+  .note{font-size:17px;} .note .nk{font-size:14px;}
+  .code.prompt code{font-size:16.5px;}
+  .code.prompt pre{max-height:470px;}
+  .chat .bub{font-size:17px;}
+  .chk{font-size:18px; gap:12px;}
+  .pipe .step{padding:16px 12px;} .pipe .step .sn{font-size:18px;} .pipe .step .sd{font-size:13.5px;} .pipe .step .si{font-size:13px;}
+  .stat .num{font-size:36px;} .stat .lab{font-size:16px;}
+  .need-img .nd{font-size:16px;}
+  .labcover ol{font-size:19px;} .labcover .goal{font-size:19px;} .labcover .lout{font-size:18px;}
+  .s-sub{font-size:18px;}
+  .code.prompt.sm code{font-size:13.5px; line-height:1.55;} .code.prompt.sm pre{max-height:520px; padding:12px 16px;}
+  .ctable td:first-child{white-space:nowrap;}
+
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="fill" id="pfill"></div></div>
+
+<main class="stage" id="stage">
+  <div class="sizer" id="sizer">
+    <div class="scaler" id="scaler">
+
+
+
+<!-- ============================================================
+     슬라이드는 여기부터. 규격: 1280x720 고정.
+     첫 장은 slide cover active, 나머지는 active 없이.
+     ============================================================ -->
+
+<section class="slide cover active" data-title="표지"><div class="wrap"><div class="ckick"><span class="bar"></span>코리안리재보험 AI 업무도구 제작 교육 · 오전</div><h1>반복 지시는<br><em>스킬</em>로</h1><p class="lead">매번 같은 설명을 반복하던 문서 업무를 스킬로 저장하고, 한 문장으로 초안을 받는 2시간</p><div class="meta"><div class="it"><span class="k">시간</span><span class="v">09:30 ~ 11:30 · 2H</span></div><div class="it"><span class="k">기준 툴</span><span class="v">ChatGPT</span></div><div class="it"><span class="k">데이터</span><span class="v">실습용 더미 데이터</span></div></div></div></section>
+
+<section class="slide" data-title="오늘 손에 쥐고 나가는 것"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">오늘 손에 쥐고 나가는 것</h2><div class="rule"></div><div class="body"><div class="cards c4"><div class="card"><span class="n">01</span><h3>시트 · 캘린더 연결</h3><p>ChatGPT가 내 구글 시트와 캘린더를 직접 읽음</p></div><div class="card"><span class="n">02</span><h3>공통 지침 1건</h3><p>주간 업무 보고 · 저장하고 다시 불러오기까지</p></div><div class="card"><span class="n">03</span><h3>내 업무 스킬 1개</h3><p>한 문장이면 내 양식대로 초안</p></div><div class="card"><span class="n">03</span><h3>검증 체크리스트 1장</h3><p>AI 답을 믿기 전에 확인할 것</p></div></div><div class="note red"><span class="nk">핵심</span><span class="nt"><b>설명은 한 번만 · 다음부터는 호출만</b></span></div></div></section>
+
+<section class="slide" data-title="진행 순서"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">진행 순서</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>시간</th><th>블록</th><th>실습</th><th>결과</th></tr></thead><tbody><tr><td>09:30</td><td><b>01</b> 채팅을 넘어: 플러그인으로 외부 자료 읽기</td><td>시트 · 캘린더 연결</td><td>이번 주 요약</td></tr><tr><td>10:00</td><td><b>02</b> 반복 문서 업무 구조화</td><td>지침 전후 비교</td><td>공통 지침 1건</td></tr><tr><td>10:30</td><td><b>03</b> 담당 업무 스킬 제작 · 연동</td><td>내 업무로 스킬</td><td>스킬 1개 · 체크리스트</td></tr><tr><td>11:30</td><td>마무리</td><td></td><td></td></tr></tbody></table></div></section>
+
+<section class="slide" data-title="실습 준비"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">실습 준비</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="chk"><div>개인 노트북 · 외부망 연결</div><div>ChatGPT 유료 계정 로그인</div><div>Google 계정 로그인 (크롬 · 엣지)</div><div>실습 자료 링크 열기</div></div></div><div><div class="pane good"><h4>Claude · Gemini 사용자</h4><ul class='ul'><li>화면은 ChatGPT 기준으로 진행</li><li>세 툴 모두 <b>이름 → 설명 → 지침 → 참고 파일</b> 순서가 같음</li><li>같은 순서로 내 툴에서 채우기</li><li>툴별 위치는 각 블록의 위치표 · 막히면 손 들기 (튜터)</li></ul></div></div></div></div></section>
+
+<section class="slide" data-title="정보 취급 기준"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">시작 전</div><h2 class="s-title">정보 취급 기준</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th></th><th>기준</th></tr></thead><tbody><tr><td><b>데이터</b></td><td>실습용 더미만 · <span class='hl'>회사 실데이터 입력 금지</span></td></tr><tr><td><b>계정 연동</b></td><td>개인 Google 계정 · 실습용 시트와 캘린더만 연결</td></tr><tr><td><b>실습 후</b></td><td>원하면 연결 해제 · 「실습용 팀 일정」 캘린더 삭제</td></tr><tr><td><b>회사 계정</b></td><td>Outlook · SharePoint 등 회사 계정 연결은 <b>사내 승인 후</b> · 오늘은 개인 Google 계정으로</td></tr><tr><td><b>결과물</b></td><td>AI 결과는 초안 · 최종 확인과 책임은 작성자</td></tr></tbody></table></div></section>
+
+<section class="slide section" data-title="01. 채팅을 넘어:&lt;br&gt;플러그인으로 외부 자료 읽기"><div class="ghost">01</div><div class="sno">01</div><h2>채팅을 넘어:<br>플러그인으로 외부 자료 읽기</h2><p>복사 · 붙여넣기 대신 ChatGPT가 내 시트와 캘린더를 직접 읽는 단계</p><div class="stime">09:30 ~ 10:00</div></section>
+
+<section class="slide" data-title="생성형 AI 활용 3단계"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">생성형 AI 활용 3단계</h2><div class="rule"></div><div class="body"><div class="pipe"><div class="step"><div class="si">01</div><div class="sn">채팅형</div><div class="sd">묻고 답하기 · 자료는 복사해 붙여넣기</div></div><div class="arrow">→</div><div class="step hl"><div class="si">02</div><div class="sn">도구 연결</div><div class="sd">시트 · 캘린더 · 드라이브를 직접 읽기</div></div><div class="arrow">→</div><div class="step"><div class="si">03</div><div class="sn">에이전트</div><div class="sd">여러 단계를 스스로 실행</div></div></div><div class="twocol "><div><div class="pane bad"><h4>채팅형에서 매주 반복되는 일</h4><ul class='ul'><li>시트 열기 → 복사 → 붙여넣기</li><li>일정 따로 확인 → 붙여넣기</li><li>양식 · 규칙을 매번 다시 설명</li></ul></div></div><div><div class="pane good"><h4>오늘 바꾸는 것</h4><ul class='ul'><li>시트 · 캘린더는 <b>플러그인으로 연결</b></li><li>양식 · 규칙은 <b>스킬로 저장</b></li><li>다음 주부터는 한 문장</li></ul></div></div></div></div></section>
+
+<section class="slide" data-title="스킬과 플러그인"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">스킬과 플러그인</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="cards c1"><div class="card"><span class="n">SKILL</span><h3>스킬</h3><p>반복 업무의 지침 · 참고자료 · 예시를 저장한 것<br>「이 일은 이렇게 해」</p></div><div class="card"><span class="n">PLUGIN</span><h3>플러그인</h3><p>스킬 + 외부 앱 연결을 한 번에 설치하는 묶음<br>「이 앱의 자료를 읽어」</p></div></div></div><div><div class="chat"><div class="chat"><div class="u"><span class="who">나</span><div class="bub">이번 주 주간 보고서 초안 잡아줘</div></div><div class="a"><span class="who ai">AI</span><div class="bub">「주간업무보고」 스킬 사용 · 「팀 업무 현황」 시트와 「실습용 팀 일정」을 읽었습니다.<br><b>마감 초과 2건</b>을 맨 위에 두고 4항목 양식으로 정리했습니다.</div></div></div></div><div class="note "><span class="nk">함께 쓰면</span><span class="nt">스킬은 <b>어떻게</b>, 플러그인은 <b>무엇을</b> 읽을지</span></div></div></div></div></section>
+
+<section class="slide" data-title="세 툴의 같은 기능"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">세 툴의 같은 기능</h2><div class="rule"></div><div class="body"><table class="ctable tools"><thead><tr><th></th><th><span class="tg g">ChatGPT · 기준</span></th><th><span class="tg c">Claude</span></th><th><span class="tg m">Gemini</span></th></tr></thead><tbody><tr><td>지침 저장</td><td>스킬</td><td>스킬</td><td>스킬</td></tr><tr><td>외부 자료 연결</td><td>플러그인 · Google Sheets · Calendar</td><td>커넥터 · Google Drive · Calendar</td><td>Google 앱 기본 연동</td></tr><tr><td>자동 호출</td><td>대화 중 자동 호출</td><td>대화 중 자동 호출</td><td>대화 중 자동 호출</td></tr><tr><td>만드는 곳</td><td>플러그인 메뉴 → 스킬</td><td>설정 → 기능 → 스킬</td><td>스킬 메뉴</td></tr></tbody></table><div class="note red"><span class="nk">오늘은</span><span class="nt">ChatGPT 화면 기준 · Claude · Gemini도 같은 칸을 같은 순서로</span></div></div></section>
+
+<section class="slide labcover" data-title="[실습 1] 시트 · 캘린더를 연결해 이번 주 요약 받기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="labwrap"><div class="labl"><div class="lflag">실습 1 · 20분</div><h2>시트 · 캘린더를 연결해 이번 주 요약 받기</h2><p class="goal">복사 · 붙여넣기 없이 ChatGPT가 「팀 업무 현황」 시트와 「실습용 팀 일정」을 함께 읽게 만들기</p><div class="lout"><span>산출물</span>연결 완료 · 이번 주 요약 1건</div></div><div class="labr"><div class="lh">순서</div><ol><li>시트 사본 만들기</li><li>캘린더 파일 가져오기</li><li>ChatGPT에서 Google Sheets · Calendar 연결</li><li>요청문으로 이번 주 요약</li><li>시트 · 일정과 대조</li></ol></div></div></section>
+
+<section class="slide" data-title="① 실습 자료를 내 구글 계정으로"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 1</div><h2 class="s-title">① 실습 자료를 내 구글 계정으로</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="biglist"><div class="li"><span class="num">1</span><div class="tx"><h4>시트 사본 만들기</h4><p>자료 링크의 「팀 업무 현황」 열기 → 파일 → <b>사본 만들기</b> → 이름 그대로 저장</p></div></div><div class="li"><span class="num">2</span><div class="tx"><h4>캘린더 만들기</h4><p>Google 캘린더 → 설정 → 새 캘린더 → 이름 「실습용 팀 일정」</p></div></div><div class="li"><span class="num">3</span><div class="tx"><h4>일정 가져오기</h4><p>설정 → 가져오기 → <b>실습용_팀일정.ics</b> 선택 → 대상 「실습용 팀 일정」</p></div></div></div></div><div><div class="need-img"><span class="nk">화면 캡처 자리</span><span class="nd">Google 캘린더 「가져오기」 화면 · 대상 캘린더 선택 부분 강조</span><span class="nm2">img/am_ics_import.png</span></div></div></div></div></section>
+
+<section class="slide" data-title="② ChatGPT에 Google 연결"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 1</div><h2 class="s-title">② ChatGPT에 Google 연결</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="biglist"><div class="li"><span class="num">1</span><div class="tx"><h4>플러그인 메뉴 열기</h4><p>왼쪽 메뉴 → 플러그인</p></div></div><div class="li"><span class="num">2</span><div class="tx"><h4>Google Sheets 찾기</h4><p>검색 → 설치 → <b>연결</b> → Google 로그인 · 권한 허용</p></div></div><div class="li"><span class="num">3</span><div class="tx"><h4>Google Calendar 연결</h4><p>같은 방법으로 연결</p></div></div><div class="li"><span class="num">4</span><div class="tx"><h4>확인</h4><p>새 대화 입력창의 <b>+</b> → 두 앱이 켜져 있는지</p></div></div></div></div><div><div class="need-img"><span class="nk">화면 캡처 자리</span><span class="nd">ChatGPT 플러그인 디렉터리 · Google Sheets 연결 버튼</span><span class="nm2">img/am_plugin_connect.png</span></div></div></div><div class="note "><span class="nk">Claude · Gemini</span><span class="nt">Claude는 설정 → 커넥터 · Gemini는 Google 앱 연동이 기본</span></div></div></section>
+
+<section class="slide" data-title="③ 요청문으로 이번 주 요약"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 1</div><h2 class="s-title">③ 요청문으로 이번 주 요약</h2><div class="rule"></div><div class="body"><div class="code prompt"><div class="bar"><span class="plabel">실습 1 · 요청문</span></div><pre><code>내 구글 드라이브의 「팀 업무 현황」 시트와 구글 캘린더의 「실습용 팀 일정」을 읽고
+이번 주 팀 현황을 요약해 줘.
+
+- 업무별 진행률과 마감일
+- 이번 주 회의 · 마감 일정
+- 마감이 지났거나 이번 주 마감인데 진행률이 낮은 업무</code></pre></div><div class="note "><span class="nk">확인</span><span class="nt">시트의 숫자 · 캘린더 일정과 하나씩 대조 · 없는 내용이 나오면 표시</span></div><div class="note red"><span class="nk">막히면</span><span class="nt">시트를 내려받아(파일 → 다운로드 → .xlsx) 대화창에 첨부하고 같은 요청</span></div></div></section>
+
+<section class="slide" data-title="확인 포인트"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">확인 포인트</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="pane good"><h4>잘 된 결과</h4><ul class='ul'><li>시트 12건이 빠짐없이</li><li>캘린더 일정 10건 반영</li><li>마감 지난 업무를 따로 표시</li><li>시트에 없는 내용은 없음</li></ul></div></div><div><div class="pane bad"><h4>다시 볼 결과</h4><ul class='ul'><li>업무 수가 시트와 다름</li><li>날짜를 다르게 읽음</li><li>「아마 ~일 것」 같은 추정</li><li>→ 원문과 대조 · 다시 요청</li></ul></div></div></div><div class="note "><span class="nk">다음 블록</span><span class="nt">매번 이 요청문을 다시 쓰는 대신 <b>지침으로 저장</b></span></div></div></section>
+
+<section class="slide section" data-title="02. 반복 문서 업무 구조화"><div class="ghost">02</div><div class="sno">02</div><h2>반복 문서 업무 구조화</h2><p>매번 길게 설명하던 업무를 지침 · 참고자료 · 출력 예시 세 가지로 나누기</p><div class="stime">10:00 ~ 10:30</div></section>
+
+<section class="slide" data-title="매주 반복되는 설명"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">매주 반복되는 설명</h2><div class="rule"></div><div class="body"><div class="chat"><div class="u"><span class="who">나</span><div class="bub">이번 주 업무 정리해 줘. 업무명, 담당, 진행률, 다음 조치 순서로. 마감 지난 건 맨 위에 올리고 며칠 지났는지 쓰고, 진행률 비어 있는 건 추정하지 말고 확인 요청이라고 써 줘. 표로 만들고 문체는 지난번처럼…</div></div><div class="a"><span class="who ai">AI</span><div class="bub">네, 정리했습니다. (다음 주에도 같은 설명을 처음부터)</div></div></div><div class="note red"><span class="nk">문제</span><span class="nt">설명이 길수록 빠뜨리는 조건이 생기고 · 사람마다 · 주마다 결과가 달라짐</span></div></div></section>
+
+<section class="slide" data-title="3요소로 나누기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">3요소로 나누기</h2><div class="rule"></div><div class="body"><div class="threecol"><div><div class="pane good"><h4>고정 지침</h4><ul class='ul'><li>매번 같은 규칙</li><li>항목 · 순서 · 금지 사항</li><li>「이렇게 써라」</li></ul></div></div><div><div class="pane good"><h4>참고자료</h4><ul class='ul'><li>양식 파일</li><li>지난 보고서</li><li>「이 양식에 맞춰라」</li></ul></div></div><div><div class="pane good"><h4>출력 예시</h4><ul class='ul'><li>완성된 결과 한 건</li><li>문체 · 길이 기준</li><li>「이 정도로 써라」</li></ul></div></div></div><div class="note "><span class="nk">매주 바뀌는 것</span><span class="nt">이번 주 업무 기록 · 일정만 → 시트 · 캘린더에서 읽기</span></div></div></section>
+
+<section class="slide labcover" data-title="[실습 2] 지침 적용 전후 비교"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="labwrap"><div class="labl"><div class="lflag">실습 2 · 20분</div><h2>지침 적용 전후 비교</h2><p class="goal">같은 자료로 ① 지침 없이 ② 지침을 넣고 요청해 결과 차이를 직접 확인</p><div class="lout"><span>산출물</span>공통 샘플 기준 지침 1건</div></div><div class="labr"><div class="lh">순서</div><ol><li>지침 없이 한 줄 요청</li><li>결과 메모</li><li>지침 붙여 넣고 같은 요청</li><li>차이 비교</li><li>양식대로 안 나온 부분은 지침 문장 고치기</li></ol></div></div></section>
+
+<section class="slide" data-title="① 지침 없이"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">① 지침 없이</h2><div class="rule"></div><div class="body"><div class="code prompt"><div class="bar"><span class="plabel">실습 2 · 지침 없이</span></div><pre><code>「팀 업무 현황」 시트와 「실습용 팀 일정」 캘린더로 이번 주 주간 업무 보고 써 줘.</code></pre></div><div class="note "><span class="nk">메모</span><span class="nt">항목 순서 · 마감 초과 표시 · 빈 진행률을 어떻게 처리했는지 적어 두기</span></div></div></section>
+
+<section class="slide" data-title="② 지침을 넣고"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">② 지침을 넣고</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="code prompt sm" data-file="주간업무보고_지침.md"><div class="bar"><span class="plabel">실습 2 · 지침</span></div><pre><code># 주간업무보고 지침
+
+## 입력
+- 「팀 업무 현황」 시트: 업무명 · 담당 · 마감일 · 진행률 · 비고
+- 「실습용 팀 일정」 캘린더: 이번 주 일정
+
+## 작성 규칙
+1. 업무마다 [업무명 · 담당 · 진행률 · 다음 조치] 4항목으로 쓴다
+2. 마감일이 지난 업무는 맨 위에 두고 「마감 N일 초과」를 붙인다
+3. 진행률이 비어 있으면 추정하지 않고 「확인 요청」으로 쓴다
+4. 시트와 일정에 없는 내용은 만들지 않는다
+
+## 출력 형식
+- 첫 줄: 이번 주 요약 한 문장
+- 표: 업무명 | 담당 | 진행률 | 다음 조치 | 비고
+- 마지막: 이번 주 주요 일정 목록 (날짜순)
+- 참고자료 「작성예시」의 문체를 따른다</code></pre></div></div><div><ul class='ul'><li>새 대화에서 지침 전체를 붙여 넣고</li><li>참고자료 <b>주간보고_양식.docx · 작성예시.docx</b> 첨부</li><li>마지막 줄에 「이번 주 보고서 써 줘」</li></ul><div class="note "><span class="nk">비교</span><span class="nt">①과 나란히 놓고 차이 확인</span></div></div></div></div></section>
+
+<section class="slide" data-title="전후 비교"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">전후 비교</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>확인 항목</th><th>지침 없이</th><th>지침 적용</th></tr></thead><tbody><tr><td>항목 · 순서</td><td>매번 다름</td><td>4항목 고정</td></tr><tr><td>마감 초과 업무</td><td>중간에 섞임</td><td>맨 위 · 「N일 초과」</td></tr><tr><td>진행률 빈칸</td><td>추정해서 채우기도</td><td>「확인 요청」</td></tr><tr><td>문체 · 길이</td><td>그때그때</td><td>작성예시와 비슷</td></tr></tbody></table><div class="note red"><span class="nk">직접 확인</span><span class="nt">내 결과가 이 표와 다르면 → 다음 장</span></div></div></section>
+
+<section class="slide" data-title="지침이 안 먹을 때"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">지침이 안 먹을 때</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>증상</th><th>고치는 법</th></tr></thead><tbody><tr><td>규칙 하나를 계속 빠뜨림</td><td>그 문장을 <b>맨 앞</b>으로 · 번호 붙이기</td></tr><tr><td>「적당히」 처리</td><td>숫자 · 이름으로 구체적으로 (「3줄 이내」 「맨 위」)</td></tr><tr><td>금지했는데 계속 함</td><td>「하지 마」 대신 <b>대신 할 일</b>을 함께 (「추정 대신 확인 요청」)</td></tr><tr><td>양식이 흐트러짐</td><td>출력 예시 한 건을 참고자료로 추가</td></tr></tbody></table><div class="note "><span class="nk">고친 뒤</span><span class="nt">같은 요청을 다시 돌려 확인</span></div></div></section>
+
+<section class="slide" data-title="지침을 스킬로 저장"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 2</div><h2 class="s-title">지침을 스킬로 저장</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="biglist"><div class="li"><span class="num">1</span><div class="tx"><h4>스킬 만들기 열기</h4><p>플러그인 → 스킬 → <b>만들기</b></p></div></div><div class="li"><span class="num">2</span><div class="tx"><h4>이름</h4><p>주간업무보고</p></div></div><div class="li"><span class="num">3</span><div class="tx"><h4>설명</h4><p>주간 업무 보고서 · 이번 주 업무 정리를 요청할 때</p></div></div><div class="li"><span class="num">4</span><div class="tx"><h4>지침 · 참고 파일</h4><p>고친 지침 붙여 넣기 · 양식 · 작성예시 첨부 → 저장</p></div></div></div></div><div><div class="need-img"><span class="nk">화면 캡처 자리</span><span class="nd">ChatGPT 스킬 만들기 화면 · 이름 · 설명 · 지침 · 파일 칸</span><span class="nm2">img/am_skill_create.png</span></div></div></div><div class="note "><span class="nk">확인</span><span class="nt">새 대화에서 「이번 주 업무 보고 정리해 줘」 → 스킬이 호출되는지</span></div></div></section>
+
+<section class="slide" data-title="세 툴 모두 같은 4칸"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">세 툴 모두 같은 4칸</h2><div class="rule"></div><div class="body"><table class="ctable tools"><thead><tr><th></th><th><span class="tg g">ChatGPT · 기준</span></th><th><span class="tg c">Claude</span></th><th><span class="tg m">Gemini</span></th></tr></thead><tbody><tr><td>이름</td><td>name</td><td>name</td><td>이름</td></tr><tr><td>설명</td><td>description · 호출 기준</td><td>description · 호출 기준</td><td>설명</td></tr><tr><td>지침</td><td>지시문</td><td>지시문</td><td>지침</td></tr><tr><td>참고 파일</td><td>references</td><td>첨부 파일</td><td>지식 파일</td></tr></tbody></table><div class="note red"><span class="nk">순서</span><span class="nt"><b>이름 → 설명 → 지침 → 참고 파일</b> · 어느 툴이든 같은 순서로 채우기</span></div></div></section>
+
+<section class="slide section" data-title="03. 담당 업무 스킬 제작 · 연동"><div class="ghost">03</div><div class="sno">03</div><h2>담당 업무 스킬 제작 · 연동</h2><p>내 반복 업무를 스킬로 만들고, 새 대화에서 한 문장으로 초안까지</p><div class="stime">10:30 ~ 11:30</div></section>
+
+<section class="slide" data-title="내 업무 고르기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">내 업무 고르기</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="pane good"><h4>스킬로 만들기 좋은 업무</h4><ul class='ul'><li><b>매주 · 매월</b> 반복</li><li>입력 자료가 정해져 있음 (시트 · 메일 · 메모)</li><li>결과 양식이 정해져 있음</li><li>설명을 매번 다시 하고 있음</li></ul></div></div><div><table class="ctable "><thead><tr><th>예시</th><th>입력</th><th>결과</th></tr></thead><tbody><tr><td><b>비용 집계</b></td><td>경비 내역 30건</td><td>항목별 합계 · 예산 초과</td></tr><tr><td><b>회의록 정리</b></td><td>회의 메모</td><td>결정 · 담당 · 기한 표</td></tr><tr><td><b>일정 현황</b></td><td>프로젝트 일정</td><td>이번 주 마감 · 지연 건</td></tr></tbody></table></div></div><div class="note red"><span class="nk">고르기 어려우면</span><span class="nt">예시 3종 더미 자료로 진행</span></div></div></section>
+
+<section class="slide labcover" data-title="[실습 3] 내 업무 스킬 만들기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="labwrap"><div class="labl"><div class="lflag">실습 3 · 50분</div><h2>내 업무 스킬 만들기</h2><p class="goal">내 반복 업무를 스킬로 저장하고, 새 대화에서 한 문장으로 시트 · 캘린더를 읽어 초안 받기</p><div class="lout"><span>산출물</span>내 업무 스킬 1개 · 검증 체크리스트 1장</div></div><div class="labr"><div class="lh">순서</div><ol><li>업무 · 입력 · 규칙 · 형식 채우기</li><li>대화로 스킬 만들기</li><li>참고자료 올리기 · 설명문 다듬기</li><li>검증 문장 넣기</li><li>새 대화에서 한 문장 호출 → 검수 → 고쳐 저장</li></ol></div></div></section>
+
+<section class="slide" data-title="① 대화로 스킬 만들기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">① 대화로 스킬 만들기</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="code prompt"><div class="bar"><span class="plabel">실습 3 · 〈 〉만 내 업무로</span></div><pre><code>내 업무 스킬을 만들고 싶어. 아래 내용으로 스킬을 만들어 줘.
+모르는 부분은 나에게 하나씩 물어봐 줘.
+
+- 업무: 〈예: 매주 월요일 부서 경비 집계 보고〉
+- 입력 자료: 〈예: 경비 내역 시트 · 항목 · 금액 · 사용일〉
+- 작성 규칙: 〈예: 항목별 합계 · 예산 초과 항목은 맨 위〉
+- 출력 형식: 〈예: 요약 한 줄 + 표 + 초과 항목 설명〉
+- 하지 말 것: 〈예: 시트에 없는 금액을 만들지 않기〉
+- 이 스킬을 부를 때 쓸 말: 〈예: 「경비 집계해 줘」 「이번 주 경비 보고」〉</code></pre></div></div><div><ul class='ul'><li>플러그인 → 스킬 → 만들기 → <b>대화로 만들기</b></li><li>요청문의 〈 〉만 내 업무로 바꿔 붙여 넣기</li><li>되묻는 질문에 답하기</li><li>만들어진 지침을 읽고 저장</li></ul><div class="note "><span class="nk">Claude · Gemini</span><span class="nt">같은 요청문을 스킬 만들기 대화에 그대로</span></div></div></div></div></section>
+
+<section class="slide" data-title="② 참고자료 올리기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">② 참고자료 올리기</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>올릴 것</th><th>역할</th><th>예</th></tr></thead><tbody><tr><td><b>양식</b></td><td>결과의 틀</td><td>보고 양식 · 표 머리</td></tr><tr><td><b>작성 예시</b></td><td>문체 · 길이 기준</td><td>지난 보고서 1건 (더미)</td></tr><tr><td><b>메일 · 문서 예시</b></td><td>자주 쓰는 표현</td><td>보고 메일 2건 (더미)</td></tr></tbody></table><div class="note red"><span class="nk">주의</span><span class="nt">실제 회사 문서 대신 <b>더미 · 이름 바꾼 예시</b>만</span></div><div class="note "><span class="nk">실습 자료</span><span class="nt">주간보고_양식 · 작성예시 · 메일예시 · 예시 3종 폴더</span></div></div></section>
+
+<section class="slide" data-title="③ 설명문이 호출을 정함"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">③ 설명문이 호출을 정함</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="pane bad"><h4>호출이 안 되는 설명</h4><ul class='ul'><li>「보고서 도우미」</li><li>「업무 관련 스킬」</li><li>→ 언제 써야 할지 모름</li></ul></div></div><div><div class="pane good"><h4>호출이 잘 되는 설명</h4><ul class='ul'><li>「주간 업무 보고서 초안 · 이번 주 업무 정리를 요청할 때. 팀 업무 현황 시트와 팀 일정을 읽어 4항목 표로」</li><li>→ <b>언제 · 무엇으로 · 어떻게</b></li></ul></div></div></div><div class="note "><span class="nk">시험</span><span class="nt">「이번 주 주간 보고서 초안 잡아줘」로 불러지는지 · 안 되면 설명문에 그 표현 추가</span></div></div></section>
+
+<section class="slide" data-title="④ 검증 문장을 스킬에"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">④ 검증 문장을 스킬에</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><div class="code prompt" data-file="검증_문장.md"><div class="bar"><span class="plabel">실습 3 · 지침 끝에 추가</span></div><pre><code>## 결과 검증
+- 숫자 · 날짜 · 이름마다 어느 시트 · 일정 · 파일에서 왔는지 괄호로 표시한다
+- 입력에 없는 내용은 쓰지 않고 「확인 요청」으로 남긴다
+- 마지막에 「검증 메모」를 붙인다: 입력 건수와 결과 건수 · 확인이 필요한 항목 · 기준 날짜</code></pre></div></div><div><div class="cards c1"><div class="card"><span class="n">1</span><h3>출처 표기</h3><p>숫자마다 어디서 왔는지</p></div><div class="card"><span class="n">2</span><h3>교차 검증</h3><p>입력 건수 = 결과 건수</p></div><div class="card"><span class="n">3</span><h3>최신성</h3><p>기준 날짜 · 오래된 자료 표시</p></div></div></div></div></div></section>
+
+<section class="slide" data-title="⑤ 새 대화에서 한 문장"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">⑤ 새 대화에서 한 문장</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="chat"><div class="u"><span class="who">나</span><div class="bub">이번 주 주간 보고서 초안 잡아줘</div></div><div class="a"><span class="who ai">AI</span><div class="bub">「주간업무보고」 스킬 · 「팀 업무 현황」 시트 · 「실습용 팀 일정」 사용<br>이번 주 요약: 12건 중 완료 4 · 마감 초과 2 · 확인 요청 1 …<br><i>검증 메모: 입력 12건 · 결과 12건 · 기준일 …</i></div></div></div></div><div><div class="chk"><div>스킬 이름이 표시되는지</div><div>시트 · 캘린더를 읽었는지</div><div>지침의 형식 · 순서대로인지</div><div>검증 메모가 붙는지</div></div></div></div><div class="note red"><span class="nk">안 불러지면</span><span class="nt">「주간업무보고 스킬로」를 앞에 붙여 직접 부르기 → 설명문 고치기</span></div></div></section>
+
+<section class="slide" data-title="⑥ 검수 → 고쳐 저장"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">실습 3</div><h2 class="s-title">⑥ 검수 → 고쳐 저장</h2><div class="rule"></div><div class="body"><div class="pipe"><div class="step"><div class="si">01</div><div class="sn">호출</div><div class="sd">한 문장 요청</div></div><div class="arrow">→</div><div class="step"><div class="si">02</div><div class="sn">검수</div><div class="sd">원문과 대조</div></div><div class="arrow">→</div><div class="step hl"><div class="si">03</div><div class="sn">원인 찾기</div><div class="sd">어느 지침이 안 먹었나</div></div><div class="arrow">→</div><div class="step"><div class="si">04</div><div class="sn">지침 고치기</div><div class="sd">문장 앞으로 · 구체적으로</div></div><div class="arrow">→</div><div class="step"><div class="si">05</div><div class="sn">저장</div><div class="sd">스킬 업데이트</div></div></div><div class="note "><span class="nk">반복</span><span class="nt">같은 요청으로 다시 확인 · 2~3번이면 충분히 안정</span></div></div></section>
+
+<section class="slide" data-title="AI 답변 검증 체크리스트"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">AI 답변 검증 체크리스트</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>#</th><th>확인</th><th>방법</th></tr></thead><tbody><tr><td>1</td><td><b>건수</b>가 입력과 같은가</td><td>시트 행 수 · 일정 수와 비교</td></tr><tr><td>2</td><td><b>숫자 · 날짜</b>가 원문과 같은가</td><td>무작위 3개 골라 대조</td></tr><tr><td>3</td><td><b>없는 내용</b>을 만들지 않았나</td><td>출처 표시가 없는 문장 찾기</td></tr><tr><td>4</td><td><b>기준 날짜</b>가 맞는가</td><td>이번 주 · 최신 자료인지</td></tr><tr><td>5</td><td><b>밖으로 나가면 안 되는 정보</b>는 없나</td><td>이름 · 금액 · 내부 정보</td></tr></tbody></table><div class="note red"><span class="nk">저장</span><span class="nt">이 표를 내 업무에 맞게 고쳐 1장으로 · 다시 요청할 문장과 함께</span></div></div></section>
+
+<section class="slide" data-title="막힐 때"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">막힐 때</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>상황</th><th>대처</th></tr></thead><tbody><tr><td>스킬 메뉴가 안 보임</td><td>프로젝트 만들기 → <b>프로젝트 지침</b>에 같은 내용 · 파일 첨부</td></tr><tr><td>Google 연결이 안 됨</td><td>시트를 .xlsx로 내려받아 첨부 · 일정은 목록 복사</td></tr><tr><td>스킬이 안 불러짐</td><td>스킬 이름을 직접 부르기 → 설명문에 내가 쓴 표현 추가</td></tr><tr><td>결과가 매번 다름</td><td>출력 예시 1건 추가 · 규칙에 번호</td></tr></tbody></table><div class="note red"><span class="nk">그래도 안 되면</span><span class="nt">손 들기 · 튜터가 자리로</span></div></div></section>
+
+<section class="slide" data-title="오늘 만든 것"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">오늘 만든 것</h2><div class="rule"></div><div class="body"><div class="stat-row"><div class="stat"><div class="num">연결</div><div class="lab">시트 · 캘린더</div></div><div class="stat"><div class="num">지침</div><div class="lab">주간 업무 보고</div></div><div class="stat"><div class="num">스킬 1개</div><div class="lab">내 업무</div></div><div class="stat"><div class="num">1장</div><div class="lab">검증 체크리스트</div></div></div><div class="note "><span class="nk">다음 주부터</span><span class="nt">설명 대신 <b>한 문장 호출</b> · 틀린 부분은 지침에 한 줄씩</span></div></div></section>
+
+<section class="slide" data-title="내일부터"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">내일부터</h2><div class="rule"></div><div class="body"><div class="biglist"><div class="li"><span class="num">1</span><div class="tx"><h4>반복 업무 하나</h4><p>이번 주에 두 번 이상 같은 설명을 한 업무</p></div></div><div class="li"><span class="num">2</span><div class="tx"><h4>스킬로 저장</h4><p>이름 · 설명 · 지침 · 참고 파일</p></div></div><div class="li"><span class="num">3</span><div class="tx"><h4>틀리면 지침에 한 줄</h4><p>같은 실수가 다시 나오지 않게</p></div></div><div class="li"><span class="num">4</span><div class="tx"><h4>결과는 직접 확인</h4><p>체크리스트 5항목 · 실데이터 반입 기준 지키기</p></div></div><div class="li"><span class="num">5</span><div class="tx"><h4>회사 도구로 넓히기</h4><p>Outlook · SharePoint 연결은 사내 승인 후 같은 방식으로</p></div></div></div></div></section>
+
+<section class="slide section" data-title="Q&A. 질문"><div class="ghost">Q&A</div><div class="sno">Q&A</div><h2>질문</h2><p>실습 자료 · 요청문은 자료 링크에서 다시 받기</p></section>
+
+    </div>
+  </div>
+</main>
+<div class="overview" id="overview">
+  <div class="head"><h3>슬라이드 목차</h3><button id="ovClose">닫기 ✕</button></div>
+  <div class="ovgrid" id="ovgrid"></div>
+</div>
+
+<div class="controlbar">
+  <button class="ico" id="btnMenu" title="목차"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <span class="sep"></span>
+  <button class="ico" id="btnPrev" title="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <span class="count"><b id="cur">1</b> / <span id="tot2">75</span></span>
+  <button class="ico" id="btnNext" title="다음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg></button>
+  <span class="sep"></span>
+  <button class="zoom" id="btnOut" title="축소"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14"/></svg></button>
+  <button class="zoom" id="btnIn" title="확대"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button class="zoom" id="btnFit" title="화면 맞춤"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 4H5a1 1 0 0 0-1 1v4M15 4h4a1 1 0 0 1 1 1v4M9 20H5a1 1 0 0 1-1-1v-4M15 20h4a1 1 0 0 0 1-1v-4"/></svg></button>
+  <button class="pdf" id="btnPdf" title="PDF로 저장 (인쇄 → PDF로 저장)">PDF</button>
+</div>
+
+<div class="hint">← → 또는 Space · 목차(≡) · 줌(−/+) · 숫자 입력 후 Enter로 이동</div>
+<div id="jumpHint"></div>
+<style>
+  #jumpHint{position:fixed; left:50%; bottom:74px; transform:translateX(-50%) translateY(6px); z-index:75;
+    background:#2B2B2E; color:#fff; font-family:Georgia,'Times New Roman',serif; font-style:italic;
+    font-size:20px; letter-spacing:.04em; padding:8px 20px; border-radius:999px;
+    box-shadow:0 12px 28px -10px rgba(0,0,0,.55); opacity:0; pointer-events:none;
+    transition:opacity .12s ease, transform .12s ease;}
+  #jumpHint.on{opacity:1; transform:translateX(-50%) translateY(0);}
+  @media print{ #jumpHint{display:none !important;} }
+</style>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const scaler = document.getElementById('scaler');
+  const sizer  = document.getElementById('sizer');
+  const stage  = document.getElementById('stage');
+  const total  = slides.length;
+  let idx = 0, userZoom = 1;
+  const BW = 1280, BH = 720;
+
+  document.getElementById('tot2').textContent = total;
+  slides.forEach((s, i) => {
+    const c = s.querySelector('.coord b');     if (c) c.textContent = String(i + 1).padStart(2, '0');
+    const t = s.querySelector('.coord .tot');  if (t) t.textContent = total;
+  });
+
+  const ovgrid = document.getElementById('ovgrid');
+  slides.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'ovcard';
+    b.innerHTML = '<div class="ovn">' + String(i + 1).padStart(2, '0') + '</div><div class="ovt">' + (s.dataset.title || '') + '</div>';
+    b.addEventListener('click', () => { go(i); closeOverview(); });
+    ovgrid.appendChild(b);
+  });
+  const overview = document.getElementById('overview');
+  function openOverview(){ overview.classList.add('on'); }
+  function closeOverview(){ overview.classList.remove('on'); }
+  document.getElementById('btnMenu').addEventListener('click', openOverview);
+  document.getElementById('ovClose').addEventListener('click', closeOverview);
+  overview.addEventListener('click', (e) => { if (e.target === overview) closeOverview(); });
+
+  function fitScale(){
+    const availW = stage.clientWidth  - 60;
+    const availH = stage.clientHeight - 60;
+    return Math.min(availW / BW, availH / BH);
+  }
+  function applyScale(){
+    const eff = fitScale() * userZoom;
+    scaler.style.transform = 'scale(' + eff + ')';
+    sizer.style.width  = (BW * eff) + 'px';
+    sizer.style.height = (BH * eff) + 'px';
+  }
+  window.addEventListener('resize', applyScale);
+
+  function go(n){
+    idx = Math.max(0, Math.min(total - 1, n));
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('btnPrev').disabled = idx === 0;
+    document.getElementById('btnNext').disabled = idx === total - 1;
+    document.getElementById('pfill').style.width = (idx / (total - 1) * 100) + '%';
+    applyScale();
+    stage.scrollTop = 0; stage.scrollLeft = 0;
+  }
+  document.getElementById('btnPrev').addEventListener('click', () => go(idx - 1));
+  document.getElementById('btnNext').addEventListener('click', () => go(idx + 1));
+  document.getElementById('btnIn').addEventListener('click',  () => { userZoom = Math.min(2.4, userZoom + 0.15); applyScale(); });
+  document.getElementById('btnOut').addEventListener('click', () => { userZoom = Math.max(0.5, userZoom - 0.15); applyScale(); });
+  document.getElementById('btnFit').addEventListener('click', () => { userZoom = 1; applyScale(); });
+  document.getElementById('btnPdf').addEventListener('click', () => window.print());
+
+  // ---- 슬라이드 번호 입력 → Enter 로 점프 ----
+  let jumpBuf = '', jumpTimer = null;
+  const jumpHint = document.getElementById('jumpHint');
+  function showJump(){
+    if (!jumpHint) return;
+    if (jumpBuf){ jumpHint.textContent = '→ ' + jumpBuf; jumpHint.classList.add('on'); }
+    else { jumpHint.classList.remove('on'); }
+  }
+  function clearJump(){ jumpBuf = ''; if (jumpTimer) clearTimeout(jumpTimer); showJump(); }
+  function commitJump(){
+    if (jumpBuf){ const n = parseInt(jumpBuf, 10); if (!isNaN(n)) go(n - 1); }
+    clearJump();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (overview.classList.contains('on')) { if (e.key === 'Escape') closeOverview(); return; }
+    if (/^[0-9]$/.test(e.key)){
+      e.preventDefault();
+      jumpBuf = (jumpBuf + e.key).slice(0, 3);
+      showJump();
+      if (jumpTimer) clearTimeout(jumpTimer);
+      jumpTimer = setTimeout(clearJump, 1600);
+      return;
+    }
+    if (e.key === 'Enter'){ e.preventDefault(); commitJump(); return; }
+    if (e.key === 'Escape'){ clearJump(); }
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); clearJump(); go(idx + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp'){ e.preventDefault(); clearJump(); go(idx - 1); }
+    if (e.key === 'Home'){ clearJump(); go(0); } if (e.key === 'End'){ clearJump(); go(total - 1); }
+    if (e.key === '+' || e.key === '='){ userZoom = Math.min(2.4, userZoom + 0.15); applyScale(); }
+    if (e.key === '-'){ userZoom = Math.max(0.5, userZoom - 0.15); applyScale(); }
+  });
+
+  applyScale(); go(0);
+</script>
+<script>
+// 코드 블록마다 「복사」 버튼
+document.querySelectorAll('.code').forEach(function (box) {
+  var bar = box.querySelector('.bar'), code = box.querySelector('pre');
+  if (!bar || !code) return;
+  var b = document.createElement('button');
+  b.className = 'copybtn'; b.type = 'button'; b.textContent = '복사';
+  b.addEventListener('click', function (ev) {
+    ev.stopPropagation();
+    var text = code.innerText.replace(/\n$/, '');
+    var ok = function () { b.textContent = '복사됨'; b.classList.add('done'); setTimeout(function () { b.textContent = '복사'; b.classList.remove('done'); }, 1500); };
+    if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(ok); }
+    else { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch (e) {} ta.remove(); }
+  });
+  bar.appendChild(b);
+  if (box.dataset.file) {                       // 템플릿은 파일로 바로 저장
+    var sv = document.createElement('button');
+    sv.className = 'savebtn'; sv.type = 'button'; sv.textContent = '파일로 저장';
+    sv.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      var blob = new Blob([code.innerText.replace(/\n$/, '') + '\n'], {type: 'text/plain;charset=utf-8'});
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = box.dataset.file;
+      document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    });
+    bar.appendChild(sv);
+  }
+});
+</script>
+
+</body>
+</html>
