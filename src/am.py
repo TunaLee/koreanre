@@ -114,12 +114,21 @@ def block1():
             steps([
                 ("플러그인 열기", "왼쪽 메뉴 → <b>플러그인</b>"),
                 ("Google Drive 연결", "<b>Google Drive</b> (Drive · Docs · Sheets) <b>+</b> → Google 로그인 · 권한 허용"),
-                ("Google Calendar 연결", "검색창에 「Calendar」 → 같은 방법"),
+                ("Google Calendar 연결", "검색창에 「cal」 → 다음 장"),
                 ("확인", "<b>설치됨</b>에 두 플러그인 표시"),
             ]),
             img("img/am_plugin_dir.png", "ChatGPT · 플러그인 화면"), "w2")
             + note("Claude · Gemini", "Claude는 설정 → 커넥터 · Gemini는 Google 앱 연동이 기본"), kick="실습 1"),
-        page("③ 요청문으로 이번 주 요약 받기", two(prompt(
+        page("③ Google Calendar 연결", two(
+            steps([
+                ("검색", "플러그인 검색창에 <b>cal</b>"),
+                ("Google Calendar", "<b>+</b> → Google 로그인 · 권한 허용"),
+                ("확인", "<b>설치됨</b>에 Google Drive · Google Calendar"),
+            ]),
+            img("img/am_plugin_calendar.png", "ChatGPT · 플러그인 검색 「cal」"), "w2")
+            + note("Outlook 사용자", "<b>Outlook Calendar</b> · Outlook Email · SharePoint도 같은 방법으로 연결 · 회사 계정은 사내 승인이 필요할 수 있음")
+            + note("오늘 실습", "실습용 일정은 Google Calendar로", "red"), kick="실습 1"),
+        page("④ 요청문으로 이번 주 요약 받기", two(prompt(
             f"내 구글 드라이브의 「{SHEET}」 시트와 구글 캘린더의 「{CAL}」을 읽고\n"
             "이번 주 팀 현황을 요약해 줘.\n\n"
             "- 업무별 진행률과 마감일\n"
