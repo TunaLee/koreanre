@@ -29,8 +29,8 @@ def cover(lines, lead, meta, part):
             f'<h1>{h1}</h1><p class="lead">{lead}</p><div class="meta">{m}</div></div></section>')
 
 
-def section(no, title, sub, time=""):
-    tm = f'<div class="stime">{time}</div>' if time else ""
+def section(no, title, sub, time=""):  # time은 쓰지 않음 (시각 표기 제거)
+    tm = ""
     return (f'<section class="slide section" data-title="{no}. {_h.escape(title)}">'
             f'<div class="ghost">{no}</div><div class="sno">{no}</div><h2>{title}</h2><p>{sub}</p>{tm}</section>')
 
@@ -101,11 +101,11 @@ def chat(user, ai):
             f'<div class="a"><span class="who ai">AI</span><div class="bub">{ai}</div></div></div>')
 
 
-def lab(no, title, goal, todo, out, time):
+def lab(no, title, goal, todo, out, time=""):
     li = "".join(f"<li>{x}</li>" for x in todo)
     return (f'<section class="slide labcover" data-title="[실습 {no}] {_h.escape(title)}">'
             f'<div class="topbar"><span>{COURSE}</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div>'
-            f'<div class="labwrap"><div class="labl"><div class="lflag">실습 {no} · {time}</div><h2>{title}</h2><p class="goal">{goal}</p>'
+            f'<div class="labwrap"><div class="labl"><div class="lflag">실습 {no}{" · " + time if time else ""}</div><h2>{title}</h2><p class="goal">{goal}</p>'
             f'<div class="lout"><span>산출물</span>{out}</div></div>'
             f'<div class="labr"><div class="lh">순서</div><ol>{li}</ol></div></div></section>')
 
