@@ -4,7 +4,7 @@ from kit import big, note, page, table
 
 TREND = [  # (시기, 제목, 설명, 강조)
     ("2022.11", "채팅", "ChatGPT 공개 · 묻고 답하기", False),
-    ("2024.11", "연결 규격 MCP", "AI와 업무 시스템을 잇는 공통 규격 공개", False),
+    ("2024.11", "연결 표준 MCP", "AI와 업무 시스템을 잇는 공통 규격 공개", False),
     ("2025.07", "에이전트", "AI가 여러 단계를 직접 실행 (ChatGPT agent)", False),
     ("2025.10", "스킬", "업무 지침을 저장해 꺼내 쓰는 Agent Skills 발표 → 12월 오픈 표준", False),
     ("2026.07", "ChatGPT 플러그인", "스킬 + 앱을 묶어 한 번에 설치", True),

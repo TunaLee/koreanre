@@ -83,18 +83,18 @@ def tool_call():
     cells = '<div class="tc-arr">→</div>'.join(
         f'<div class="tc"><div class="fi">{ic(i)}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
     return (f'<div class="tcall">{cells}</div>'
-            '<div class="tback">← 읽은 내용이 같은 길로 돌아와 ChatGPT가 요약</div>')
+            '<div class="tback">읽어 온 내용으로 ChatGPT가 요약</div>')
 
 
 def disclosure():
     """스킬은 설명만 먼저 읽고, 필요할 때 본문 · 파일을 펼친다."""
     return ('<div class="disc">'
             '<div class="dl"><div class="dk">항상</div><div class="dbar w1"><b>이름 · 설명</b> 한두 줄</div>'
-            '<div class="dn">스킬이 30개여도 설명만 훑어봄</div></div>'
+            '<div class="dn">스킬이 30개여도 설명만 확인</div></div>'
             '<div class="dl"><div class="dk">요청이 맞으면</div><div class="dbar w2"><b>지침 본문</b> 규칙 · 순서 · 형식</div>'
-            '<div class="dn">「주간 보고」 요청 → 이 스킬만 펼침</div></div>'
+            '<div class="dn">「주간 보고」 요청 → 이 스킬의 지침만 불러옴</div></div>'
             '<div class="dl"><div class="dk">더 필요하면</div><div class="dbar w3"><b>참고 파일</b> 양식 · 예시 · 메일</div>'
-            '<div class="dn">작성 중 필요한 파일만 열어 봄</div></div>'
+            '<div class="dn">작성 중 필요한 파일만 열람</div></div>'
             '</div>')
 
 
@@ -104,7 +104,7 @@ def bundle():
             '<div class="bs"><span>SKILL</span><b>주간업무보고</b><i>4항목 · 마감 초과 맨 위 · 추정 금지</i></div>'
             '<div class="bs app"><span>APP</span><b>Google Drive</b><i>팀 업무 현황 시트 읽기</i></div>'
             '<div class="bs app"><span>APP</span><b>Google Calendar</b><i>팀 일정 읽기</i></div>'
-            '</div><div class="bf">한 번 설치 → 지침과 연결이 같이 따라옴</div></div>')
+            '</div><div class="bf">한 번 설치로 지침과 앱 연결을 함께 사용</div></div>')
 
 
 def forgetting():
@@ -112,7 +112,7 @@ def forgetting():
     lines = ["지난주: 「4항목 · 마감 초과 맨 위로」", "…", "다른 질문", "다른 질문", "…", "이번 주: 「보고서 써 줘」"]
     chat = "".join(f'<div class="fl" style="opacity:{0.25 + i * 0.15:.2f}">{t}</div>' for i, t in enumerate(lines))
     return ('<div class="forget">'
-            f'<div class="fc"><div class="fh">대화창에만 말한 규칙</div>{chat}<div class="fx">규칙은 이미 저 위로 · 매번 다시 설명</div></div>'
+            f'<div class="fc"><div class="fh">대화창에만 말한 규칙</div>{chat}<div class="fx">앞서 말한 규칙은 잊힘 · 매번 다시 설명</div></div>'
             '<div class="fc good"><div class="fh">스킬로 저장한 규칙</div>'
             '<div class="pin">주간업무보고<br><small>4항목 · 마감 초과 맨 위 · 추정 금지</small></div>'
             '<div class="fl">이번 주: 「보고서 써 줘」</div><div class="fx ok">새 대화에서도 같은 규칙</div></div></div>')
