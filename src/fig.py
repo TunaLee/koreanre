@@ -44,13 +44,13 @@ def _tile(icon, title, desc, cls=""):
 def agent_parts():
     """에이전트 = 모델 + 도구 + 지침 + 자료."""
     return ('<div class="parts">'
-            + _tile("model", "모델", "읽고 · 판단하고 · 쓰는 두뇌", "core")
+            + _tile("model", "모델", "읽기 · 판단 · 작성", "core")
             + '<div class="plus">+</div>'
-            + _tile("tool", "도구", "검색 · 파일 · 시트 · 캘린더<br>직접 열어 보는 손")
+            + _tile("tool", "도구", "검색 · 파일 · 시트 · 캘린더<br>외부 자료 조회")
             + '<div class="plus">+</div>'
-            + _tile("book", "지침", "우리 팀 방식대로<br>일하는 매뉴얼")
+            + _tile("book", "지침", "팀의 작업 규칙<br>업무 매뉴얼")
             + '<div class="plus">+</div>'
-            + _tile("folder", "자료", "양식 · 예시 · 지난 결과<br>책상 위 참고자료")
+            + _tile("folder", "자료", "양식 · 예시 · 지난 결과<br>참고자료")
             + '</div>')
 
 

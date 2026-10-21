@@ -17,7 +17,7 @@ def trend_src():
 
 
 def same_standard():
-    return page("세 회사가 같은 스킬 표준", table(["", "발표", "내용"], [
+    return page("세 회사의 공통 스킬 표준", table(["", "발표", "내용"], [
         ["<b>Anthropic · Claude</b>", "2025.10 발표 · 2025.12 오픈 표준", "Agent Skills · SKILL.md 공개 (agentskills.io)"],
         ["<b>OpenAI · ChatGPT</b>", "2026.07 플러그인 디렉터리", "스킬 · 앱을 플러그인으로 묶어 설치"],
         ["<b>Google · Gemini</b>", "2026.09 발표 · 10월 배포 시작", "「SKILL.md 표준」 기반 스킬 · Gem은 스킬로 자동 이전"],
@@ -27,7 +27,7 @@ def same_standard():
 
 
 def mcp():
-    return page("연결 규격도 하나로", '<div class="parts">'
+    return page("연결 표준 MCP", '<div class="parts">'
                 + fig._tile("plug", "MCP", "AI와 시트 · 메일 · 일정을<br>잇는 공통 규격", "core")
                 + '<div class="plus">→</div>'
                 + fig._tile("nodes", "공동 관리", "2025.12 리눅스 재단 산하로<br>Anthropic · OpenAI · Block 공동 설립")
@@ -39,9 +39,9 @@ def mcp():
 
 
 def work_stats():
-    return page("AI를 쓰는 사람들의 변화", big([
-        ("66%", "고부가 업무에 더 많은 시간을 쓰게 됨"),
-        ("58%", "1년 전엔 못 하던 결과물을 만듦"),
+    return page("AI 사용자가 느낀 변화", big([
+        ("66%", "고부가 업무에 쓰는 시간 증가"),
+        ("58%", "1년 전에는 불가능했던 결과물 작성"),
         ("44.5%", "국민 생성형 AI 경험률 · 1년 새 +11.2%p"),
     ]) + note("출처", "Microsoft Work Trend Index 2026 (2026-05-05 · 10개국 AI 사용자 2만 명) · "
                      "과기정통부 「2025 인터넷이용실태조사」 (2026-03-31)"), kick="최신 흐름")
