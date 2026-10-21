@@ -123,3 +123,24 @@ def tools3(rows):
 def img(path, cap="", light=False):
     c = f'<div class="cap">{cap}</div>' if cap else ""
     return f'<figure class="realshot{" light" if light else ""}"><img src="{path}" alt="{_h.escape(cap)}">{c}</figure>'
+
+
+def ill(mod, fn, zone, title, lines=()):
+    """그림 장: 장면(SVG) 전체 + 빈 구역에 제목과 3줄 이내 본문. zone = left40 · top20 · top25"""
+    import importlib
+    svg = getattr(importlib.import_module(mod), fn)()
+    pos = "left" if zone == "left40" else "top"
+    body = "".join(f"<li>{l}</li>" for l in lines)
+    t = _h.escape(title)
+    return (f'<section class="slide ill" data-title="{t}">'
+            f'<svg class="scene" viewBox="0 0 1280 720" aria-hidden="true">{svg}</svg>'
+            f'<span class="coord icoord"><b>01</b> / <span class="tot"></span></span>'
+            f'<div class="icap {pos}{" z25" if zone == "top25" else ""}"><h2>{title}</h2>'
+            f'{"<div class=bar></div>" if pos == "left" else ""}{f"<ul>{body}</ul>" if body else ""}</div></section>')
+
+
+def ba(before, after, lb="이전", la="이후"):
+    """나란히 비교 (농심 덱 ba 형식)."""
+    br = lambda s: _h.escape(s).replace("\n", "<br>")
+    return (f'<div class="bav"><div class="b"><div class="lab">{lb}</div><div class="q">{br(before)}</div></div>'
+            f'<div class="arr">→</div><div class="a"><div class="lab">{la}</div><div class="q">{br(after)}</div></div></div>')
