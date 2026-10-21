@@ -213,3 +213,6 @@
   .ftile.core .ico{color:#fff;}
   .tc .ico{width:42px; height:42px;}
   .se .file{display:inline-flex; align-items:center; gap:4px;} .se .file .ico{width:15px; height:15px;}
+  .realshot{margin:0; border:1px solid #D9D9DE; border-radius:10px; overflow:hidden; background:#000; box-shadow:0 14px 30px -20px rgba(0,0,0,.45);}
+  .realshot img{display:block; width:100%; height:auto; max-height:430px; object-fit:contain;}
+  .realshot .cap{background:#fff; font-size:12.5px; color:var(--mut); padding:6px 10px; border-top:1px solid #E1E1E6;}

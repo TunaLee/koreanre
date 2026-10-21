@@ -78,7 +78,7 @@ def agent_loop(ask="「이번 주 보고서 써 줘」", out="보고서 초안",
 def tool_call():
     """모델은 직접 접속하지 않는다 — 도구에 부탁하고, 도구는 내 권한으로 가져온다."""
     st = [("chat", "나", "「이번 주 현황 요약해 줘」"), ("model", "ChatGPT", "「시트가 필요해」 판단"),
-          ("plug", "플러그인", "Google Sheets 앱"), ("key", "내 권한", "연결할 때 허용한 범위만"),
+          ("plug", "플러그인", "Google Drive"), ("key", "내 권한", "연결할 때 허용한 범위만"),
           ("chart", "내 시트", "팀 업무 현황")]
     cells = '<div class="tc-arr">→</div>'.join(
         f'<div class="tc"><div class="fi">{ic(i)}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
@@ -102,7 +102,7 @@ def bundle():
     """플러그인 = 스킬 + 앱 묶음."""
     return ('<div class="bundle"><div class="bh">플러그인 · 「팀 업무 보고」</div><div class="bb">'
             '<div class="bs"><span>SKILL</span><b>주간업무보고</b><i>4항목 · 마감 초과 맨 위 · 추정 금지</i></div>'
-            '<div class="bs app"><span>APP</span><b>Google Sheets</b><i>팀 업무 현황 읽기</i></div>'
+            '<div class="bs app"><span>APP</span><b>Google Drive</b><i>팀 업무 현황 시트 읽기</i></div>'
             '<div class="bs app"><span>APP</span><b>Google Calendar</b><i>팀 일정 읽기</i></div>'
             '</div><div class="bf">한 번 설치 → 지침과 연결이 같이 따라옴</div></div>')
 

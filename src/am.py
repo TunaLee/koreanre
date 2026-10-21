@@ -1,6 +1,6 @@
 """오전 · 반복 문서 업무 스킬 제작 (2H)."""
 import fig
-from kit import (big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
+from kit import (img, big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
                  table, three, tools3, two, ul)
 from trend import TREND, mcp, same_standard, trend_src, work_stats
 
@@ -94,13 +94,13 @@ def block1():
         same_standard(),
         page("세 툴의 기능 비교", tools3([
             ["지침 저장", "스킬", "스킬", "스킬"],
-            ["외부 자료 연결", "플러그인 · Google Sheets · Calendar", "커넥터 · Google Drive · Calendar", "Google 앱 기본 연동"],
+            ["외부 자료 연결", "플러그인 · Google Drive · Calendar", "커넥터 · Google Drive · Calendar", "Google 앱 기본 연동"],
             ["자동 호출", "대화 중 자동 호출", "대화 중 자동 호출", "대화 중 자동 호출"],
             ["만드는 곳", "플러그인 메뉴 → 스킬", "설정 → 기능 → 스킬", "스킬 메뉴"],
         ]) + note("오늘은", "ChatGPT 화면 기준 · Claude · Gemini도 같은 칸을 같은 순서로", "red")),
         lab("1", "시트 · 캘린더를 연결해 이번 주 요약 받기",
             "복사 · 붙여넣기 없이 ChatGPT가 「팀 업무 현황」 시트와 「실습용 팀 일정」을 함께 읽게 만들기",
-            ["시트 사본 만들기", "캘린더 파일 가져오기", "ChatGPT에서 Google Sheets · Calendar 연결", "요청문으로 이번 주 요약", "시트 · 일정과 대조"],
+            ["시트 사본 만들기", "캘린더 파일 가져오기", "ChatGPT에서 Google Drive · Calendar 연결", "요청문으로 이번 주 요약", "시트 · 일정과 대조"],
             "연결 완료 · 이번 주 요약 1건"),
         page("① 실습 자료를 내 구글 계정으로", two(
             steps([
@@ -112,12 +112,12 @@ def block1():
             kick="실습 1"),
         page("② ChatGPT에 Google 연결", two(
             steps([
-                ("플러그인 메뉴 열기", "왼쪽 메뉴 → 플러그인"),
-                ("Google Sheets 찾기", "검색 → 설치 → <b>연결</b> → Google 로그인 · 권한 허용"),
-                ("Google Calendar 연결", "같은 방법으로 연결"),
-                ("확인", "새 대화 입력창의 <b>+</b> → 두 앱이 켜져 있는지"),
+                ("플러그인 열기", "왼쪽 메뉴 → <b>플러그인</b>"),
+                ("Google Drive 연결", "<b>Google Drive</b> (Drive · Docs · Sheets) <b>+</b> → Google 로그인 · 권한 허용"),
+                ("Google Calendar 연결", "검색창에 「Calendar」 → 같은 방법"),
+                ("확인", "<b>설치됨</b>에 두 플러그인 표시"),
             ]),
-            shot("ChatGPT 플러그인 디렉터리 · Google Sheets 연결 버튼", "img/am_plugin_connect.png"))
+            img("img/am_plugin_dir.png", "ChatGPT · 플러그인 화면"), "w2")
             + note("Claude · Gemini", "Claude는 설정 → 커넥터 · Gemini는 Google 앱 연동이 기본"), kick="실습 1"),
         page("③ 요청문으로 이번 주 요약 받기", two(prompt(
             f"내 구글 드라이브의 「{SHEET}」 시트와 구글 캘린더의 「{CAL}」을 읽고\n"
@@ -198,7 +198,7 @@ def block2():
         ]) + note("고친 뒤", "같은 요청을 다시 돌려 확인"), kick="실습 2"),
         page("지침을 스킬로 저장", two(
             steps([
-                ("스킬 만들기 열기", "플러그인 → 스킬 → <b>만들기</b>"),
+                ("스킬 만들기 열기", "플러그인 화면 위 <b>스킬</b> 탭 → 만들기"),
                 ("이름", "주간업무보고"),
                 ("설명", "주간 업무 보고서 · 이번 주 업무 정리를 요청할 때"),
                 ("지침 · 참고 파일", "고친 지침 붙여 넣기 · 양식 · 작성예시 첨부 → 저장"),
