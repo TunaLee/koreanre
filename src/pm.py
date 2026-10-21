@@ -77,10 +77,10 @@ def block1():
         page("검색은 AI가, 확인은 내가", fig.research_flow()
              + note("주의", "AI는 그럴듯한 숫자를 만들 수 있음 · <b>링크를 열어 확인한 숫자만</b> 보고서에"), kick="동작 원리"),
         page("세 툴이 공통으로 하는 일", '<div class="parts">'
-             + fig._tile("💬", "대화", "요청 · 수정 · 질문")
-             + fig._tile("📂", "파일 분석", "CSV · 엑셀 · PDF 읽기")
-             + fig._tile("🔎", "웹 검색", "최신 공개 자료 · 출처 링크")
-             + fig._tile("🖼️", "결과물 미리보기", "HTML을 화면에 바로", "core")
+             + fig._tile("chat", "대화", "요청 · 수정 · 질문")
+             + fig._tile("folder", "파일 분석", "CSV · 엑셀 · PDF 읽기")
+             + fig._tile("search", "웹 검색", "최신 공개 자료 · 출처 링크")
+             + fig._tile("window", "결과물 미리보기", "HTML을 화면에 바로", "core")
              + "</div>"
              + note("오늘 쓰는 것", "네 가지 모두 · 툴 이름보다 <b>이 기능이 어디 있는지</b>", "red")),
         page("같은 기능, 다른 위치", tools3([

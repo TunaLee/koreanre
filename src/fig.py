@@ -1,8 +1,42 @@
 """그림 요소: 개념 도해와 화면 모형. 모두 HTML · 인라인 SVG라 외부 파일 없이 그려진다."""
 
+ICONS = {  # 24×24 선 아이콘 (stroke = currentColor)
+    "model": '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><rect x="10" y="10" width="4" height="4"/>',
+    "tool": '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-2.5z"/>',
+    "book": '<path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/>',
+    "folder": '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    "chat": '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+    "plug": '<path d="M9 2v5M15 2v5"/><path d="M6 7h12v4a6 6 0 0 1-12 0z"/><path d="M12 17v5"/>',
+    "key": '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
+    "chart": '<path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/>',
+    "rule": '<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+    "clip": '<path d="M21 11l-8.5 8.5a5 5 0 0 1-7-7L14 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7"/>',
+    "check": '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+    "bolt": '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    "coin": '<circle cx="12" cy="12" r="9"/><path d="M7 9l2 7 3-6 3 6 2-7M6.5 12h11"/>',
+    "pen": '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>',
+    "calendar": '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    "form": '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+    "doc": '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h4"/>',
+    "mail": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+    "globe": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+    "nodes": '<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8.5 6h7M7.3 8.2l3.5 7.6M16.7 8.2l-3.5 7.6"/>',
+    "search": '<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>',
+    "link": '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    "report": '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 17v-3M12 17v-6M15 17v-4"/>',
+    "window": '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
+    "html": '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M10 12l-2 2 2 2M14 12l2 2-2 2"/>',
+}
+
+
+def ic(name):
+    return (f'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+            f'stroke-linecap="round" stroke-linejoin="round">{ICONS[name]}</svg>')
+
+
 
 def _tile(icon, title, desc, cls=""):
-    return f'<div class="ftile {cls}"><div class="fi">{icon}</div><div class="ft">{title}</div><div class="fd">{desc}</div></div>'
+    return f'<div class="ftile {cls}"><div class="fi">{ic(icon)}</div><div class="ft">{title}</div><div class="fd">{desc}</div></div>'
 
 
 # ── 개념 도해 ───────────────────────────────────────────────
@@ -10,13 +44,13 @@ def _tile(icon, title, desc, cls=""):
 def agent_parts():
     """에이전트 = 모델 + 도구 + 지침 + 자료."""
     return ('<div class="parts">'
-            + _tile("🧠", "모델", "읽고 · 판단하고 · 쓰는 두뇌", "core")
+            + _tile("model", "모델", "읽고 · 판단하고 · 쓰는 두뇌", "core")
             + '<div class="plus">+</div>'
-            + _tile("🛠️", "도구", "검색 · 파일 · 시트 · 캘린더<br>직접 열어 보는 손")
+            + _tile("tool", "도구", "검색 · 파일 · 시트 · 캘린더<br>직접 열어 보는 손")
             + '<div class="plus">+</div>'
-            + _tile("📘", "지침", "우리 팀 방식대로<br>일하는 매뉴얼")
+            + _tile("book", "지침", "우리 팀 방식대로<br>일하는 매뉴얼")
             + '<div class="plus">+</div>'
-            + _tile("🗂️", "자료", "양식 · 예시 · 지난 결과<br>책상 위 참고자료")
+            + _tile("folder", "자료", "양식 · 예시 · 지난 결과<br>책상 위 참고자료")
             + '</div>')
 
 
@@ -43,11 +77,11 @@ def agent_loop(ask="「이번 주 보고서 써 줘」", out="보고서 초안",
 
 def tool_call():
     """모델은 직접 접속하지 않는다 — 도구에 부탁하고, 도구는 내 권한으로 가져온다."""
-    st = [("💬", "나", "「이번 주 현황 요약해 줘」"), ("🧠", "ChatGPT", "「시트가 필요해」 판단"),
-          ("🔌", "플러그인", "Google Sheets 앱"), ("🔑", "내 권한", "연결할 때 허용한 범위만"),
-          ("📊", "내 시트", "팀 업무 현황")]
+    st = [("chat", "나", "「이번 주 현황 요약해 줘」"), ("model", "ChatGPT", "「시트가 필요해」 판단"),
+          ("plug", "플러그인", "Google Sheets 앱"), ("key", "내 권한", "연결할 때 허용한 범위만"),
+          ("chart", "내 시트", "팀 업무 현황")]
     cells = '<div class="tc-arr">→</div>'.join(
-        f'<div class="tc"><div class="fi">{i}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
+        f'<div class="tc"><div class="fi">{ic(i)}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
     return (f'<div class="tcall">{cells}</div>'
             '<div class="tback">← 읽은 내용이 같은 길로 돌아와 ChatGPT가 요약</div>')
 
@@ -80,7 +114,7 @@ def forgetting():
     return ('<div class="forget">'
             f'<div class="fc"><div class="fh">대화창에만 말한 규칙</div>{chat}<div class="fx">규칙은 이미 저 위로 · 매번 다시 설명</div></div>'
             '<div class="fc good"><div class="fh">스킬로 저장한 규칙</div>'
-            '<div class="pin">📌 주간업무보고<br><small>4항목 · 마감 초과 맨 위 · 추정 금지</small></div>'
+            '<div class="pin">주간업무보고<br><small>4항목 · 마감 초과 맨 위 · 추정 금지</small></div>'
             '<div class="fl">이번 주: 「보고서 써 줘」</div><div class="fx ok">새 대화에서도 같은 규칙</div></div></div>')
 
 
@@ -116,7 +150,7 @@ def calendar(events):
 
 
 def skill_editor(name, desc, guide, files):
-    f = "".join(f'<span class="file">📄 {x}</span>' for x in files)
+    f = "".join(f'<span class="file">{ic("doc")}{x}</span>' for x in files)
     return window("스킬 만들기", (
         f'<div class="se"><label>이름</label><div class="in">{name}</div>'
         f'<label>설명 <em>← 언제 부를지 정함</em></label><div class="in">{desc}</div>'
@@ -154,18 +188,18 @@ def browser(url, body):
 
 def file_flow():
     """요청문 → Canvas 미리보기 → .html 파일 → 브라우저."""
-    st = [("💬", "요청문", "만들 화면을 말로"), ("🖼️", "미리보기", "Canvas에서 바로 확인"),
-          ("📄", ".html 파일", "내려받기 · 한 파일"), ("🌐", "브라우저", "더블클릭 · 메일 첨부")]
+    st = [("chat", "요청문", "만들 화면을 말로"), ("window", "미리보기", "Canvas에서 바로 확인"),
+          ("html", ".html 파일", "내려받기 · 한 파일"), ("globe", "브라우저", "더블클릭 · 메일 첨부")]
     cells = '<div class="tc-arr">→</div>'.join(
-        f'<div class="tc"><div class="fi">{i}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
+        f'<div class="tc"><div class="fi">{ic(i)}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
     return f'<div class="tcall">{cells}</div>'
 
 
 def research_flow():
-    st = [("🔎", "웹 검색", "ChatGPT가 공개 자료 찾기"), ("🔗", "링크 확인", "직접 열어 숫자 대조"),
-          ("📊", "표 · CSV", "확인한 값만"), ("📑", "보고서 HTML", "요약 · 근거 · 출처")]
+    st = [("search", "웹 검색", "ChatGPT가 공개 자료 찾기"), ("link", "링크 확인", "직접 열어 숫자 대조"),
+          ("chart", "표 · CSV", "확인한 값만"), ("report", "보고서 HTML", "요약 · 근거 · 출처")]
     cells = '<div class="tc-arr">→</div>'.join(
-        f'<div class="tc"><div class="fi">{i}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
+        f'<div class="tc"><div class="fi">{ic(i)}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
     return f'<div class="tcall">{cells}</div>'
 
 

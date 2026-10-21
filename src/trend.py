@@ -28,11 +28,11 @@ def same_standard():
 
 def mcp():
     return page("연결 규격도 하나로", '<div class="parts">'
-                + fig._tile("🔌", "MCP", "AI와 시트 · 메일 · 일정을<br>잇는 공통 규격", "core")
+                + fig._tile("plug", "MCP", "AI와 시트 · 메일 · 일정을<br>잇는 공통 규격", "core")
                 + '<div class="plus">→</div>'
-                + fig._tile("🤝", "공동 관리", "2025.12 리눅스 재단 산하로<br>Anthropic · OpenAI · Block 공동 설립")
+                + fig._tile("nodes", "공동 관리", "2025.12 리눅스 재단 산하로<br>Anthropic · OpenAI · Block 공동 설립")
                 + '<div class="plus">→</div>'
-                + fig._tile("🌐", "어디서나", "ChatGPT · Gemini · Copilot 채택<br>공개 서버 1만 개 이상")
+                + fig._tile("globe", "어디서나", "ChatGPT · Gemini · Copilot 채택<br>공개 서버 1만 개 이상")
                 + "</div>"
                 + note("의미", "플러그인 · 커넥터 연결 방식이 툴마다 비슷해지는 이유")
                 + note("출처", "Anthropic 「MCP 기증 · Agentic AI Foundation 설립」 (2025-12-09)"), kick="최신 흐름")
