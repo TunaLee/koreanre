@@ -187,8 +187,8 @@ def browser(url, body):
 
 
 def file_flow():
-    """요청문 → Canvas 미리보기 → .html 파일 → 브라우저."""
-    st = [("chat", "요청문", "만들 화면을 말로"), ("window", "미리보기", "Canvas에서 바로 확인"),
+    """요청문 → 미리보기 → .html 파일 → 브라우저."""
+    st = [("chat", "요청문", "만들 화면을 말로"), ("window", "미리보기", "대화창 코드 블록에서 확인"),
           ("html", ".html 파일", "내려받기 · 한 파일"), ("globe", "브라우저", "더블클릭 · 메일 첨부")]
     cells = '<div class="tc-arr">→</div>'.join(
         f'<div class="tc"><div class="fi">{ic(i)}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>' for i, t, d in st)
