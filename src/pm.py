@@ -1,7 +1,7 @@
 """오후 · 웹 리서치 기반 HTML 보고서 제작 (4H)."""
 import fig
 import webfig
-from trend import TREND, trend_src, work_stats
+from trend import TREND, same_standard, trend_src, work_stats
 from kit import (ba, ill, img, big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
                  table, three, tools3, two, ul)
 
@@ -42,7 +42,7 @@ def opening():
             ("내 주제 보고서", "웹 검색부터 보고서까지", "04"),
         ], 4) + note("핵심", "<b>결과물은 HTML 파일 하나</b> · 어느 툴로 만들어도 같은 결과물 · 설치 없이 열림", "red")),
         page("진행 순서", fig.file_flow() + table(["블록", "결과"], [
-            ["<b>01</b> AI 흐름 · 툴 비교", "—"],
+            ["<b>01</b> AI 흐름과 동작 원리", "—"],
             ["<b>02</b> 업무 도구 제작 시작", "첫 HTML 파일"],
             ["<b>03</b> 공통 실습: 리서치 데이터 대시보드", "공통 대시보드 HTML"],
             ["<b>04</b> 보고용 HTML 변환", "보고용 HTML 1건"],
@@ -53,12 +53,7 @@ def opening():
         page("실습 준비", two(
             '<div class="chk"><div>개인 노트북 · 외부망 연결</div><div>ChatGPT 유료 계정 로그인</div>'
             '<div>크롬 또는 엣지 브라우저</div><div>실습 자료 링크에서 CSV 받기</div></div>',
-            pane("Claude · Gemini 사용자", ul([
-                "화면은 ChatGPT 기준으로 진행",
-                "요청문은 <b>그대로 복사</b>해 내 툴에 붙여 넣기",
-                "결과 미리보기 위치만 다름 (위치표)",
-                "막히면 튜터에게 요청",
-            ]), "good"))),
+            pane("다른 툴을 쓰는 경우", ul(["Claude · Gemini도 같은 표준(스킬 · MCP)을 따름", "오늘은 <b>ChatGPT 화면</b> 기준으로 진행", "막히면 튜터에게 요청"]), "good"))),
         page("정보 취급 기준", table(["", "기준"], [
             ["<b>데이터</b>", "공개 웹 데이터만 · <span class='hl'>회사 내부 자료 · 실데이터 금지</span>"],
             ["<b>주제</b>", "시장 · 제도 · 업계 동향처럼 공개 자료로 확인되는 것"],
@@ -71,7 +66,7 @@ def opening():
 
 def block1():
     return [
-        section("01", "AI 흐름 · 툴 비교", "AI가 웹을 찾아 보고서를 만드는 원리와 세 툴의 공통 기능"),
+        section("01", "AI 흐름과 동작 원리", "AI가 웹을 찾아 보고서를 만드는 원리"),
         page("채팅에서 에이전트로", fig.timeline(TREND), kick="최신 흐름", sub=trend_src()),
         work_stats(),
         page("웹 검색의 동작 방식", fig.agent_loop("「○○ 최근 3년 자료 찾아 줘」", "출처 달린 표", [("검색 계획", "어떤 말로 찾을지"), ("웹 검색", "여러 사이트 읽기"), ("결과 확인", "숫자 · 날짜 · 출처"), ("다시 검색", "부족하면 다른 말로")])
@@ -82,25 +77,14 @@ def block1():
         ill("scenes_ch1", "s2", "top25", "AI는 모르는 내용도 그럴듯하게 작성", ["자료에 없는 빈칸을 추측으로 채움", "모른다고 답하지 않는 경우가 많음"]),
         ill("scenes_ch1", "s3", "top20", "AI가 모르는 정보: 최신 정보 · 회사 내부 정보", ["최신 정보 → 웹 검색으로 보완", "회사 정보 → 오늘은 입력하지 않음 (반입 금지)"]),
         ill("scenes_ch1", "s4", "top20", "근거를 주는 두 가지 방법", ["웹에서 찾기: 웹 검색 · 심층 리서치", "자료 안에서만: 첨부한 파일 기준으로 답변"]),
-        page("세 툴의 공통 기능", '<div class="parts">'
+        page("오늘 쓰는 ChatGPT 기능", '<div class="parts">'
              + fig._tile("chat", "대화", "요청 · 수정 · 질문")
              + fig._tile("folder", "파일 분석", "CSV · 엑셀 · PDF 읽기")
              + fig._tile("search", "웹 검색", "최신 공개 자료 · 출처 링크")
              + fig._tile("window", "결과물 미리보기", "HTML을 화면에 바로", "core")
              + "</div>"
-             + note("오늘 쓰는 것", "네 가지 모두 · 툴 이름보다 <b>이 기능이 어디 있는지</b>", "red")),
-        page("툴별 기능 위치", tools3([
-            ["파일 첨부", "입력창 <b>+</b> → 파일", "입력창 <b>+</b> → 파일", "입력창 <b>+</b> → 파일"],
-            ["웹 검색", "입력창 <b>+</b> → 웹 검색 · 심층 리서치", "검색 · 리서치 켜기", "자동 검색 · Deep Research"],
-            ["결과 미리보기", "코드 블록 미리보기", "Artifacts", "Canvas"],
-            ["HTML 내려받기", "코드 블록 메뉴 · 다운로드 또는 복사", "Artifact 오른쪽 위 · 다운로드", "Canvas 오른쪽 위 · 공유 · 다운로드"],
-        ]) + note("확인", "툴 업데이트로 버튼 위치가 바뀔 수 있음 · 현장 화면 기준으로 안내")),
-        page("업무별 툴 선택 기준", table(["업무", "필요한 기능", "확인할 것"], [
-            ["<b>문서 작성</b>", "지침 저장 · 파일 첨부", "양식 · 문체 유지"],
-            ["<b>자료 조사</b>", "웹 검색 · 리서치", "출처 링크 · 발표 날짜"],
-            ["<b>데이터 정리</b>", "파일 분석", "건수 · 합계 대조"],
-            ["<b>화면 · 보고서 제작</b>", "결과물 미리보기", "브라우저에서 열리는지 · 인쇄"],
-        ]) + note("원칙", "툴은 <b>이미 쓰는 것</b>으로 · 기능이 없을 때만 다른 툴")),
+             + note("다른 툴도", "Claude · Gemini에도 같은 기능이 있음 · 오늘은 ChatGPT 화면 기준", "red")),
+        same_standard(),
     ]
 
 
