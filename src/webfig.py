@@ -90,7 +90,7 @@ def pipeline():
     """업무 관리 웹 전체 구조 — 화면 입력 · 업로드 → Apps Script → 시트 · 드라이브 → 화면 · AI."""
     s = markers("pl")
     s += browser(40, 30, 300, 150, bars(80, 160, [40, 70, 55, 90], O, bw=26, gap=16))
-    s += '<text x="190" y="210" text-anchor="middle" class="bt">업무 관리 웹</text><text x="190" y="236" text-anchor="middle" class="bs">입력 · 수정 · 파일 올리기</text>'
+    s += f'<text x="190" y="210" text-anchor="middle" class="bt" fill="{N}">업무 관리 웹</text><text x="190" y="236" text-anchor="middle" class="bs">입력 · 수정 · 파일 올리기</text>'
     s += box(470, 60, 240, 110, "Apps Script", "검증 · 저장 · 조회", fill=SOFT)
     s += db(840, 40, 120, 110, "시트 · 기록")
     s += folder(1000, 46, 140, 104, "드라이브 · 파일")

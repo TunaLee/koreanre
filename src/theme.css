@@ -237,8 +237,8 @@
   .ill .icap.top li{font-size:17px; line-height:1.45;}
   .ill .icap.top.z25 h2{font-size:34px;}
   .websvg{width:100%; height:auto; max-height:430px;}
-  .websvg.pipe2{max-height:470px;}
-  .websvg .bt{font-family:var(--serif); font-size:20px; font-weight:800; fill:#26262B;}
+  .websvg.pipe2{max-height:380px;}
+  .websvg .bt{font-family:var(--serif); font-size:20px; font-weight:800;}
   .websvg .bs{font-family:var(--serif); font-size:15px; fill:#55555C;}
   .websvg .bso{font-family:var(--serif); font-size:15px; fill:#E8002D; font-weight:700;}
   .websvg .bsw{font-family:var(--serif); font-size:15px; fill:#DCDCE1;}
