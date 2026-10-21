@@ -6,6 +6,7 @@
 from pathlib import Path
 
 import am
+import art
 import pm
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -16,7 +17,7 @@ def render(title, parts):
     tpl = (SRC / "template.html").read_text(encoding="utf-8")
     theme = (SRC / "theme.css").read_text(encoding="utf-8")
     tpl = tpl.replace("</style>\n</head>", theme + "\n</style>\n</head>", 1)
-    return tpl.replace("{{DECK_TITLE}}", title).replace("{{SLIDES}}", "\n\n".join(parts))
+    return tpl.replace("{{DECK_TITLE}}", title).replace("{{SLIDES}}", art.DEFS + "\n\n".join(parts))
 
 
 INDEX = """<!DOCTYPE html>
