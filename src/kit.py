@@ -120,6 +120,6 @@ def tools3(rows):
     return table(["", '<span class="tg g">ChatGPT · 기준</span>', '<span class="tg c">Claude</span>', '<span class="tg m">Gemini</span>'], rows, "tools")
 
 
-def img(path, cap=""):
+def img(path, cap="", light=False):
     c = f'<div class="cap">{cap}</div>' if cap else ""
-    return f'<figure class="realshot"><img src="{path}" alt="{_h.escape(cap)}">{c}</figure>'
+    return f'<figure class="realshot{" light" if light else ""}"><img src="{path}" alt="{_h.escape(cap)}">{c}</figure>'

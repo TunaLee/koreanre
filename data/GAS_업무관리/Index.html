@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root{--ink:#111;--mut:#6B6B73;--line:#E6E6EA;--wash:#F5F5F7;--red:#E8002D;--blue:#2F6BD8;--green:#14804A;--amber:#B26A00;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:var(--ink);background:#FAFAFB;}
+  header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;background:#fff;border-bottom:1px solid var(--line);}
+  header h1{margin:0;font-size:20px;} header .sub{font-size:13px;color:var(--mut);}
+  main{max-width:1120px;margin:0 auto;padding:20px 16px 60px;}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .kpi span{font-size:12.5px;color:var(--mut);} .kpi b{display:block;font-size:28px;margin-top:2px;}
+  .kpi.late b{color:var(--red);}
+  .bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+  .tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:13.5px;cursor:pointer;}
+  .tab.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .btn{border:0;background:var(--red);color:#fff;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;margin-left:auto;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;}
+  .card.late{border-left:4px solid var(--red);}
+  .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;}
+  .top h3{margin:0;font-size:16px;}
+  .badge{font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:6px;white-space:nowrap;}
+  .badge[data-st="할 일"]{background:var(--wash);color:var(--mut);} .badge[data-st="진행 중"]{background:#EEF3FF;color:var(--blue);}
+  .badge[data-st="완료"]{background:#E3F5EC;color:var(--green);} .badge[data-st="보류"]{background:#FFF1D6;color:var(--amber);}
+  .meta{font-size:13px;color:var(--mut);} .meta .late{color:var(--red);font-weight:700;}
+  .prog{height:8px;background:var(--wash);border-radius:4px;overflow:hidden;} .prog i{display:block;height:100%;background:var(--blue);}
+  .memo{font-size:13.5px;color:#333;white-space:pre-wrap;}
+  .files{display:flex;gap:6px;flex-wrap:wrap;}
+  .file{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;font-size:12.5px;color:var(--ink);text-decoration:none;max-width:100%;}
+  .file img{width:44px;height:44px;object-fit:cover;border-radius:6px;background:var(--wash);}
+  .acts{display:flex;gap:6px;margin-top:2px;}
+  .acts button,.acts label{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 10px;font-size:12.5px;cursor:pointer;}
+  .acts input{display:none;}
+  dialog{border:0;border-radius:14px;padding:20px;width:min(460px,92vw);box-shadow:0 20px 50px -20px rgba(0,0,0,.5);}
+  dialog h2{margin:0 0 12px;font-size:18px;}
+  dialog label{display:block;font-size:12.5px;font-weight:700;color:#555;margin:10px 0 4px;}
+  dialog input,dialog select,dialog textarea{width:100%;border:1px solid #D9D9DE;border-radius:8px;padding:9px 10px;font:inherit;font-size:14px;}
+  dialog .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  dialog .end{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;display:none;}
+  .empty{color:var(--mut);padding:40px;text-align:center;}
+  @media (max-width:700px){.kpis{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<header><div><h1>내 업무 관리</h1><div class="sub">기록 · Google 시트 · 파일 · Google 드라이브</div></div><div class="sub" id="today"></div></header>
+<main>
+  <section class="kpis" id="kpis"></section>
+  <div class="bar" id="tabs"></div>
+  <section class="grid" id="list"><div class="empty">불러오는 중…</div></section>
+</main>
+
+<dialog id="dlg">
+  <form method="dialog" id="form">
+    <h2 id="dlgTitle">새 업무</h2>
+    <input type="hidden" name="id">
+    <label>업무명</label><input name="title" required>
+    <div class="row">
+      <div><label>담당</label><input name="owner"></div>
+      <div><label>마감일</label><input name="due" type="date"></div>
+    </div>
+    <div class="row">
+      <div><label>상태</label><select name="status"><option>할 일</option><option>진행 중</option><option>보류</option><option>완료</option></select></div>
+      <div><label>진행률 (%)</label><input name="progress" type="number" min="0" max="100" value="0"></div>
+    </div>
+    <label>메모</label><textarea name="memo" rows="3"></textarea>
+    <div class="end"><button value="cancel" formnovalidate>취소</button><button value="ok" class="btn" style="margin:0">저장</button></div>
+  </form>
+</dialog>
+<div id="toast"></div>
+
+<script>
+  const STATUS = ['전체', '할 일', '진행 중', '보류', '완료'];
+  let tasks = [], filter = '전체';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  $('today').textContent = today;
+
+  function call(fn, ...args) {
+    return new Promise((ok, fail) => google.script.run.withSuccessHandler(ok).withFailureHandler(fail)[fn](...args));
+  }
+  function toast(msg) { const t = $('toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2200); }
+  function isLate(t) { return t.due && t.due < today && t.status !== '완료'; }
+
+  function render() {
+    const late = tasks.filter(isLate).length;
+    $('kpis').innerHTML = [['전체 업무', tasks.length, ''], ['진행 중', tasks.filter(t => t.status === '진행 중').length, ''],
+      ['마감 초과', late, 'late'], ['완료', tasks.filter(t => t.status === '완료').length, '']]
+      .map(([l, v, c]) => `<div class="kpi ${c}"><span>${l}</span><b>${v}</b></div>`).join('');
+    $('tabs').innerHTML = STATUS.map(s => `<button class="tab ${s === filter ? 'on' : ''}" data-s="${s}">${s}</button>`).join('')
+      + '<button class="btn" id="add">+ 새 업무</button>';
+    const shown = tasks.filter(t => filter === '전체' || t.status === filter)
+      .sort((a, b) => (isLate(b) - isLate(a)) || String(a.due).localeCompare(String(b.due)));
+    $('list').innerHTML = shown.length ? shown.map(card).join('') : '<div class="empty">업무가 없습니다</div>';
+    shown.forEach(t => t.files.filter(f => String(f.type).startsWith('image/')).forEach(loadThumb));
+  }
+
+  function card(t) {
+    const late = isLate(t);
+    const files = t.files.map(f => `<a class="file" href="${esc(f.url)}" target="_blank" rel="noopener">`
+      + (String(f.type).startsWith('image/') ? `<img data-thumb="${esc(f.id)}" alt="">` : '') + `${esc(f.name)}</a>`).join('');
+    return `<article class="card ${late ? 'late' : ''}">
+      <div class="top"><h3>${esc(t.title)}</h3><span class="badge" data-st="${esc(t.status)}">${esc(t.status)}</span></div>
+      <div class="meta">${esc(t.owner)} · 마감 <span class="${late ? 'late' : ''}">${esc(t.due) || '—'}${late ? ' (초과)' : ''}</span> · ${t.progress}%</div>
+      <div class="prog"><i style="width:${t.progress}%"></i></div>
+      ${t.memo ? `<div class="memo">${esc(t.memo)}</div>` : ''}
+      ${files ? `<div class="files">${files}</div>` : ''}
+      <div class="acts"><button data-edit="${esc(t.id)}">수정</button>
+        <label>파일 · 사진 올리기<input type="file" multiple data-up="${esc(t.id)}"></label>
+        <button data-del="${esc(t.id)}">삭제</button></div>
+    </article>`;
+  }
+
+  async function loadThumb(f) {
+    const img = document.querySelector(`img[data-thumb="${f.id}"]`);
+    if (!img || img.src) return;
+    try { const url = await call('getThumb', f.id); if (url) img.src = url; } catch (e) { /* 썸네일이 없으면 이름만 */ }
+  }
+
+  function openForm(t) {
+    const f = $('form');
+    f.reset();
+    $('dlgTitle').textContent = t ? '업무 수정' : '새 업무';
+    if (t) ['id', 'title', 'owner', 'due', 'status', 'progress', 'memo'].forEach(k => f[k].value = t[k]);
+    else f.id.value = '';
+    $('dlg').showModal();
+  }
+
+  $('dlg').addEventListener('close', async () => {
+    if ($('dlg').returnValue !== 'ok') return;
+    const f = $('form');
+    const data = Object.fromEntries(new FormData(f));
+    try { tasks = await call('saveTask', data); render(); toast('저장했습니다'); } catch (e) { toast('저장 실패: ' + e.message); }
+  });
+
+  document.addEventListener('click', async e => {
+    const el = e.target;
+    if (el.dataset.s) { filter = el.dataset.s; render(); }
+    if (el.id === 'add') openForm(null);
+    if (el.dataset.edit) openForm(tasks.find(t => t.id === el.dataset.edit));
+    if (el.dataset.del && confirm('이 업무를 삭제할까요? (드라이브 파일은 남습니다)')) {
+      tasks = await call('deleteTask', el.dataset.del); render(); toast('삭제했습니다');
+    }
+  });
+
+  document.addEventListener('change', async e => {
+    const id = e.target.dataset.up;
+    if (!id) return;
+    for (const file of e.target.files) {
+      if (file.size > 10 * 1024 * 1024) { toast(file.name + ': 10MB 이하만 올릴 수 있습니다'); continue; }
+      toast(file.name + ' 올리는 중…');
+      const b64 = await new Promise(ok => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.readAsDataURL(file); });
+      try { tasks = await call('uploadFile', id, file.name, file.type, b64); render(); toast('드라이브에 저장했습니다'); }
+      catch (err) { toast('올리기 실패: ' + err.message); }
+    }
+  });
+
+  call('getTasks').then(t => { tasks = t; render(); }).catch(e => { $('list').innerHTML = `<div class="empty">불러오기 실패: ${esc(e.message)}</div>`; });
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 """오후 · 웹 리서치 기반 HTML 보고서 제작 (4H)."""
 import fig
 from trend import TREND, trend_src, work_stats
-from kit import (big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
+from kit import (img, big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
                  table, three, tools3, two, ul)
 
 JOBS = [("전문 · 관리직", 70.4), ("사무직", 71.9), ("서비스 · 판매직", 38.3), ("생산 관련직", 24.6), ("전체", 44.5)]
@@ -46,7 +46,8 @@ def opening():
             ["<b>03</b> 공통 실습: 리서치 데이터 대시보드", "공통 대시보드 HTML"],
             ["<b>04</b> 보고용 HTML 변환", "보고용 HTML 1건"],
             ["<b>05</b> 본인 주제 보고서", "내 주제 HTML 보고서 1건"],
-            ["<b>06</b> 결과물 시연 · 사용 기준", "사용 기준 1장"],
+            ["<b>06</b> 심화 · 선택: GAS로 내 업무 관리 웹", "업로드 · 기록되는 웹 앱"],
+            ["<b>07</b> 결과물 시연 · 사용 기준", "사용 기준 1장"],
         ])),
         page("실습 준비", two(
             '<div class="chk"><div>개인 노트북 · 외부망 연결</div><div>ChatGPT 유료 계정 로그인</div>'
@@ -271,9 +272,85 @@ def block5():
     ]
 
 
+GAS_PROMPT = """Google Apps Script로 「내 업무 관리」 웹 앱을 만들어 줘.
+Code.gs 와 Index.html 두 파일로 나눠 전체 코드를 보여 줘.
+
+- 기록: 이 스프레드시트의 「업무」 시트 (ID · 업무명 · 담당 · 마감일 · 상태 · 진행률 · 메모 · 파일 · 수정일, 없으면 만들기)
+- 파일 · 사진: 내 드라이브 「업무관리_파일」 폴더에 저장하고 시트에는 링크만
+- 화면: 지표 카드 4개(전체 · 진행 중 · 마감 초과 · 완료), 상태별 탭, 업무 카드(진행률 · 메모 · 첨부 · 사진 썸네일)
+- 버튼: 새 업무 · 수정 · 삭제 · 파일 올리기(여러 개 · 10MB 이하)
+- 마감이 지났는데 완료가 아닌 업무는 맨 위에 빨간색으로
+- 외부 라이브러리 없이
+- 마지막에 붙여 넣기 · 배포 순서를 번호로"""
+
+
+def gas_flow():
+    st = [("window", "화면", "Index.html<br>카드 · 버튼 · 업로드"), ("tool", "Apps Script", "Code.gs<br>저장 · 조회 처리"),
+          ("chart", "Google 시트", "업무 기록<br>데이터베이스"), ("folder", "Google 드라이브", "파일 · 사진<br>저장소")]
+    arr = ['<div class="tc-arr">⇄</div>', '<div class="tc-arr">⇄</div>', '<div class="tc-arr">+</div>']
+    out = ""
+    for i, (ic, t, d) in enumerate(st):
+        out += f'<div class="tc"><div class="fi">{fig.ic(ic)}</div><div class="ft">{t}</div><div class="fd">{d}</div></div>'
+        if i < 3:
+            out += arr[i]
+    return f'<div class="tcall">{out}</div>'
+
+
+def block_gas():
+    return [
+        section("06", "심화 · 선택:<br>GAS로 내 업무 관리 웹", "입력하고 파일을 올리면 시트와 드라이브에 쌓이는 나만의 웹 앱"),
+        page("업무 관리 웹의 구조", gas_flow()
+             + note("GAS", "Google Apps Script · Google 시트 · 드라이브를 다루는 Google의 기본 기능 · 서버 · 설치 필요 없음")
+             + note("역할 분담", "코드는 ChatGPT가 작성 · 사람은 붙여 넣기 · 배포 · 확인", "red"), kick="심화"),
+        page("완성 화면", img("img/pm_gas_app.png", "내 업무 관리 · 예제 화면 (더미 데이터)", light=True)
+             + note("기능", "업무 추가 · 수정 · 삭제 · 상태별 보기 · 파일 · 사진 올리기 · 마감 초과 자동 표시"), kick="심화"),
+        page("보고서 HTML과 업무 관리 웹", table(["", "보고서 HTML", "GAS 웹 앱"], [
+            ["<b>데이터</b>", "파일 안에 고정", "시트에서 매번 읽기"],
+            ["<b>입력 · 업로드</b>", "없음 · 보기 전용", "입력 · 수정 · 파일 올리기"],
+            ["<b>여는 방법</b>", "파일 더블클릭 · 메일 첨부", "웹 앱 주소 · 내 Google 계정"],
+            ["<b>잘 맞는 업무</b>", "월간 보고 · 조사 결과 공유", "할 일 · 요청 접수 · 자료 모음"],
+        ]), kick="심화"),
+        lab("5", "GAS로 내 업무 관리 웹 만들기",
+            "요청문으로 받은 코드를 Apps Script에 붙여 넣고 웹 앱으로 배포해, 업무를 입력하고 사진을 올려 보기",
+            ["새 시트에서 Apps Script 열기", "요청문으로 Code.gs · Index.html 받기", "두 파일 붙여 넣기", "웹 앱 배포 · 권한 허용", "업무 입력 · 사진 올리기 → 시트 · 드라이브 확인"],
+            "업로드 · 기록되는 업무 관리 웹 1개 (선택)"),
+        page("① 시트에서 Apps Script 열기", two(
+            steps([("새 시트", "Google 시트 → 빈 스프레드시트 · 이름 「내 업무 관리」"),
+                   ("Apps Script", "메뉴 <b>확장 프로그램 → Apps Script</b>"),
+                   ("프로젝트 이름", "왼쪽 위 「제목 없는 프로젝트」 → 「내 업무 관리」")]),
+            shot("Google 시트 · 확장 프로그램 → Apps Script 메뉴", "img/pm_gas_menu.png")), kick="실습 5"),
+        page("② 요청문으로 코드 받기", prompt(GAS_PROMPT, "실습 5 · 요청문")
+             + note("막히면", "실습 자료 <b>GAS_업무관리</b> 폴더의 Code.gs · Index.html 완성본 사용", "red"), kick="실습 5"),
+        page("③ 두 파일 붙여 넣기", two(
+            steps([("Code.gs", "기존 내용 전부 지우고 받은 Code.gs 붙여 넣기"),
+                   ("Index.html", "파일 <b>+</b> → HTML → 이름 <b>Index</b> (확장자 없이) → 붙여 넣기"),
+                   ("저장", "디스크 아이콘 · ⌘S / Ctrl+S")]),
+            shot("Apps Script 편집기 · Code.gs · Index.html 두 파일", "img/pm_gas_editor.png")), kick="실습 5"),
+        page("④ 웹 앱 배포", two(
+            steps([("새 배포", "오른쪽 위 <b>배포 → 새 배포</b> → 유형 <b>웹 앱</b>"),
+                   ("실행 · 액세스", "실행: <b>나</b> · 액세스: <b>나만</b>"),
+                   ("권한 허용", "계정 선택 → 「고급」 → 「내 업무 관리(으)로 이동」 → 허용"),
+                   ("열기", "웹 앱 URL → 즐겨찾기")]),
+            shot("Apps Script 새 배포 · 웹 앱 · 액세스 「나만」", "img/pm_gas_deploy.png"))
+            + note("경고 화면", "내가 만든 스크립트라서 뜨는 확인 · <b>액세스를 「모든 사용자」로 두지 않기</b>", "red"), kick="실습 5"),
+        page("⑤ 쓰면서 고치기", flow([
+            ("업무 입력", "새 업무 · 진행률"), ("사진 올리기", "카드의 「파일 · 사진 올리기」"),
+            ("저장 확인", "시트 「업무」 · 드라이브 「업무관리_파일」"), ("기능 추가", "ChatGPT에 요청 · 바뀐 파일 전체"),
+            ("새 버전 배포", "배포 관리 → 수정 → 새 버전"),
+        ], hl=2) + prompt("이 업무 관리 웹에 「담당자별 보기」 탭을 추가해 줘. 바뀐 파일만, 파일 전체 코드로 줘.\n\n[현재 Code.gs]\n…\n[현재 Index.html]\n…", "기능 추가 요청 예"), kick="실습 5"),
+        page("GAS 문제 해결", table(["상황", "대처"], [
+            ["「확인되지 않은 앱」 경고", "「고급」 → 「(프로젝트)(으)로 이동」 · 내가 만든 스크립트라 정상"],
+            ["화면이 하얗게 나옴", "HTML 파일 이름이 <b>Index</b>인지 · 확장자 중복(Index.html.html) 확인"],
+            ["고쳤는데 그대로", "배포 관리 → 수정 → <b>새 버전</b>으로 다시 배포"],
+            ["업로드 실패", "10MB 이하 · 첫 업로드 때 드라이브 권한 허용"],
+            ["다른 사람과 같이 쓰기", "액세스 범위 · 데이터 노출을 사내 기준으로 먼저 확인"],
+        ]) + note("그래도 안 되면", "오류 메시지를 그대로 ChatGPT에 붙여 넣기 · 튜터 호출", "red"), kick="실습 5"),
+    ]
+
+
 def block6():
     return [
-        section("06", "결과물 시연 · 사용 기준", "튜터가 미리 확인한 결과물 5~6건 · 실무에서 쓸 기준 정리"),
+        section("07", "결과물 시연 · 사용 기준", "튜터가 미리 확인한 결과물 5~6건 · 실무에서 쓸 기준 정리"),
         page("시연에서 볼 것", table(["볼 점", "질문"], [
             ["<b>요청문</b>", "어떤 요청문이 결과를 갈랐나"],
             ["<b>출처</b>", "숫자마다 출처 · 링크가 열리나"],
@@ -301,4 +378,4 @@ def block6():
 
 
 def slides():
-    return opening() + block1() + block2() + block3() + block4() + block5() + block6()
+    return opening() + block1() + block2() + block3() + block4() + block5() + block_gas() + block6()
