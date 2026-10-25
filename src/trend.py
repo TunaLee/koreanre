@@ -181,3 +181,61 @@ def made_tools():
         ["<b>판정 · 넘기기</b>", "이상 이벤트 판정 → 조사 (반도체) · 규정에 없으면 담당자에게 (철강)", "심사 필요 건 분류 · 승인 요청"],
         ["<b>안전장치</b>", "운영 DB 쓰기 차단 (철강)", "원본 데이터 수정 차단"],
     ]) + note("공통점", "도구 = <b>이름 · 설명 · 입력</b>을 정한 기능 · AI는 설명을 보고 고르고, 실행은 프로그램이", "red"), kick="도구")
+
+
+def why_tools():
+    """도구가 필요한 이유 1 · 숫자를 계산하지 않고 이어 쓰는 모습."""
+    import webfig
+    return page("AI가 숫자를 쓰는 방식", two(
+        webfig.next_token("4,817 × 293 = ", [[("1,411", .46), ("1,410", .21), ("1,421", .12), ("141", .08)],
+                                             [(",281", .31), (",381", .29), (",181", .14), (",481", .10)],
+                                             [("입니다.", .72), ("이에요.", .17), ("정도", .06)]],
+                          "계산하지 않음 · 정답 1,411,381", uid="ntam"),
+        ul(["다음 글자를 <b>확률</b>로 골라 이어 붙임", "숫자도 계산이 아니라 <b>그럴듯한 다음 글자</b>로",
+            "0.31 vs 0.29 · 근소한 차이로 틀린 쪽 선택", "틀려도 같은 말투 · 스스로 확인하는 단계 없음"]), "w"), kick="도구가 필요한 이유")
+
+
+def with_tools():
+    """도구가 필요한 이유 2 · 도구 없이 vs 코드 실행 + 혼자 못 하는 일."""
+    bad = ('<div class="tw-box bad"><div class="tw-h">도구 없이</div><div class="tw-q">4,817 × 293은?</div>'
+           '<div class="tw-a">1,411,281입니다.</div><div class="tw-r">정답과 100 차이 · 틀린 줄 모름</div></div>')
+    good = ('<div class="tw-box good"><div class="tw-h">코드 실행 도구</div><div class="tw-q">4,817 × 293은?</div>'
+            '<pre class="tw-c">4817 * 293\n→ 1411381</pre><div class="tw-a">1,411,381입니다.</div><div class="tw-r">계산은 도구가 · AI는 결과로 답</div></div>')
+    return page("도구가 있으면", '<div class="tw">' + bad + good + "</div>"
+                + table(["AI 혼자 못 하는 것", "이유", "붙이는 도구"], [
+                    ["<b>정확한 계산</b>", "숫자를 확률로 이어 씀", "코드 실행 (파일 분석)"],
+                    ["<b>오늘의 정보</b>", "학습한 시점 이후를 모름", "웹 검색"],
+                    ["<b>내 자료</b>", "본 적 없는 시트 · 일정", "앱 연결 (Drive · Calendar)"],
+                    ["<b>실제 행동</b>", "글자만 만들 수 있음", "메일 · 일정 등록 도구"],
+                ]), kick="도구가 필요한 이유")
+
+
+def mcp_why():
+    """MCP가 필요한 이유 · 앱마다 따로 vs 공통 규격."""
+    apps, svcs = ["ChatGPT", "Claude", "Gemini"], ["Google Drive", "국가통계", "사내 시스템"]
+    def col(x, names, cls):
+        return "".join(f'<g class="{cls}"><rect x="{x}" y="{20 + i * 70}" width="120" height="44" rx="10"/>'
+                       f'<text x="{x + 60}" y="{47 + i * 70}">{n}</text></g>' for i, n in enumerate(names))
+    ys = [42 + i * 70 for i in range(3)]
+    many = "".join(f'<line x1="140" y1="{a}" x2="280" y2="{b}"/>' for a in ys for b in ys)
+    left = (f'<svg viewBox="0 0 420 230" class="mw-svg">{many}{col(20, apps, "ap")}{col(280, svcs, "sv")}</svg>')
+    hub = "".join(f'<line x1="140" y1="{a}" x2="180" y2="112"/>' for a in ys) + "".join(f'<line x1="240" y1="112" x2="280" y2="{b}"/>' for b in ys)
+    right = (f'<svg viewBox="0 0 420 230" class="mw-svg">{hub}{col(20, apps, "ap")}{col(280, svcs, "sv")}'
+             '<g class="hub"><rect x="170" y="88" width="80" height="48" rx="24"/><text x="210" y="117">MCP</text></g></svg>')
+    return page("MCP가 필요한 이유", '<div class="mw">'
+                f'<div class="mw-c bad"><div class="mw-h">규격 없이 · 앱마다 따로</div>{left}<div class="mw-n">AI 앱 3 × 서비스 3 = <b>연결 9개</b> · 앱이 바뀌면 다시</div></div>'
+                f'<div class="mw-c good"><div class="mw-h">MCP · 공통 규격</div>{right}<div class="mw-n">서비스마다 <b>MCP 서버 1개</b> · 어느 AI 앱에서나</div></div></div>'
+                + note("비유", "충전 단자가 기기마다 다르던 시절 → <b>USB-C 하나</b>로 · MCP = AI와 도구를 잇는 공통 단자", "red"), kick="MCP")
+
+
+def mcp_glance():
+    """MCP 한눈에 · 구성 셋 + 주고받는 순서 셋."""
+    from kit import flow
+    return page("MCP 한눈에 보기", flow([("AI 앱", "ChatGPT · Claude · Gemini<br>= MCP 클라이언트"),
+                                          ("MCP 서버", "도구 목록 · 실행 담당"),
+                                          ("서비스", "국가통계 · 공시 · 사내 시스템")], hl=1)
+                + table(["순서", "AI 앱 → MCP 서버", "MCP 서버 → AI 앱"], [
+                    ["<b>① 목록</b>", "「어떤 도구가 있어?」", "통계 검색 · 통계표 조회"],
+                    ["<b>② 호출</b>", "「통계표 조회 · 자연재해 피해 · 2024」", "서비스에서 값을 가져옴"],
+                    ["<b>③ 결과</b>", "—", "표 데이터 → AI가 답변 작성"],
+                ]) + note("사용자는", "주소 등록 · 로그인 한 번 → 이후는 평소처럼 질문", "red"), kick="MCP")

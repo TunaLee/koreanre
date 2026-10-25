@@ -2,7 +2,7 @@
 import fig
 from kit import (links, ba, ill, img, big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
                  table, three, tools3, two, ul)
-from trend import TREND, agent_background, external_tools, made_tools, mcp, same_standard, tool_kinds, trend_src, work_stats
+from trend import TREND, agent_background, external_tools, made_tools, mcp, mcp_glance, mcp_why, same_standard, why_tools, with_tools, tool_kinds, trend_src, work_stats
 
 SHEET = "팀 업무 현황"
 CAL = "실습용 팀 일정"
@@ -72,10 +72,14 @@ def block1():
         section("01", "채팅을 넘어:<br>에이전트와 플러그인", "AI가 시트를 읽고 보고서를 쓰는 원리"),
         *agent_background([("모델", "ChatGPT 그대로", False), ("도구", "앱 연결 · 시트 · 캘린더 읽기", True),
                            ("지침", "반복 설명을 스킬로 저장", True), ("자료", "양식 · 작성 예시를 참고 파일로", True)]),
+        why_tools(),
+        with_tools(),
         tool_kinds(),
         page("시트를 읽는 원리", fig.tool_call()
              + note("권한", "<b>연결할 때 허용한 범위</b>만 조회 · 연결 해제 시 접근 종료", "red"), kick="동작 원리"),
         made_tools(),
+        mcp_why(),
+        mcp_glance(),
         external_tools(),
         mcp(),
         page("대화창 지시와 저장된 지침", fig.forgetting()

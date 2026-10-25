@@ -759,6 +759,25 @@
 .se .sbtn{display:flex; justify-content:flex-end; gap:8px; margin-top:4px;} .se .sbtn .sv{margin-top:0;}
 .se .rf{border:1px solid #D9D9DE; border-radius:8px; padding:7px 14px; font-size:13.5px; font-weight:700; color:#555;}
 
+/* 도구가 필요한 이유 · MCP */
+.tw{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:14px;}
+.tw-box{border:1.5px solid #d9d9de; border-radius:12px; padding:12px 16px; display:grid; gap:6px;}
+.tw-box.bad{border-color:#e9b3bd; background:#fff6f8;} .tw-box.good{border-color:#9fd3b2; background:#f4fbf6;}
+.tw-h{font-weight:800; font-size:16px;} .tw-q{font-size:14px; color:#555;}
+.tw-a{font-size:20px; font-weight:800;} .tw-box.bad .tw-a{color:#E8002D; text-decoration:line-through; text-decoration-thickness:2px;}
+.tw-c{margin:0; background:#26262B; color:#fff; border-radius:8px; padding:6px 10px; font-size:13px;}
+.tw-r{font-size:13px; color:#6b6b73;}
+.mw{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+.mw-c{border:1.5px solid #d9d9de; border-radius:14px; padding:12px 14px;}
+.mw-c.good{border-color:#E8002D;}
+.mw-h{font-weight:800; font-size:17px; margin-bottom:6px;} .mw-c.good .mw-h{color:#E8002D;}
+.mw-svg{width:100%; height:auto;}
+.mw-svg line{stroke:#9a9aa3; stroke-width:2;} .mw-c.good .mw-svg line{stroke:#E8002D;}
+.mw-svg rect{fill:#fff; stroke:#26262B; stroke-width:2;} .mw-svg .sv rect{fill:#f1f1f4;}
+.mw-svg text{font-size:15px; font-weight:700; text-anchor:middle; fill:#26262B;}
+.mw-svg .hub rect{fill:#E8002D; stroke:#E8002D;} .mw-svg .hub text{fill:#fff; font-size:17px;}
+.mw-n{font-size:15px; margin-top:4px;}
+
 </style>
 </head>
 <body>
@@ -839,11 +858,64 @@
 
 <section class="slide" data-title="오늘 다루는 것"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">에이전트</div><h2 class="s-title">오늘 다루는 것</h2><div class="rule"></div><div class="body"><div class="tps"><div class="tp"><b>모델</b><span>ChatGPT 그대로</span></div><div class="tp on"><b>도구</b><span>앱 연결 · 시트 · 캘린더 읽기</span></div><div class="tp on"><b>지침</b><span>반복 설명을 스킬로 저장</span></div><div class="tp on"><b>자료</b><span>양식 · 작성 예시를 참고 파일로</span></div></div><div class="note red"><span class="nk">이어서</span><span class="nt">빨간 칸을 차례로 · 같은 모델도 무엇을 쥐여 주느냐에 따라 결과가 달라짐</span></div></div></section>
 
+<section class="slide" data-title="AI가 숫자를 쓰는 방식"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">도구가 필요한 이유</div><h2 class="s-title">AI가 숫자를 쓰는 방식</h2><div class="rule"></div><div class="body"><div class="twocol w"><div><style>.ga{background:#F6F6F8;border:1px solid #E4E4E9;border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:14px}.ga .gas{font-size:26px;font-weight:800;color:#26262B;min-height:40px;line-height:1.4;word-break:keep-all}.ga .gacur{display:inline-block;width:3px;height:26px;background:#E8002D;margin-left:4px;vertical-align:-4px;animation:gablink 1s steps(1) infinite}@keyframes gablink{50%{opacity:0}}.ga .galab{font-size:13px;font-weight:800;color:#6B6B73}.ga .galab span{font-weight:400}.ga .garows{display:flex;flex-direction:column;gap:8px}.ga .gar{display:grid;grid-template-columns:120px 1fr 48px;align-items:center;gap:10px;font-size:18px;color:#26262B}.ga .gaw{text-align:right;font-weight:800;font-family:var(--mono,monospace)}.ga .gab{height:22px;background:#fff;border-radius:5px;overflow:hidden}.ga .gab i{display:block;height:100%;background:#DCDCE1;border-radius:5px;transition:width .5s ease,background .3s}.ga .gar.pick .gab i{background:#E8002D}.ga .gar.pick .gaw{color:#E8002D}.ga .gap{font-family:var(--mono,monospace);font-size:14px;color:#55555C}.ga .gaend{display:inline-block;vertical-align:5px;margin-left:12px;font-size:13px;font-weight:800;color:#fff;background:#26262B;border-radius:999px;padding:5px 12px;opacity:0;transition:opacity .3s}.ga .gaend.on{opacity:1}@media print{.ga .gaend{opacity:1}.ga .gacur{display:none}}</style><div class="ga" id="ntam" data-gen='{"prefix": "4,817 × 293 = ", "steps": [[["1,411", 0.46], ["1,410", 0.21], ["1,421", 0.12], ["141", 0.08]], [[",281", 0.31], [",381", 0.29], [",181", 0.14], [",481", 0.1]], [["입니다.", 0.72], ["이에요.", 0.17], ["정도", 0.06]]]}'>
+  <div class="gas"><span class="gatxt">4,817 × 293 = 1,411,281입니다.</span><span class="gacur"></span><span class="gaend">계산하지 않음 · 정답 1,411,381</span></div>
+  <div class="galab">다음 토큰 후보 <span>(설명용 확률)</span></div>
+  <div class="garows"><div class="gar pick"><span class="gaw">입니다.</span><span class="gab"><i style="width:72%"></i></span><span class="gap">0.72</span></div><div class="gar"><span class="gaw">이에요.</span><span class="gab"><i style="width:17%"></i></span><span class="gap">0.17</span></div><div class="gar"><span class="gaw">정도</span><span class="gab"><i style="width:6%"></i></span><span class="gap">0.06</span></div><div class="gar"><span class="gaw"></span><span class="gab"><i style="width:0%"></i></span><span class="gap">0.00</span></div></div>
+</div><script>
+(function () {
+  const box = document.getElementById('ntam');
+  if (!box) return;
+  const D = JSON.parse(box.dataset.gen);
+  const txt = box.querySelector('.gatxt'), rows = box.querySelectorAll('.gar'), end = box.querySelector('.gaend');
+  let step = 0, words = [D.prefix], phase = 0, timer = null;
+  function show(i) {
+    const st = D.steps[i];
+    rows.forEach((r, k) => {
+      const c = st[k];
+      r.classList.remove('pick');
+      r.style.visibility = c ? 'visible' : 'hidden';
+      if (!c) return;
+      r.querySelector('.gaw').textContent = c[0];
+      r.querySelector('.gap').textContent = c[1].toFixed(2);
+      r.querySelector('i').style.width = (c[1] * 100) + '%';
+    });
+  }
+  function tick() {
+    if (box.offsetParent === null) return;
+    if (step >= D.steps.length) {
+      end.classList.add('on');
+      if (++phase > 4) { step = 0; phase = 0; words = [D.prefix]; txt.textContent = D.prefix; end.classList.remove('on'); show(0); }
+      return;
+    }
+    if (phase === 0) { show(step); phase = 1; return; }
+    if (phase === 1) { rows[0].classList.add('pick'); phase = 2; return; }
+    words.push(D.steps[step][0][0]); txt.textContent = words.join('');
+    step += 1; phase = 0;
+  }
+  window.addEventListener('beforeprint', () => {
+    clearInterval(timer); const n = D.steps.length - 1;
+    txt.textContent = [D.prefix].concat(D.steps.map(st => st[0][0])).join('');
+    show(n); rows[0].classList.add('pick'); end.classList.add('on');
+  });
+  txt.textContent = D.prefix; show(0);
+  rows.forEach(r => r.querySelector('i').style.width = '0%');
+  timer = setInterval(tick, 900);
+})();
+</script></div><div><ul class='ul'><li>다음 글자를 <b>확률</b>로 골라 이어 붙임</li><li>숫자도 계산이 아니라 <b>그럴듯한 다음 글자</b>로</li><li>0.31 vs 0.29 · 근소한 차이로 틀린 쪽 선택</li><li>틀려도 같은 말투 · 스스로 확인하는 단계 없음</li></ul></div></div></div></section>
+
+<section class="slide" data-title="도구가 있으면"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">도구가 필요한 이유</div><h2 class="s-title">도구가 있으면</h2><div class="rule"></div><div class="body"><div class="tw"><div class="tw-box bad"><div class="tw-h">도구 없이</div><div class="tw-q">4,817 × 293은?</div><div class="tw-a">1,411,281입니다.</div><div class="tw-r">정답과 100 차이 · 틀린 줄 모름</div></div><div class="tw-box good"><div class="tw-h">코드 실행 도구</div><div class="tw-q">4,817 × 293은?</div><pre class="tw-c">4817 * 293
+→ 1411381</pre><div class="tw-a">1,411,381입니다.</div><div class="tw-r">계산은 도구가 · AI는 결과로 답</div></div></div><table class="ctable "><thead><tr><th>AI 혼자 못 하는 것</th><th>이유</th><th>붙이는 도구</th></tr></thead><tbody><tr><td><b>정확한 계산</b></td><td>숫자를 확률로 이어 씀</td><td>코드 실행 (파일 분석)</td></tr><tr><td><b>오늘의 정보</b></td><td>학습한 시점 이후를 모름</td><td>웹 검색</td></tr><tr><td><b>내 자료</b></td><td>본 적 없는 시트 · 일정</td><td>앱 연결 (Drive · Calendar)</td></tr><tr><td><b>실제 행동</b></td><td>글자만 만들 수 있음</td><td>메일 · 일정 등록 도구</td></tr></tbody></table></div></section>
+
 <section class="slide" data-title="에이전트가 쓰는 도구 세 종류"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">도구</div><h2 class="s-title">에이전트가 쓰는 도구 세 종류</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>종류</th><th>예</th><th>연결 방법</th></tr></thead><tbody><tr><td><b>기본 도구</b></td><td>웹 검색 · 파일 분석(코드 실행) · 이미지 생성</td><td>켜져 있음 · 입력창 <b>+</b>에서 선택</td></tr><tr><td><b>앱 연결</b></td><td>Google Drive · Calendar · Gmail · Notion · Slack</td><td>로그인 한 번 · 허용한 범위만 조회</td></tr><tr><td><b>MCP 서버</b></td><td>공공 통계 · 공시 · 법령 · 사내 시스템</td><td>주소 등록 · 공개 서버 또는 <b>직접 만든 서버</b></td></tr></tbody></table><div class="note red"><span class="nk">오늘 오전</span><span class="nt"><b>앱 연결</b>로 시트 · 캘린더를 읽고, 업무 지침은 <b>스킬</b>로 저장</span></div></div></section>
 
 <section class="slide" data-title="시트를 읽는 원리"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">동작 원리</div><h2 class="s-title">시트를 읽는 원리</h2><div class="rule"></div><div class="body"><div class="tcall"><div class="tc"><div class="fi"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></div><div class="ft">나</div><div class="fd">「이번 주 현황 요약해 줘」</div></div><div class="tc-arr">→</div><div class="tc"><div class="fi"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><rect x="10" y="10" width="4" height="4"/></svg></div><div class="ft">ChatGPT</div><div class="fd">「시트가 필요해」 판단</div></div><div class="tc-arr">→</div><div class="tc"><div class="fi"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v5M15 2v5"/><path d="M6 7h12v4a6 6 0 0 1-12 0z"/><path d="M12 17v5"/></svg></div><div class="ft">플러그인</div><div class="fd">Google Drive</div></div><div class="tc-arr">→</div><div class="tc"><div class="fi"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></svg></div><div class="ft">내 권한</div><div class="fd">연결할 때 허용한 범위만</div></div><div class="tc-arr">→</div><div class="tc"><div class="fi"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/></svg></div><div class="ft">내 시트</div><div class="fd">팀 업무 현황</div></div></div><div class="tback">읽어 온 내용으로 ChatGPT가 요약</div><div class="note red"><span class="nk">권한</span><span class="nt"><b>연결할 때 허용한 범위</b>만 조회 · 연결 해제 시 접근 종료</span></div></div></section>
 
 <section class="slide" data-title="직접 만든 도구 예"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">도구</div><h2 class="s-title">직접 만든 도구 예</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>유형</th><th>다른 현장 과정에서 만든 도구</th><th>재보험 업무라면</th></tr></thead><tbody><tr><td><b>조회</b></td><td>설비 생산량 · 불량 조회 (철강) · Lot 이력 · 정비 기록 조회 (반도체)</td><td>계약 · 출재 조건 조회</td></tr><tr><td><b>계산</b></td><td>근무조별 불량률 · 정확한 계산기 (철강)</td><td>손해율 · 보유 · 출재 비율 계산</td></tr><tr><td><b>문서 검색</b></td><td>사내 규정 검색 · 조항 원문 추적 (철강) · 기술 문서 검색 서버 (반도체)</td><td>약관 · 특약 조항 검색</td></tr><tr><td><b>기록</b></td><td>메모 조회 · 저장 · 수정 · 삭제 (반도체)</td><td>업무 일지 · 회의 결정 기록</td></tr><tr><td><b>판정 · 넘기기</b></td><td>이상 이벤트 판정 → 조사 (반도체) · 규정에 없으면 담당자에게 (철강)</td><td>심사 필요 건 분류 · 승인 요청</td></tr><tr><td><b>안전장치</b></td><td>운영 DB 쓰기 차단 (철강)</td><td>원본 데이터 수정 차단</td></tr></tbody></table><div class="note red"><span class="nk">공통점</span><span class="nt">도구 = <b>이름 · 설명 · 입력</b>을 정한 기능 · AI는 설명을 보고 고르고, 실행은 프로그램이</span></div></div></section>
+
+<section class="slide" data-title="MCP가 필요한 이유"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">MCP</div><h2 class="s-title">MCP가 필요한 이유</h2><div class="rule"></div><div class="body"><div class="mw"><div class="mw-c bad"><div class="mw-h">규격 없이 · 앱마다 따로</div><svg viewBox="0 0 420 230" class="mw-svg"><line x1="140" y1="42" x2="280" y2="42"/><line x1="140" y1="42" x2="280" y2="112"/><line x1="140" y1="42" x2="280" y2="182"/><line x1="140" y1="112" x2="280" y2="42"/><line x1="140" y1="112" x2="280" y2="112"/><line x1="140" y1="112" x2="280" y2="182"/><line x1="140" y1="182" x2="280" y2="42"/><line x1="140" y1="182" x2="280" y2="112"/><line x1="140" y1="182" x2="280" y2="182"/><g class="ap"><rect x="20" y="20" width="120" height="44" rx="10"/><text x="80" y="47">ChatGPT</text></g><g class="ap"><rect x="20" y="90" width="120" height="44" rx="10"/><text x="80" y="117">Claude</text></g><g class="ap"><rect x="20" y="160" width="120" height="44" rx="10"/><text x="80" y="187">Gemini</text></g><g class="sv"><rect x="280" y="20" width="120" height="44" rx="10"/><text x="340" y="47">Google Drive</text></g><g class="sv"><rect x="280" y="90" width="120" height="44" rx="10"/><text x="340" y="117">국가통계</text></g><g class="sv"><rect x="280" y="160" width="120" height="44" rx="10"/><text x="340" y="187">사내 시스템</text></g></svg><div class="mw-n">AI 앱 3 × 서비스 3 = <b>연결 9개</b> · 앱이 바뀌면 다시</div></div><div class="mw-c good"><div class="mw-h">MCP · 공통 규격</div><svg viewBox="0 0 420 230" class="mw-svg"><line x1="140" y1="42" x2="180" y2="112"/><line x1="140" y1="112" x2="180" y2="112"/><line x1="140" y1="182" x2="180" y2="112"/><line x1="240" y1="112" x2="280" y2="42"/><line x1="240" y1="112" x2="280" y2="112"/><line x1="240" y1="112" x2="280" y2="182"/><g class="ap"><rect x="20" y="20" width="120" height="44" rx="10"/><text x="80" y="47">ChatGPT</text></g><g class="ap"><rect x="20" y="90" width="120" height="44" rx="10"/><text x="80" y="117">Claude</text></g><g class="ap"><rect x="20" y="160" width="120" height="44" rx="10"/><text x="80" y="187">Gemini</text></g><g class="sv"><rect x="280" y="20" width="120" height="44" rx="10"/><text x="340" y="47">Google Drive</text></g><g class="sv"><rect x="280" y="90" width="120" height="44" rx="10"/><text x="340" y="117">국가통계</text></g><g class="sv"><rect x="280" y="160" width="120" height="44" rx="10"/><text x="340" y="187">사내 시스템</text></g><g class="hub"><rect x="170" y="88" width="80" height="48" rx="24"/><text x="210" y="117">MCP</text></g></svg><div class="mw-n">서비스마다 <b>MCP 서버 1개</b> · 어느 AI 앱에서나</div></div></div><div class="note red"><span class="nk">비유</span><span class="nt">충전 단자가 기기마다 다르던 시절 → <b>USB-C 하나</b>로 · MCP = AI와 도구를 잇는 공통 단자</span></div></div></section>
+
+<section class="slide" data-title="MCP 한눈에 보기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">MCP</div><h2 class="s-title">MCP 한눈에 보기</h2><div class="rule"></div><div class="body"><div class="pipe"><div class="step"><div class="si">01</div><div class="sn">AI 앱</div><div class="sd">ChatGPT · Claude · Gemini<br>= MCP 클라이언트</div></div><div class="arrow">→</div><div class="step hl"><div class="si">02</div><div class="sn">MCP 서버</div><div class="sd">도구 목록 · 실행 담당</div></div><div class="arrow">→</div><div class="step"><div class="si">03</div><div class="sn">서비스</div><div class="sd">국가통계 · 공시 · 사내 시스템</div></div></div><table class="ctable "><thead><tr><th>순서</th><th>AI 앱 → MCP 서버</th><th>MCP 서버 → AI 앱</th></tr></thead><tbody><tr><td><b>① 목록</b></td><td>「어떤 도구가 있어?」</td><td>통계 검색 · 통계표 조회</td></tr><tr><td><b>② 호출</b></td><td>「통계표 조회 · 자연재해 피해 · 2024」</td><td>서비스에서 값을 가져옴</td></tr><tr><td><b>③ 결과</b></td><td>—</td><td>표 데이터 → AI가 답변 작성</td></tr></tbody></table><div class="note red"><span class="nk">사용자는</span><span class="nt">주소 등록 · 로그인 한 번 → 이후는 평소처럼 질문</span></div></div></section>
 
 <section class="slide" data-title="가져다 쓰는 외부 도구 · MCP 서버"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">도구</div><h2 class="s-title">가져다 쓰는 외부 도구 · MCP 서버</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th>분야</th><th>서버</th><th>재보험 업무에서</th></tr></thead><tbody><tr><td><b>국가통계</b></td><td>korea-stats-mcp (KOSIS)</td><td>재해 · 인구 · 산업 통계로 위험 추이</td></tr><tr><td><b>기업 공시</b></td><td>DART-mcp-server</td><td>원수사 · 경쟁사 공시 · 재무 정보</td></tr><tr><td><b>법령</b></td><td>korean-law-mcp</td><td>보험업법 · 시행령 · 행정규칙 조회</td></tr><tr><td><b>공공데이터</b></td><td>data-go-mcp-servers</td><td>공공데이터포털의 여러 API를 도구로</td></tr><tr><td><b>기술 문서</b></td><td>Microsoft Learn MCP</td><td>엑셀 · 파워포인트 · 스크립트 사용법</td></tr></tbody></table><div class="note red"><span class="nk">주의</span><span class="nt">공개 서버는 만든 곳 · 권한 범위를 먼저 확인 · 회사 데이터는 사내 승인 서버로만</span></div><div class="note "><span class="nk">출처</span><span class="nt">Awesome MCP Korea 목록 · Microsoft Learn MCP 공식 문서</span></div></div></section>
 
