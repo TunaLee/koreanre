@@ -411,3 +411,7 @@
 .cc-tag{font-size:15px; padding:8px 12px; border-radius:8px; background:#f1f1f4; color:#26262B;}
 .cc-col.ccd .cc-tag{background:#fde8ec; color:#b0001f; font-weight:700;}
 @media print{.cc-cur{display:none}}
+
+.se .in.md{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; white-space:pre-wrap; background:#fafafb;}
+.se .sbtn{display:flex; justify-content:flex-end; gap:8px; margin-top:4px;} .se .sbtn .sv{margin-top:0;}
+.se .rf{border:1px solid #D9D9DE; border-radius:8px; padding:7px 14px; font-size:13.5px; font-weight:700; color:#555;}

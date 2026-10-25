@@ -150,13 +150,13 @@ def calendar(events):
 
 
 def skill_editor(name, desc, guide, files):
+    """ChatGPT · skill-creator가 만든 스킬 초안 창 (SKILL.md + 참고 파일 + Install)."""
     f = "".join(f'<span class="file">{ic("doc")}{x}</span>' for x in files)
-    return window("스킬 만들기", (
-        f'<div class="se"><label>이름</label><div class="in">{name}</div>'
-        f'<label>설명 <em>← 언제 부를지 정함</em></label><div class="in">{desc}</div>'
-        f'<label>지침</label><div class="in ta">{guide}</div>'
+    md = f"---\nname: {name}\ndescription: {desc}\n---\n\n## 지침\n{guide}"
+    return window("스킬 초안 · skill-creator", (
+        f'<div class="se"><label>SKILL.md <em>← description이 호출 시점을 정함</em></label><div class="in ta md">{md}</div>'
         f'<label>참고 파일</label><div class="files">{f}</div>'
-        '<div class="sv">저장</div></div>'), "se-w")
+        '<div class="sbtn"><span class="rf">계속 다듬기</span><span class="sv">Install</span></div></div>'), "se-w")
 
 
 def report_card(rows, title="주간업무보고_결과"):
