@@ -144,3 +144,17 @@ def ba(before, after, lb="이전", la="이후"):
     br = lambda s: _h.escape(s).replace("\n", "<br>")
     return (f'<div class="bav"><div class="b"><div class="lab">{lb}</div><div class="q">{br(before)}</div></div>'
             f'<div class="arr">→</div><div class="a"><div class="lab">{la}</div><div class="q">{br(after)}</div></div></div>')
+
+
+SITE = "https://tunalee.github.io/koreanre/"
+
+
+def links(rows):
+    """실습 자료 링크 버튼. rows: (제목, 설명, 상대 경로). 슬라이드 · PDF 어디서든 열리게 절대 주소로."""
+    from urllib.parse import quote
+    out = ""
+    for t, d, path in rows:
+        url = SITE + quote(path)
+        out += (f'<a class="dlk" href="{url}" target="_blank" rel="noopener"><b>{t}</b><span>{d}</span>'
+                f'<em>{SITE.replace("https://", "")}{path}</em></a>')
+    return f'<div class="dlks">{out}</div>'

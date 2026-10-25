@@ -594,6 +594,12 @@
   .combo span{border:2px solid var(--ink); border-radius:12px; padding:18px 26px; font-size:22px; font-weight:900;}
   .combo span.hl{background:var(--violet); border-color:var(--violet); color:#fff;}
   .combo b{font-size:30px; color:var(--mut);}
+  /* 실습 자료 링크 */
+  .dlks{display:flex; flex-direction:column; gap:12px;}
+  .dlk{display:grid; grid-template-columns:1fr auto; gap:2px 16px; align-items:center; text-decoration:none; color:var(--ink); border:2px solid var(--line); border-left:6px solid var(--violet); border-radius:12px; padding:14px 18px; background:#fff;}
+  .dlk:hover{border-color:var(--violet);}
+  .dlk b{font-size:19px;} .dlk span{grid-row:1 / 3; grid-column:2; font-size:14px; font-weight:800; color:#fff; background:var(--violet); border-radius:8px; padding:8px 14px;}
+  .dlk em{font-style:normal; font-size:13px; color:var(--mut); word-break:break-all;}
 
 </style>
 </head>
@@ -654,6 +660,8 @@
 <section class="slide" data-title="진행 순서"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">진행 순서</h2><div class="rule"></div><div class="body"><div class="pipe"><div class="step"><div class="si">01</div><div class="sn">에이전트와 플러그인</div><div class="sd">동작 원리 · 시트 · 캘린더 연결</div></div><div class="arrow">→</div><div class="step"><div class="si">02</div><div class="sn">반복 업무 구조화</div><div class="sd">지침 · 참고자료 · 예시</div></div><div class="arrow">→</div><div class="step"><div class="si">03</div><div class="sn">내 업무 스킬</div><div class="sd">만들기 · 호출 · 검증</div></div></div><table class="ctable "><thead><tr><th>블록</th><th>실습</th><th>결과</th></tr></thead><tbody><tr><td><b>01</b> 채팅을 넘어: 에이전트와 플러그인</td><td>시트 · 캘린더 연결</td><td>이번 주 요약</td></tr><tr><td><b>02</b> 반복 문서 업무 구조화</td><td>지침 전후 비교</td><td>공통 지침 1건</td></tr><tr><td><b>03</b> 담당 업무 스킬 제작 · 연동</td><td>내 업무로 스킬</td><td>스킬 1개 · 체크리스트</td></tr></tbody></table></div></section>
 
 <section class="slide" data-title="실습 준비"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">실습 준비</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="chk"><div>개인 노트북 · 외부망 연결</div><div>ChatGPT 유료 계정 로그인</div><div>Google 계정 로그인 (크롬 · 엣지)</div><div>실습 자료 링크 열기</div></div></div><div><div class="pane good"><h4>다른 툴을 쓰는 경우</h4><ul class='ul'><li>Claude · Gemini도 같은 표준(스킬 · MCP)을 따름</li><li>오늘은 <b>ChatGPT 화면</b> 기준으로 진행</li><li>막히면 튜터에게 요청</li></ul></div></div></div></div></section>
+
+<section class="slide" data-title="실습 자료 받기"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">실습 자료 받기</h2><div class="rule"></div><div class="body"><div class="dlks"><a class="dlk" href="https://tunalee.github.io/koreanre/dl/%EC%98%A4%EC%A0%84_%EC%8B%A4%EC%8A%B5%EC%9E%90%EB%A3%8C.zip" target="_blank" rel="noopener"><b>오전 실습 자료 (zip)</b><span>내려받기</span><em>tunalee.github.io/koreanre/dl/오전_실습자료.zip</em></a><a class="dlk" href="https://tunalee.github.io/koreanre/" target="_blank" rel="noopener"><b>강의 슬라이드 · 자료 모음</b><span>열기</span><em>tunalee.github.io/koreanre/</em></a></div><div class="note red"><span class="nk">들어 있는 것</span><span class="nt">팀 업무 현황(xlsx) · 주간보고 양식 · 작성 예시 · 메일 예시 · 팀 일정(ics) · 모두 가상 데이터</span></div></div></section>
 
 <section class="slide" data-title="정보 취급 기준"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">시작 전</div><h2 class="s-title">정보 취급 기준</h2><div class="rule"></div><div class="body"><table class="ctable "><thead><tr><th></th><th>기준</th></tr></thead><tbody><tr><td><b>데이터</b></td><td>실습용 더미만 · <span class='hl'>회사 실데이터 입력 금지</span></td></tr><tr><td><b>계정 연동</b></td><td>개인 Google 계정 · 실습용 시트와 캘린더만 연결</td></tr><tr><td><b>실습 후</b></td><td>원하면 연결 해제 · 「실습용 팀 일정」 캘린더 삭제</td></tr><tr><td><b>회사 계정</b></td><td>Outlook · SharePoint 등 회사 계정 연결은 <b>사내 승인 후</b> · 오늘은 개인 Google 계정으로</td></tr><tr><td><b>결과물</b></td><td>AI 결과는 초안 · 최종 확인과 책임은 작성자</td></tr></tbody></table></div></section>
 

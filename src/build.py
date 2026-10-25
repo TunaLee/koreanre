@@ -44,8 +44,7 @@ a.row:hover{background:#FFF5F7;} a.row span{color:var(--mut);font-size:14px;} a.
 <a class="row" href="pm.html"><b>오후 강의 슬라이드</b><span>열기 →</span></a>
 <a class="row" href="dl/오후_공통데이터.csv" download><b>오후 공통 데이터 (CSV)</b><span>내려받기</span></a>
 <a class="row" href="dl/오후_공통데이터_출처.md" download><b>공통 데이터 출처</b><span>내려받기</span></a>
-<a class="row" href="dl/GAS_업무관리.zip" download><b>심화 · GAS 업무 관리 웹 완성본</b><span>zip 내려받기</span></a>
-<a class="row" href="gas_preview.html"><b>GAS 업무 관리 웹 미리보기 (가짜 데이터)</b><span>열기 →</span></a>
+<a class="row" href="dl/업무관리_예시데이터.csv" download><b>심화 · 업무 관리 예시 데이터 (CSV)</b><span>내려받기</span></a>
 <p class="note">실습 자료의 이름 · 숫자는 모두 가상입니다(오후 공통 데이터는 공식 통계). 회사 실데이터는 입력하지 마세요.</p>
 </main></body></html>
 """
@@ -63,14 +62,9 @@ def downloads(out):
         for f in sorted((data / "오전").rglob("*")):
             if f.is_file() and f.name != ".DS_Store":
                 z.write(f, Path("오전_실습자료") / f.relative_to(data / "오전"))
-    for name in ("오후_공통데이터.csv", "오후_공통데이터_출처.md"):
+    for name in ("오후_공통데이터.csv", "오후_공통데이터_출처.md", "업무관리_예시데이터.csv"):
         shutil.copy(data / name, dl / name)
-    with zipfile.ZipFile(dl / "GAS_업무관리.zip", "w", zipfile.ZIP_DEFLATED) as z:
-        for f in sorted((data / "GAS_업무관리").iterdir()):
-            z.write(f, Path("GAS_업무관리") / f.name)
-    gas = (data / "GAS_업무관리" / "Index.html").read_text(encoding="utf-8")
-    stub = (SRC / "gas_stub.js").read_text(encoding="utf-8")
-    (out / "gas_preview.html").write_text(gas.replace("<head>", "<head><script>" + stub + "</script>", 1), encoding="utf-8")
+    (out / "gas_preview.html").unlink(missing_ok=True)   # 완성본 미리보기는 배포하지 않음 (data/GAS_업무관리는 강사용 백업)
     (out / "index.html").write_text(INDEX, encoding="utf-8")
     (out / ".nojekyll").write_text("", encoding="utf-8")
 

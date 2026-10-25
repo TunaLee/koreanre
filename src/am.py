@@ -1,6 +1,6 @@
 """오전 · 반복 문서 업무 스킬 제작 (2H)."""
 import fig
-from kit import (ba, ill, img, big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
+from kit import (links, ba, ill, img, big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
                  table, three, tools3, two, ul)
 from trend import TREND, mcp, same_standard, trend_src, work_stats
 
@@ -53,6 +53,10 @@ def opening():
             "<div>Google 계정 로그인 (크롬 · 엣지)</div>"
             "<div>실습 자료 링크 열기</div></div>",
             pane("다른 툴을 쓰는 경우", ul(["Claude · Gemini도 같은 표준(스킬 · MCP)을 따름", "오늘은 <b>ChatGPT 화면</b> 기준으로 진행", "막히면 튜터에게 요청"]), "good"))),
+        page("실습 자료 받기", links([
+            ("오전 실습 자료 (zip)", "내려받기", "dl/오전_실습자료.zip"),
+            ("강의 슬라이드 · 자료 모음", "열기", ""),
+        ]) + note("들어 있는 것", "팀 업무 현황(xlsx) · 주간보고 양식 · 작성 예시 · 메일 예시 · 팀 일정(ics) · 모두 가상 데이터", "red")),
         page("정보 취급 기준", table(["", "기준"], [
             ["<b>데이터</b>", "실습용 더미만 · <span class='hl'>회사 실데이터 입력 금지</span>"],
             ["<b>계정 연동</b>", "개인 Google 계정 · 실습용 시트와 캘린더만 연결"],
