@@ -169,3 +169,39 @@ def web_three():
         if i < 2:
             out += '<div class="w3a">+</div>'
     return f'<div class="w3s">{out}</div>'
+
+
+def web_without():
+    """같은 미니 대시보드: HTML만 / +CSS(JS 없음) / 셋 다."""
+    raw = ('<div class="ww raw"><div class="t">손해율 대시보드</div><div>전체 손해율</div><div>—</div><div>재물</div><div>—</div>'
+           '<div>배상</div><div>—</div><div><u>전체</u> <u>재물</u> <u>배상</u></div><div class="cv">(차트 자리 · 빈칸)</div></div>')
+    card = lambda k, v: f'<div class="wwk"><span>{k}</span><b>{v}</b></div>'
+    styled = lambda vals, chart, on: (
+        f'<div class="ww"><div class="wwt">손해율 대시보드</div><div class="wwks">{card("전체", vals[0])}{card("재물", vals[1])}{card("배상", vals[2])}</div>'
+        f'<div class="wwf"><i class="{"on" if on else ""}">전체</i><i>재물</i><i>배상</i></div>'
+        f'<div class="wwc">{chart}</div></div>')
+    bars = "".join(f'<i style="height:{h}%"></i>' for h in (55, 62, 58, 70, 65))
+    nocss = styled(("—", "—", "—"), '<em>차트 빈칸</em>', False)
+    full = styled(("63%", "58%", "71%"), f'<div class="wwb">{bars}</div>', True)
+    cols = [("HTML만", "CSS · JS 없음", raw, ["글자가 위에서 아래로 나열", "카드 · 색 · 간격 없음 · 버튼은 밑줄 글자", "차트 자리는 빈칸", "숫자 자리는 「—」"]),
+            ("HTML + CSS", "JS 없음", nocss, ["보기는 완성품처럼", "필터 버튼을 눌러도 반응 없음", "숫자 계산 · 차트 그리기가 안 됨", "「모양은 되는데 안 움직임」"]),
+            ("HTML + CSS + JS", "완성", full, ["카드에 계산된 숫자", "필터를 누르면 해당 구분만", "차트가 그려짐", "CSV가 바뀌면 다시 계산"])]
+    out = ""
+    for i, (t, sub, mock, lis) in enumerate(cols):
+        out += (f'<div class="wwcol{" on" if i == 2 else ""}"><div class="wwh"><b>{t}</b><span>{sub}</span></div>{mock}'
+                f'<ul>{"".join(f"<li>{x}</li>" for x in lis)}</ul></div>')
+    return f'<div class="wws">{out}</div>'
+
+
+def layouts():
+    """레이아웃 네 가지 썸네일."""
+    def th(inner, name, use):
+        return f'<div class="lo"><div class="lo-f">{inner}</div><b>{name}</b><span>{use}</span></div>'
+    b = lambda cls="": f'<i class="{cls}"></i>'
+    items = [
+        (f'<div class="g1">{b("h")}{b()}{b()}{b()}</div>', "세로 1단", "보고서 · 인쇄 · 좁은 화면"),
+        (f'<div class="g2">{b("side")}<div class="g1">{b("h")}{b()}{b()}</div></div>', "2단 · 사이드바", "왼쪽 필터 · 오른쪽 내용"),
+        (f'<div class="g3">{b()}{b()}{b()}{b()}{b()}{b()}</div>', "카드 격자", "같은 종류 여러 개 · 업무 카드"),
+        (f'<div class="g4"><div class="g3s">{b()}{b()}{b()}</div>{b("big")}{b("tb")}</div>', "대시보드형", "위 지표 카드 · 가운데 차트 · 아래 표"),
+    ]
+    return '<div class="los">' + "".join(th(*x) for x in items) + "</div>"
