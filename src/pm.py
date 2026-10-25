@@ -351,20 +351,20 @@ def block_gas():
             steps([("새 시트", "Google 시트 → 빈 스프레드시트 · 이름 「내 업무 관리」"),
                    ("Apps Script", "메뉴 <b>확장 프로그램 → Apps Script</b>"),
                    ("프로젝트 이름", "왼쪽 위 「제목 없는 프로젝트」 → 「내 업무 관리」")]),
-            shot("Google 시트 · 확장 프로그램 → Apps Script 메뉴", "img/pm_gas_menu.png")), kick="실습 5"),
+            img("img/pm_gas_menu.png", "Google 시트 · Extensions(확장 프로그램) → Apps Script", light=True)), kick="실습 5"),
         page("② 요청문으로 코드 받기", prompt(GAS_PROMPT, "실습 5 · 요청문")
              + note("막히면", "실습 자료 <b>GAS_업무관리</b> 폴더의 Code.gs · Index.html 완성본 사용", "red"), kick="실습 5"),
         page("③ 두 파일 붙여 넣기", two(
             steps([("Code.gs", "기존 내용 전부 지우고 받은 Code.gs 붙여 넣기"),
                    ("Index.html", "파일 <b>+</b> → HTML → 이름 <b>Index</b> (확장자 없이) → 붙여 넣기"),
                    ("저장", "디스크 아이콘 · ⌘S / Ctrl+S")]),
-            shot("Apps Script 편집기 · Code.gs · Index.html 두 파일", "img/pm_gas_editor.png")), kick="실습 5"),
+            img("img/pm_gas_editor.png", "파일 목록에 Code.gs · Index.html 두 개 · 이름은 대문자 I", light=True)), kick="실습 5"),
         page("④ 웹 앱 배포", two(
             steps([("새 배포", "오른쪽 위 <b>배포 → 새 배포</b> → 유형 <b>웹 앱</b>"),
                    ("실행 · 액세스", "실행: <b>나</b> · 액세스: <b>나만</b>"),
                    ("권한 허용", "계정 선택 → 「고급」 → 「내 업무 관리(으)로 이동」 → 허용"),
                    ("열기", "웹 앱 URL → 즐겨찾기")]),
-            shot("Apps Script 새 배포 · 웹 앱 · 액세스 「나만」", "img/pm_gas_deploy.png"))
+            img("img/pm_gas_deploy.png", "유형 웹 앱 · 실행 나 · 액세스 나만", light=True))
             + note("경고 화면", "내가 만든 스크립트라서 뜨는 확인 · <b>액세스를 「모든 사용자」로 두지 않기</b>", "red"), kick="실습 5"),
         page("⑤ 쓰면서 고치기", flow([
             ("업무 입력", "새 업무 · 진행률"), ("사진 올리기", "카드의 「파일 · 사진 올리기」"),
