@@ -128,3 +128,21 @@ def proxy():
     s += f'<text x="1010" y="190" class="bt" fill="{N}">화면으로만</text>'
     s += '<text x="1010" y="218" class="bs">시트 직접 수정 없음</text><text x="1010" y="242" class="bs">정해진 입력만 저장</text><text x="1010" y="266" class="bs">원본은 안전</text>'
     return f'<svg viewBox="0 0 1240 460" class="websvg">{s}</svg>'
+
+
+def static_vs_dynamic():
+    """정적(CSV를 넣어 만든 HTML) vs 동적(시트 연동 웹): 원본이 바뀌면? 10초 반복 · 인쇄에는 바뀐 뒤 장면."""
+    def box(title, sub, extra="", cls=""):
+        return f'<div class="sd-b {cls}"><b>{title}</b><span>{sub}</span>{extra}</div>'
+    val = lambda old, new, cls: f'<div class="sd-v {cls}"><i class="o">{old}</i><i class="n">{new}</i></div>'
+    top = (box("CSV 파일", "10월 손해율", val("62%", "65%", "src"))
+           + '<div class="sd-a">→</div>' + box("AI에 첨부 · 요청", "한 번 만들 때만")
+           + '<div class="sd-a">→</div>' + box("HTML 파일", "숫자가 파일 안에 고정", val("62%", "62%", "stuck"), "file")
+           + '<div class="sd-a">→</div>' + box("브라우저", "열어 보기", '<div class="sd-tag bad">그대로 62% · 다시 요청해 새 파일</div>'))
+    bot = (box("Google 시트", "원본 · 10월 손해율", val("62%", "65%", "src"))
+           + '<div class="sd-a dyn">⇄<em></em></div>' + box("Apps Script", "열 때마다 시트를 읽음")
+           + '<div class="sd-a dyn">⇄<em></em></div>' + box("웹 화면", "새로고침", val("62%", "65%", "live"), "file")
+           + '<div class="sd-a">→</div>' + box("브라우저", "웹 앱 주소", '<div class="sd-tag good">65% 반영 · 화면 입력도 시트로</div>'))
+    return (f'<div class="sd"><div class="sd-ev">원본 데이터 변경 · 10월 손해율 62% → 65%</div>'
+            f'<div class="sd-l"><div class="sd-h">정적 · CSV를 넣어 만든 대시보드</div><div class="sd-row">{top}</div></div>'
+            f'<div class="sd-l"><div class="sd-h on">동적 · 데이터를 연동한 웹</div><div class="sd-row">{bot}</div></div></div>')

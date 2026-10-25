@@ -633,6 +633,32 @@
   .tu-s b{display:block; font-size:15px;} .tu-s span{font-size:13px; color:var(--mut);}
   .tu-ts{display:flex; gap:10px; margin-top:10px;} .tu-t{flex:1; display:flex; align-items:center; gap:8px; border:1px dashed var(--line); border-radius:10px; padding:6px 10px; font-size:14px; font-weight:700;}
   .tu-t svg{width:20px; height:20px; flex:none;}
+  /* 정적 vs 동적 애니메이션 (10초 반복 · 기본값은 바뀐 뒤 장면) */
+  .sd{display:flex; flex-direction:column; gap:12px; position:relative;}
+  .sd-ev{align-self:center; font-size:15px; font-weight:900; color:#fff; background:var(--violet); border-radius:999px; padding:6px 16px; animation:sdEv 10s infinite both;}
+  .sd-l{border:1px solid var(--line); border-radius:14px; padding:10px 14px;}
+  .sd-h{font-size:15px; font-weight:900; color:var(--mut); margin-bottom:8px;} .sd-h.on{color:var(--violet);}
+  .sd-row{display:grid; grid-template-columns:1fr 30px 1fr 30px 1fr 30px 1.25fr; align-items:stretch; gap:4px;}
+  .sd-b{border:1px solid var(--line); border-top:3px solid var(--ink); border-radius:10px; padding:8px 10px; display:flex; flex-direction:column; gap:2px; background:#fff;}
+  .sd-b b{font-size:15px;} .sd-b span{font-size:12px; color:var(--mut);} .sd-b.file{border-top-color:var(--violet);}
+  .sd-a{display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--mut); font-size:18px; position:relative;}
+  .sd-a.dyn em{position:absolute; width:10px; height:10px; border-radius:50%; background:var(--violet); left:0; animation:sdDot 10s infinite both;}
+  .sd-v{position:relative; height:30px; margin-top:4px;} .sd-v i{position:absolute; left:0; top:0; font-style:normal; font-size:24px; font-weight:900;}
+  .sd-v .o{opacity:0; animation:sdOld 10s infinite both;} .sd-v .n{opacity:1; animation:sdNew 10s infinite both;}
+  .sd-v.src .n,.sd-v.live .n{color:var(--violet);}
+  .sd-v.stuck .o,.sd-v.stuck .n{color:var(--ink);}
+  .sd-tag{margin-top:4px; font-size:12px; font-weight:800; border-radius:6px; padding:3px 6px; opacity:1; animation:sdTag 10s infinite both;}
+  .sd-tag.bad{background:#F1F1F4; color:var(--ink);} .sd-tag.good{background:#FFE3E9; color:var(--violet);}
+  .sd-v.live .n{animation-name:sdLive;} .sd-l:last-child .sd-tag{animation-name:sdTagLate;}
+  @keyframes sdEv{0%,30%{opacity:.25} 38%,92%{opacity:1} 100%{opacity:.25}}
+  @keyframes sdOld{0%,38%{opacity:1} 42%,100%{opacity:0}}
+  @keyframes sdNew{0%,38%{opacity:0} 42%,100%{opacity:1}}
+  @keyframes sdLive{0%,58%{opacity:0} 62%,100%{opacity:1}}
+  @keyframes sdTag{0%,44%{opacity:0} 48%,100%{opacity:1}}
+  @keyframes sdTagLate{0%,62%{opacity:0} 66%,100%{opacity:1}}
+  @keyframes sdDot{0%,42%{opacity:0; left:0} 44%{opacity:1; left:0} 58%{opacity:1; left:20px} 60%,100%{opacity:0; left:20px}}
+  .sd-v.live .o{animation-name:sdLiveOld;} @keyframes sdLiveOld{0%,58%{opacity:1} 62%,100%{opacity:0}}
+  @media print{.sd *{animation:none!important} .sd-v .o{opacity:0} .sd-v .n{opacity:1}}
 
 </style>
 </head>
