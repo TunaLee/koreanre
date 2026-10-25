@@ -277,3 +277,12 @@ def next_token(prefix, steps, end_label, uid="nt"):
   <div class="galab">다음 토큰 후보 <span>(설명용 확률)</span></div>
   <div class="garows">{rows}</div>
 </div>''' + js)
+
+
+def tones():
+    """같은 할 일 카드 · 네 가지 디자인 톤."""
+    items = [("tn-base", "기본", "파란 강조 · 보통 간격"), ("tn-rep", "차분한 보고서", "흰 배경 · 남색 하나 · 넓은 여백 · 각진 모서리"),
+             ("tn-dark", "다크 대시보드", "어두운 배경 · 청록 숫자 · 큰 숫자"), ("tn-soft", "밝은 카드형", "연한 배경 · 보라 · 둥근 모서리 · 그림자")]
+    card = ('<div class="tnx"><div class="tnh">이번 주 팀 할 일</div><div class="tnc"><b>비용 집계 보고</b><span>이준호 · 10/28</span><i>완료</i></div>'
+            '<div class="tnc"><b>행사 장소 답사</b><span>정하늘 · 10/30</span><i>완료</i></div></div>')
+    return '<div class="tns">' + "".join(f'<div class="tn {c}">{card}<b class="tnn">{n}</b><span class="tnd">{d}</span></div>' for c, n, d in items) + "</div>"
