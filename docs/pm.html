@@ -659,6 +659,20 @@
   @keyframes sdDot{0%,42%{opacity:0; left:0} 44%{opacity:1; left:0} 58%{opacity:1; left:20px} 60%,100%{opacity:0; left:20px}}
   .sd-v.live .o{animation-name:sdLiveOld;} @keyframes sdLiveOld{0%,58%{opacity:1} 62%,100%{opacity:0}}
   @media print{.sd *{animation:none!important} .sd-v .o{opacity:0} .sd-v .n{opacity:1}}
+  /* 웹을 이루는 세 가지 */
+  .w3s{display:grid; grid-template-columns:1fr 24px 1fr 24px 1fr; gap:8px; align-items:stretch;}
+  .w3a{display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:900; color:var(--mut);}
+  .w3{border:2px solid var(--line); border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:6px;}
+  .w3h{display:flex; align-items:baseline; gap:8px;} .w3h b{font-size:21px;} .w3h span{font-size:15px; font-weight:800; color:var(--violet);}
+  .w3r{font-size:13px; color:var(--mut);}
+  .w3code{margin:0; background:#1d1d22; color:#e8e8ee; border-radius:8px; padding:8px 10px; font-size:11.5px; line-height:1.45; white-space:pre; overflow:hidden; min-height:118px;}
+  .w3k{font-size:12px; font-weight:900; color:var(--violet); margin-top:auto;}
+  .w3p{border:1px dashed var(--line); border-radius:8px; padding:10px; min-height:96px; background:#fff;}
+  .w3p.raw{font-family:"Times New Roman", serif; font-size:14px; line-height:1.5;}
+  .w3c{border:1px solid #ddd; border-top:4px solid #2f6bd8; border-radius:10px; padding:10px 12px; display:grid; grid-template-columns:1fr auto; gap:2px 8px; align-items:center;}
+  .w3c b{font-size:15px;} .w3c span{grid-column:1; font-size:12px; color:var(--mut);} .w3c i{grid-row:1 / 3; grid-column:2; font-style:normal; font-size:12px; font-weight:800; color:#fff; background:#2f6bd8; border-radius:6px; padding:4px 8px;}
+  .w3c.done{opacity:.6;} .w3c.done b{text-decoration:line-through;} .w3c.done i{background:#8a8a92;}
+  .w3p small{display:block; margin-top:6px; font-size:13px; font-weight:800; color:var(--violet);}
 
 </style>
 </head>
@@ -879,7 +893,21 @@
 <circle cx="874" cy="519" r="10" fill="#FFFFFF" stroke="#26262B" stroke-width="3"/>
 <g transform="translate(1110,580) scale(1.15)"><path d="M-44 -86 Q-80 -80 -78 -42" stroke="#26262B" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="-78" cy="-42" r="10" fill="#DCDCE1" stroke="#26262B" stroke-width="3"/></g></svg><span class="coord icoord"><b>01</b> / <span class="tot"></span></span><div class="icap top"><h2>답변과 미리보기</h2><ul><li>글로 받는 답: 읽고 끝</li><li>코드 블록 미리보기: 화면을 보면서 고쳐 달라고 요청</li></ul></div></section>
 
-<section class="slide" data-title="HTML 파일을 이루는 세 가지"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">HTML 파일을 이루는 세 가지</h2><div class="rule"></div><div class="body"><div class="cards c3"><div class="card"><span class="n">1</span><h3>HTML</h3><p>화면 뼈대 · 카드 · 표 자리</p></div><div class="card"><span class="n">2</span><h3>CSS</h3><p>색 · 크기 · 배치</p></div><div class="card"><span class="n">3</span><h3>JavaScript</h3><p>숫자 계산 · 차트 · 필터 동작</p></div></div><div class="note red"><span class="nk">결과</span><span class="nt">세 가지가 파일 하나에 · 브라우저에서 바로 열리는 화면</span></div></div></section>
+<section class="slide" data-title="HTML 파일을 이루는 세 가지"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><h2 class="s-title">HTML 파일을 이루는 세 가지</h2><div class="rule"></div><div class="body"><div class="w3s"><div class="w3"><div class="w3h"><b>HTML</b><span>= 집의 뼈대 · 방 배치</span></div><div class="w3r">무엇이 어디에 있는지</div><pre class="w3code">&lt;h4&gt;이번 주 팀 할 일&lt;/h4&gt;
+&lt;div class=&quot;card&quot;&gt;
+  &lt;b&gt;비용 집계 보고&lt;/b&gt;
+  &lt;span&gt;이준호 · 10/28&lt;/span&gt;
+  &lt;button&gt;완료&lt;/button&gt;
+&lt;/div&gt;</pre><div class="w3k">화면</div><div class="w3p raw"><div style="font-size:15px;font-weight:700">이번 주 팀 할 일</div><div>비용 집계 보고</div><div>이준호 · 10/28</div><div><u>완료</u></div></div></div><div class="w3a">+</div><div class="w3"><div class="w3h"><b>CSS</b><span>= 인테리어</span></div><div class="w3r">색 · 크기 · 간격 · 배치</div><pre class="w3code">.card {
+  border: 1px solid #ddd;
+  border-top: 4px solid #2f6bd8;
+  border-radius: 10px;
+  padding: 14px;
+}</pre><div class="w3k">화면</div><div class="w3p"><div class="w3c"><b>비용 집계 보고</b><span>이준호 · 10/28</span><i>완료</i></div></div></div><div class="w3a">+</div><div class="w3"><div class="w3h"><b>JavaScript</b><span>= 전기 · 스위치</span></div><div class="w3r">누르면 움직이고 계산</div><pre class="w3code">button.onclick = () =&gt; {
+  card.classList.add(&quot;done&quot;);
+  count = count - 1;
+  left.textContent = `남은 일 ${count}개`;
+};</pre><div class="w3k">화면</div><div class="w3p"><div class="w3c done"><b>비용 집계 보고</b><span>이준호 · 10/28</span><i>완료됨</i></div><small>남은 일 2개</small></div></div></div><div class="note red"><span class="nk">결과</span><span class="nt">세 가지가 파일 하나에 · 브라우저에서 바로 열림 · 요청할 땐 「뼈대 · 꾸밈 · 동작」을 나눠 말하면 고치기 쉬움</span></div></div></section>
 
 <section class="slide" data-title="짐작한 숫자와 계산한 숫자"><div class="topbar"><span>코리안리재보험 AI 업무도구 제작 교육</span><span class="coord"><b>01</b> / <span class="tot"></span></span></div><div class="kick">코드 작업</div><h2 class="s-title">짐작한 숫자와 계산한 숫자</h2><div class="rule"></div><div class="body"><div class="twocol "><div><div class="pane bad"><h4>글로만 답할 때</h4><ul class='ul'><li>CSV를 읽고 숫자를 <b>짐작</b>해서 씀</li><li>합계 · 평균이 그럴듯하지만 틀릴 수 있음</li><li>어떻게 계산했는지 확인할 방법 없음</li></ul></div></div><div><div class="pane good"><h4>파일 분석 · 코드 실행</h4><ul class='ul'><li>AI가 Python 코드를 <b>직접 실행</b>해 집계</li><li>결과 표와 계산 코드를 함께 보여 줌</li><li>그 표의 숫자로 대시보드 · 차트</li></ul></div></div></div><div class="code prompt sm"><div class="bar"><span class="plabel">숫자가 들어가는 요청에 한 줄 추가</span></div><pre><code>첨부한 CSV를 코드로 집계해서 지표 · 연도별 값을 표로 보여 줘.
 계산에 쓴 코드도 보여 주고, 대시보드에는 이 표의 숫자만 써 줘.</code></pre></div><div class="note red"><span class="nk">확인</span><span class="nt">계산 코드와 결과 표가 함께 나왔는지 · 표 숫자 = 대시보드 숫자</span></div></div></section>

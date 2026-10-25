@@ -146,3 +146,26 @@ def static_vs_dynamic():
     return (f'<div class="sd"><div class="sd-ev">원본 데이터 변경 · 10월 손해율 62% → 65%</div>'
             f'<div class="sd-l"><div class="sd-h">정적 · CSV를 넣어 만든 대시보드</div><div class="sd-row">{top}</div></div>'
             f'<div class="sd-l"><div class="sd-h on">동적 · 데이터를 연동한 웹</div><div class="sd-row">{bot}</div></div></div>')
+
+
+def web_three():
+    """HTML · CSS · JS = 뼈대 · 인테리어 · 스위치 · 같은 카드가 단계별로 바뀜."""
+    import html as _h
+    cols = [
+        ("HTML", "집의 뼈대 · 방 배치", "무엇이 어디에 있는지",
+         '<h4>이번 주 팀 할 일</h4>\n<div class="card">\n  <b>비용 집계 보고</b>\n  <span>이준호 · 10/28</span>\n  <button>완료</button>\n</div>',
+         '<div class="w3p raw"><div style="font-size:15px;font-weight:700">이번 주 팀 할 일</div><div>비용 집계 보고</div><div>이준호 · 10/28</div><div><u>완료</u></div></div>'),
+        ("CSS", "인테리어", "색 · 크기 · 간격 · 배치",
+         '.card {\n  border: 1px solid #ddd;\n  border-top: 4px solid #2f6bd8;\n  border-radius: 10px;\n  padding: 14px;\n}',
+         '<div class="w3p"><div class="w3c"><b>비용 집계 보고</b><span>이준호 · 10/28</span><i>완료</i></div></div>'),
+        ("JavaScript", "전기 · 스위치", "누르면 움직이고 계산",
+         'button.onclick = () => {\n  card.classList.add("done");\n  count = count - 1;\n  left.textContent = `남은 일 ${count}개`;\n};',
+         '<div class="w3p"><div class="w3c done"><b>비용 집계 보고</b><span>이준호 · 10/28</span><i>완료됨</i></div><small>남은 일 2개</small></div>'),
+    ]
+    out = ""
+    for i, (name, ana, role, code, prev) in enumerate(cols):
+        out += (f'<div class="w3"><div class="w3h"><b>{name}</b><span>= {ana}</span></div><div class="w3r">{role}</div>'
+                f'<pre class="w3code">{_h.escape(code)}</pre><div class="w3k">화면</div>{prev}</div>')
+        if i < 2:
+            out += '<div class="w3a">+</div>'
+    return f'<div class="w3s">{out}</div>'
