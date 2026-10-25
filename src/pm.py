@@ -1,7 +1,7 @@
 """오후 · 웹 리서치 기반 HTML 보고서 제작 (4H)."""
 import fig
 import webfig
-from trend import TREND, horizon, same_standard, three_levels, trend_src, work_stats
+from trend import TREND, agent_background, same_standard, trend_src, work_stats
 from kit import (links, ba, ill, img, big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
                  table, three, tools3, two, ul)
 
@@ -75,9 +75,7 @@ def opening():
 def block1():
     return [
         section("01", "AI 흐름과 동작 원리", "AI가 웹을 찾아 보고서를 만드는 원리"),
-        page("채팅에서 에이전트로", fig.timeline(TREND), kick="최신 흐름", sub=trend_src()),
-        horizon(),
-        three_levels(),
+        *agent_background(),
         work_stats(),
         page("웹 검색의 동작 방식", fig.agent_loop("「○○ 최근 3년 자료 찾아 줘」", "출처 달린 표", [("검색 계획", "어떤 말로 찾을지"), ("웹 검색", "여러 사이트 읽기"), ("결과 확인", "숫자 · 날짜 · 출처"), ("다시 검색", "부족하면 다른 말로")])
              + note("검색 흐름", "요청 → 검색 계획 → 웹 검색 → 결과 확인 → 부족하면 다시 검색 → 표 · 보고서", "red"), kick="동작 원리"),

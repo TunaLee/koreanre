@@ -2,7 +2,7 @@
 import fig
 from kit import (links, ba, ill, img, big, cards, chat, cover, flow, lab, note, page, pane, prompt, section, shot, steps,
                  table, three, tools3, two, ul)
-from trend import TREND, mcp, same_standard, trend_src, work_stats
+from trend import TREND, agent_background, external_tools, made_tools, mcp, same_standard, tool_kinds, trend_src, work_stats
 
 SHEET = "팀 업무 현황"
 CAL = "실습용 팀 일정"
@@ -70,7 +70,7 @@ def opening():
 def block1():
     return [
         section("01", "채팅을 넘어:<br>에이전트와 플러그인", "AI가 시트를 읽고 보고서를 쓰는 원리"),
-        page("채팅에서 에이전트로", fig.timeline(TREND), kick="최신 흐름", sub=trend_src()),
+        *agent_background(),
         work_stats(),
         page("직업별 생성형 AI 경험률", two(
             fig.bars([("전문 · 관리직", 70.4), ("사무직", 71.9), ("서비스 · 판매직", 38.3), ("생산 관련직", 24.6), ("전체", 44.5)], hl="사무직"),
@@ -85,6 +85,9 @@ def block1():
              + note("채팅과 다른 점", "한 번 답하고 끝나지 않음 · 필요한 자료를 직접 찾아 읽고 부족하면 반복"), kick="동작 원리"),
         page("시트를 읽는 원리", fig.tool_call()
              + note("권한", "<b>연결할 때 허용한 범위</b>만 조회 · 연결 해제 시 접근 종료", "red"), kick="동작 원리"),
+        tool_kinds(),
+        made_tools(),
+        external_tools(),
         page("대화창 지시와 저장된 지침", fig.forgetting()
              + note("그래서", "매주 같은 설명 → <b>스킬로 저장</b> · 새 대화에서도 같은 규칙"), kick="동작 원리"),
         page("스킬이 호출되는 원리", fig.disclosure()
