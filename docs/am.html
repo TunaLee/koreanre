@@ -723,6 +723,37 @@
   .tn-soft .tnx{background:#F6F7FB; border-color:#F6F7FB;} .tn-soft .tnc{background:#fff; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,.08);} .tn-soft .tnc span{color:#777;}
   .tn-soft .tnc i{background:#6D5DFC; color:#fff; border-radius:999px;} .tn-soft .tnh{color:#6D5DFC;}
 
+/* click_compare: 정적 · 동적 클릭 비교 */
+.cc{display:grid; grid-template-columns:1fr 1fr; gap:36px; margin-top:6px;}
+.cc-col{display:flex; flex-direction:column; gap:10px;}
+.cc-h{display:flex; align-items:baseline; gap:12px;} .cc-h b{font-size:24px;} .cc-h span{font-size:16px; color:#6b6b73;}
+.cc-col.ccd .cc-h b{color:#E8002D;}
+.cc-win{position:relative; border:1.5px solid #cfcfd6; border-radius:12px; overflow:hidden; background:#fff;}
+.cc-bar{display:flex; align-items:center; gap:6px; padding:8px 12px; background:#f1f1f4; border-bottom:1px solid #e2e2e7;}
+.cc-bar i{width:9px; height:9px; border-radius:50%; background:#cfcfd6;} .cc-bar span{margin-left:8px; font-size:12px; color:#6b6b73;}
+.cc-body{padding:16px 20px 18px;}
+.cc-t{font-size:18px; font-weight:800; margin-bottom:4px;}
+.cc-n{position:relative; height:22px; font-size:14px; color:#6b6b73; margin-bottom:10px;}
+.cc-n em{font-style:normal; position:absolute; left:0; top:0;}
+.cc-i{display:grid; grid-template-columns:22px 1fr auto; align-items:center; gap:10px; padding:10px 12px; border:1px solid #e2e2e7; border-radius:8px; margin-top:8px; font-size:15px;}
+.cc-i span{font-size:13px; color:#6b6b73;}
+.cc-box{width:18px; height:18px; border:2px solid #9a9aa3; border-radius:4px; position:relative;}
+.cc-cur{position:absolute; width:18px; height:26px; left:70%; top:85%;
+  background:#26262B; clip-path:polygon(0 0,0 80%,25% 62%,45% 100%,60% 94%,42% 58%,75% 58%); animation:cc-move 8s infinite;}
+@keyframes cc-move{0%{left:70%;top:85%} 25%{left:33px;top:118px} 30%{left:33px;top:118px; transform:scale(.8)} 34%{transform:scale(1)} 100%{left:33px;top:118px}}
+.cc-win.dyn .cc-n .o{animation:cc-out 8s infinite;} .cc-win.dyn .cc-n .n{opacity:0; color:#E8002D; font-weight:700; animation:cc-in 8s infinite;}
+.cc-win.dyn .first{animation:cc-done 8s infinite;}
+.cc-win.dyn .first b{text-decoration-color:transparent; text-decoration-line:line-through; text-decoration-thickness:2px; animation:cc-strike 8s infinite;}
+.cc-win.dyn .first .cc-box{animation:cc-check 8s infinite;}
+@keyframes cc-out{0%,30%{opacity:1} 34%,100%{opacity:0}}
+@keyframes cc-in{0%,30%{opacity:0} 34%,100%{opacity:1}}
+@keyframes cc-done{0%,30%{background:#fff; color:inherit} 34%,100%{background:#f6f6f8; color:#9a9aa3}}
+@keyframes cc-strike{0%,30%{text-decoration-color:transparent} 34%,100%{text-decoration-color:#9a9aa3}}
+@keyframes cc-check{0%,30%{background:#fff; border-color:#9a9aa3} 34%,100%{background:#E8002D; border-color:#E8002D}}
+.cc-tag{font-size:15px; padding:8px 12px; border-radius:8px; background:#f1f1f4; color:#26262B;}
+.cc-col.ccd .cc-tag{background:#fde8ec; color:#b0001f; font-weight:700;}
+@media print{.cc-cur{display:none}}
+
 </style>
 </head>
 <body>

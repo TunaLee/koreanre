@@ -33,51 +33,60 @@ def _bubble(cx, cy, rx, ry, tx, ty):
 
 # ── ① 채팅 vs 작업대 ─────────────────────────────────────
 def chat_vs_workbench():
-    # 왼쪽: 카페 테이블에 마주 앉아 말풍선을 주고받는다
+    # 왼쪽: 카페 테이블에 마주 앉아 컵을 들고 말풍선을 주고받는다
+    def loc(gx, gy, ox, oy, sc):
+        return round((gx - ox) / sc), round((gy - oy) / sc)
+    ph = loc(268, 512, 165, 590, .82)       # 사람 손 = 왼쪽 컵 손잡이
+    rh = loc(392, 512, 492, 655, 1.0)       # 로봇 손 = 오른쪽 컵 손잡이
     left = f'''
 {floor(330, 662, 270)}
 <rect x="96" y="590" width="128" height="14" rx="5" fill="{N}"/>
 <rect x="104" y="604" width="10" height="52" fill="{N}"/><rect x="206" y="604" width="10" height="52" fill="{N}"/>
-{person(165, 590, .82, extra_back=parm(-54, -140, -66, -20, -74, -80), extra_front=parm(54, -140, 128, -86, 110, -136))}
+{person(165, 590, .82, extra_back=parm(-54, -140, -60, -24, -76, -80))}
 <rect x="226" y="574" width="34" height="76" rx="10" fill="{G}" stroke="{N}" stroke-width="3"/>
 <rect x="134" y="560" width="126" height="36" rx="12" fill="{G}" stroke="{N}" stroke-width="3"/>
 <ellipse cx="256" cy="654" rx="26" ry="8" fill="{N}"/>
-{robot(492, 655, 1.0, rarm(44, -86, 62, -30) + rarm(-44, -86, -82, -128, -70, -96))}
+{robot(492, 655, 1.0, rarm(44, -86, 60, -26))}
 <ellipse cx="330" cy="526" rx="118" ry="22" fill="{G}" stroke="{N}" stroke-width="4"/>
 <rect x="323" y="548" width="14" height="100" fill="{N}"/>
 <ellipse cx="330" cy="652" rx="46" ry="8" fill="{N}"/>
-<path d="M276 498 L304 498 L301 524 L279 524 Z" fill="{W}" stroke="{N}" stroke-width="3"/>
-<path d="M304 504 Q314 510 302 518" stroke="{N}" stroke-width="3" fill="none"/>
-<path d="M356 498 L384 498 L381 524 L359 524 Z" fill="{W}" stroke="{N}" stroke-width="3"/>
-<path d="M356 504 Q346 510 358 518" stroke="{N}" stroke-width="3" fill="none"/>
-<circle cx="270" cy="520" r="10" fill="{W}" stroke="{N}" stroke-width="3"/>
-<circle cx="410" cy="527" r="10" fill="{G}" stroke="{N}" stroke-width="3"/>
+<path d="M280 498 L308 498 L305 524 L283 524 Z" fill="{W}" stroke="{N}" stroke-width="3"/>
+<path d="M281 504 Q270 511 283 518" stroke="{N}" stroke-width="3" fill="none"/>
+<path d="M352 498 L380 498 L377 524 L355 524 Z" fill="{W}" stroke="{N}" stroke-width="3"/>
+<path d="M379 504 Q390 511 377 518" stroke="{N}" stroke-width="3" fill="none"/>
+<g transform="translate(165,590) scale(.82)">{parm(54, -140, ph[0], ph[1], 112, -150)}</g>
+<g transform="translate(492,655)">{rarm(-44, -86, rh[0], rh[1], -80, -100)}</g>
 {_bubble(258, 270, 74, 46, 210, 352)}
 {_bubble(476, 352, 62, 38, 488, 410)}'''
 
-    # 오른쪽: 작업대 위에 펼친 큰 문서 한 장을 함께 손본다
+    # 오른쪽: 작업대 위 문서 한 장 · 사람은 펜으로 고칠 줄에 동그라미, 로봇은 그 줄을 가리킨다
     bench = [(752, 474), (1188, 474), (712, 602), (1228, 602)]
     doc = _quad((812, 484), (1128, 484), (790, 590), (1150, 590))
     pmark = doc(.36, .58)
-    pen_tip = (pmark[0] - 40, pmark[1] + 4)
+    tip = (pmark[0] - 30, pmark[1] + 12)              # 동그라미 아래쪽 선 위
+    grip = (tip[0] - 8, tip[1] - 30)                   # 펜을 쥔 손
+    hold = doc(.03, .62)                               # 문서 왼쪽 모서리를 누른 손
+    point = (pmark[0] + 104, pmark[1] - 2)             # 로봇이 가리키는 곳 = 동그라미 오른쪽 끝
+    rest = doc(.97, .45)                               # 로봇 다른 손 = 문서 오른쪽 모서리
+    pg, ph2 = loc(*grip, 830, 572, .86), loc(*hold, 830, 572, .86)
+    rp, rr = loc(*point, 1110, 580, 1.15), loc(*rest, 1110, 580, 1.15)
     right = f'''
 {floor(970, 676, 290)}
 {person(830, 572, .86)}
-{robot(1110, 580, 1.15, rarm(44, -86, 66, -60, hand=False))}
+{robot(1110, 580, 1.15)}
 <polygon points="{bench[0][0]},{bench[0][1]} {bench[1][0]},{bench[1][1]} {bench[3][0]},{bench[3][1]} {bench[2][0]},{bench[2][1]}" fill="{G}" stroke="{N}" stroke-width="4" stroke-linejoin="round"/>
 <rect x="712" y="602" width="516" height="16" rx="4" fill="{N}"/>
 <rect x="732" y="618" width="14" height="58" fill="{N}"/><rect x="1194" y="618" width="14" height="58" fill="{N}"/>
 {_poly(doc, 0, 0, 1, 1, W, N, 3.5)}
 {"".join(_pline(doc, .07, .93 if i % 3 else .6, v, G, 6) for i, v in enumerate((.14, .27, .40)))}
-{_poly(doc, .07, .52, .62, .66, "none")}
 {_pline(doc, .07, .93, .78, G, 6)}{_pline(doc, .07, .55, .9, G, 6)}
 {_pline(doc, .66, .93, .58, G, 6)}
-<ellipse cx="{pmark[0]:.0f}" cy="{pmark[1]:.0f}" rx="96" ry="13" fill="none" stroke="{O}" stroke-width="5"/>
 {_pline(doc, .1, .62, .58, G, 6)}
-<g transform="translate(830,572) scale(.86)">{parm(54, -140, 92, -40, 104, -112, hand=False)}{parm(-54, -140, -40, -30, -96, -60)}</g>
-<line x1="{pen_tip[0]-10:.0f}" y1="{pen_tip[1]-48:.0f}" x2="{pen_tip[0]:.0f}" y2="{pen_tip[1]:.0f}" stroke="{O}" stroke-width="7" stroke-linecap="round"/>
-<circle cx="{pen_tip[0]-8:.0f}" cy="{pen_tip[1]-30:.0f}" r="10" fill="{W}" stroke="{N}" stroke-width="3"/>
-<g transform="translate(1110,580) scale(1.15)">{rarm(-44, -86, -78, -42, -80, -80)}</g>'''
+<ellipse cx="{pmark[0]:.0f}" cy="{pmark[1]:.0f}" rx="96" ry="13" fill="none" stroke="{O}" stroke-width="5"/>
+<g transform="translate(830,572) scale(.86)">{parm(-54, -140, ph2[0], ph2[1], -96, -70)}{parm(54, -140, pg[0], pg[1], 96, -96, hand=False)}</g>
+<line x1="{tip[0]-12:.0f}" y1="{tip[1]-52:.0f}" x2="{tip[0]:.0f}" y2="{tip[1]:.0f}" stroke="{O}" stroke-width="7" stroke-linecap="round"/>
+<circle cx="{grip[0]:.0f}" cy="{grip[1]:.0f}" r="10" fill="{W}" stroke="{N}" stroke-width="3"/>
+<g transform="translate(1110,580) scale(1.15)">{rarm(-44, -86, rp[0], rp[1], -60, -40)}{rarm(44, -86, rr[0], rr[1], 56, -40)}</g>'''
     return left + f'<line x1="640" y1="190" x2="640" y2="690" stroke="{G}" stroke-width="3"/>' + right
 
 

@@ -144,8 +144,8 @@ def static_vs_dynamic():
            + '<div class="sd-a dyn">⇄<em></em></div>' + box("웹 화면", "새로고침", val("62%", "65%", "live"), "file")
            + '<div class="sd-a">→</div>' + box("브라우저", "웹 앱 주소", '<div class="sd-tag good">65% 반영 · 화면 입력도 시트로</div>'))
     return (f'<div class="sd"><div class="sd-ev">원본 데이터 변경 · 10월 손해율 62% → 65%</div>'
-            f'<div class="sd-l"><div class="sd-h">정적 · CSV를 넣어 만든 대시보드</div><div class="sd-row">{top}</div></div>'
-            f'<div class="sd-l"><div class="sd-h on">동적 · 데이터를 연동한 웹</div><div class="sd-row">{bot}</div></div></div>')
+            f'<div class="sd-l"><div class="sd-h">고정 · CSV를 넣어 만든 대시보드</div><div class="sd-row">{top}</div></div>'
+            f'<div class="sd-l"><div class="sd-h on">연동 · 시트와 연결한 웹</div><div class="sd-row">{bot}</div></div></div>')
 
 
 def web_three():
@@ -286,3 +286,22 @@ def tones():
     card = ('<div class="tnx"><div class="tnh">이번 주 팀 할 일</div><div class="tnc"><b>비용 집계 보고</b><span>이준호 · 10/28</span><i>완료</i></div>'
             '<div class="tnc"><b>행사 장소 답사</b><span>정하늘 · 10/30</span><i>완료</i></div></div>')
     return '<div class="tns">' + "".join(f'<div class="tn {c}">{card}<b class="tnn">{n}</b><span class="tnd">{d}</span></div>' for c, n, d in items) + "</div>"
+
+
+def click_compare():
+    """정적 · 동적: 같은 할 일 화면에서 체크를 누르면? 8초 반복 · 왼쪽은 그대로, 오른쪽은 줄 긋기 + 남은 일 3→2."""
+    items = [("비용 집계 보고", "이준호 · 10/28"), ("행사 장소 답사", "정하늘 · 10/30"), ("뉴스레터 발행", "윤채원 · 10/31")]
+
+    def mock(dyn):
+        rows = "".join(f'<div class="cc-i{" first" if i == 0 else ""}"><i class="cc-box"></i><b>{t}</b><span>{s}</span></div>'
+                       for i, (t, s) in enumerate(items))
+        cnt = ('<div class="cc-n"><em class="o">남은 일 3개</em><em class="n">남은 일 2개</em></div>' if dyn
+               else '<div class="cc-n"><em>남은 일 3개</em></div>')
+        return (f'<div class="cc-win{" dyn" if dyn else ""}"><div class="cc-bar"><i></i><i></i><i></i><span>이번주_할일.html</span></div>'
+                f'<div class="cc-body"><div class="cc-t">이번 주 팀 할 일</div>{cnt}{rows}</div><div class="cc-cur"></div></div>')
+    col = lambda h, sub, m, tag, cls: (f'<div class="cc-col {cls}"><div class="cc-h"><b>{h}</b><span>{sub}</span></div>{m}'
+                                       f'<div class="cc-tag">{tag}</div></div>')
+    return ('<div class="cc">'
+            + col("정적인 화면", "HTML + CSS", mock(False), "체크를 눌러도 그대로 · 보기만 하는 화면", "ccs")
+            + col("동적인 화면", "HTML + CSS + <b>JS</b>", mock(True), "누르면 줄이 그어지고 남은 일 3 → 2", "ccd")
+            + '</div>')
