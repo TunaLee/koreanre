@@ -216,7 +216,7 @@ def block2():
             links([("getdesign.md", "실제 사이트의 DESIGN.md 모음 · 550개 이상", "https://getdesign.md"),
                    ("예: Notion", "Download DESIGN.md", "https://getdesign.md/notion/design-md")])
             + steps([("사이트 하나 고르기", "Notion · Airbnb · Linear · Apple 등"), ("「Download DESIGN.md」", "메모장으로 열어 Ctrl+A · Ctrl+C"),
-                     ("같은 대화에 붙여 넣기", "아래 요청문 다음 줄에 그대로")]),
+                     ("같은 대화에 붙여 넣기", "오른쪽 요청문 다음 줄에 그대로")]),
             prompt(DESIGN_PASTE, "실습 1 · 요청문 + DESIGN.md 붙여 넣기", sm=True)
             + table(["볼 곳", "보일 변화"], [["배경 · 강조색 · 글꼴", "고른 사이트의 색 · 글꼴로"], ["카드 모서리 · 여백 · 버튼", "그 사이트 모양으로"],
                                         ["할 일 카드 · 담당자 목록", "내용 · 배치는 그대로인지"]]), "w")
