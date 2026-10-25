@@ -154,7 +154,9 @@ def links(rows):
     from urllib.parse import quote
     out = ""
     for t, d, path in rows:
-        url = SITE + quote(path)
+        ext = path.startswith("http")
+        url = path if ext else SITE + quote(path)
+        shown = path.replace("https://", "") if ext else SITE.replace("https://", "") + path
         out += (f'<a class="dlk" href="{url}" target="_blank" rel="noopener"><b>{t}</b><span>{d}</span>'
-                f'<em>{SITE.replace("https://", "")}{path}</em></a>')
+                f'<em>{shown}</em></a>')
     return f'<div class="dlks">{out}</div>'
