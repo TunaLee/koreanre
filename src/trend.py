@@ -7,7 +7,7 @@ TREND = [  # (시기, 제목, 설명, 강조)
     ("2024.11", "연결 표준 MCP", "AI와 업무 시스템을 잇는 공통 규격 공개", False),
     ("2025.07", "에이전트", "AI가 여러 단계를 직접 실행 (ChatGPT agent)", False),
     ("2025.10", "스킬", "업무 지침을 저장해 꺼내 쓰는 Agent Skills 발표 → 12월 오픈 표준", False),
-    ("2026.07", "ChatGPT 플러그인", "스킬 + 앱을 묶어 한 번에 설치", True),
+    ("2026.07", "ChatGPT 플러그인", "스킬 + MCP 서버를 묶어 한 번에 설치", True),
     ("2026.09", "Gemini 스킬", "같은 SKILL.md 표준 · Gem은 스킬로 이전", True),
 ]
 
@@ -19,7 +19,7 @@ def trend_src():
 def same_standard():
     return page("세 회사의 공통 스킬 표준", table(["", "발표", "내용"], [
         ["<b>Anthropic · Claude</b>", "2025.10 발표 · 2025.12 오픈 표준", "Agent Skills · SKILL.md 공개 (agentskills.io)"],
-        ["<b>OpenAI · ChatGPT</b>", "2026.07 플러그인 디렉터리", "스킬 · 앱을 플러그인으로 묶어 설치"],
+        ["<b>OpenAI · ChatGPT</b>", "2026.07 플러그인 디렉터리", "스킬 · MCP 서버를 플러그인으로 묶어 설치"],
         ["<b>Google · Gemini</b>", "2026.09 발표 · 10월 배포 시작", "「SKILL.md 표준」 기반 스킬 · Gem은 스킬로 자동 이전"],
     ]) + note("의미", "한 번 만든 스킬 구조가 <b>세 툴 어디서나 같은 4칸</b> · 툴을 바꿔도 다시 쓸 수 있음", "red")
         + note("출처", "anthropic.com · claude.com/blog/skills · help.openai.com · workspaceupdates.googleblog.com (2026-10-21 확인)"),

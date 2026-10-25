@@ -99,12 +99,12 @@ def disclosure():
 
 
 def bundle():
-    """플러그인 = 스킬 + 앱 묶음."""
+    """플러그인 = 스킬 + MCP 서버 묶음."""
     return ('<div class="bundle"><div class="bh">플러그인 · 「팀 업무 보고」</div><div class="bb">'
             '<div class="bs"><span>SKILL</span><b>주간업무보고</b><i>4항목 · 마감 초과 맨 위 · 추정 금지</i></div>'
-            '<div class="bs app"><span>APP</span><b>Google Drive</b><i>팀 업무 현황 시트 읽기</i></div>'
-            '<div class="bs app"><span>APP</span><b>Google Calendar</b><i>팀 일정 읽기</i></div>'
-            '</div><div class="bf">한 번 설치로 지침과 앱 연결을 함께 사용</div></div>')
+            '<div class="bs app"><span>MCP</span><b>Google Drive</b><i>팀 업무 현황 시트 읽기</i></div>'
+            '<div class="bs app"><span>MCP</span><b>Google Calendar</b><i>팀 일정 읽기</i></div>'
+            '</div><div class="bf">한 번 설치로 지침(스킬)과 도구 연결(MCP 서버)을 함께 사용</div></div>')
 
 
 def forgetting():
