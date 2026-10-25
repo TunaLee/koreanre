@@ -47,30 +47,62 @@ def work_stats():
                      "과기정통부 「2025 인터넷이용실태조사」 (2026-03-31)"), kick="최신 흐름")
 
 
-HORIZON = [  # (모델, 공개, 시간) · METR Time Horizon 1.1 원자료 · 50% 성공 기준
-    ("GPT-5", "2025.08", 203 / 60),
-    ("GPT-5.2", "2025.12", 352 / 60),
-    ("Claude Opus 4.6", "2026.02", 719 / 60),
-    ("Claude Mythos Preview", "2026.04", 1045 / 60),
+# METR Time Horizon 1.1 — 당시 최고 성능 모델 · (출시일, 50% 길이 분, 80% 길이 분, 이름표) · posco-dx hx.py 와 같은 값
+METR_SOTA = [
+    ("2023-03-14", 4.0, 0.9, "GPT-4"), ("2024-05-13", 7.0, 1.3, ""), ("2024-06-20", 11.4, 1.7, ""),
+    ("2024-09-12", 20.3, 4.4, ""), ("2024-12-05", 38.8, 7.1, "o1"), ("2025-02-24", 60.4, 12.1, ""),
+    ("2025-04-16", 119.7, 30.0, "o3"), ("2025-08-07", 203.0, 38.3, "GPT-5"), ("2025-11-18", 224.3, 54.1, ""),
+    ("2025-11-24", 293.0, 49.4, ""), ("2025-12-11", 352.2, 66.0, ""), ("2026-02-05", 718.8, 69.9, "Claude Opus 4.6"),
+    ("2026-04-07", 1044.8, 185.9, "Mythos Preview"),
 ]
 
 
+def metr_chart():
+    """로그 눈금 · 50% / 80% 성공 작업 길이 두 선 (posco-dx metr_chart 를 이 덱 색으로)."""
+    import math
+    from datetime import date
+    R, K, M = "#E8002D", "#26262B", "#8A8A92"
+    W, H, X0, X1, Y0, Y1 = 760, 380, 70, 740, 340, 20
+    t0, t1 = date(2023, 1, 1).toordinal(), date(2026, 7, 1).toordinal()
+    lo, hi = math.log2(0.5), math.log2(32 * 60)
+    X = lambda d: X0 + (X1 - X0) * (date.fromisoformat(d).toordinal() - t0) / (t1 - t0)
+    Y = lambda m: Y0 - (Y0 - Y1) * (math.log2(m) - lo) / (hi - lo)
+    g = ""
+    for m, lab in ((1, "1분"), (4, "4분"), (15, "15분"), (60, "1시간"), (240, "4시간"), (960, "16시간")):
+        g += (f'<line x1="{X0}" x2="{X1}" y1="{Y(m):.1f}" y2="{Y(m):.1f}" stroke="#EFEFF2" stroke-width="1.5"/>'
+              f'<text x="{X0 - 8}" y="{Y(m) + 4:.1f}" text-anchor="end" font-size="13" fill="{M}">{lab}</text>')
+    for yr in (2023, 2024, 2025, 2026):
+        g += f'<text x="{X(f"{yr}-01-01"):.1f}" y="{Y0 + 22}" text-anchor="middle" font-size="13" fill="{M}">{yr}</text>'
+    band = " ".join(f"{X(d):.1f},{Y(a):.1f}" for d, a, b, _ in METR_SOTA) + " " + \
+        " ".join(f"{X(d):.1f},{Y(b):.1f}" for d, a, b, _ in reversed(METR_SOTA))
+    g += f'<polygon points="{band}" fill="{R}" fill-opacity=".08"/>'
+    for idx, col in ((1, R), (2, K)):
+        pts = " L".join(f"{X(r[0]):.1f} {Y(r[idx]):.1f}" for r in METR_SOTA)
+        g += f'<path d="M{pts}" fill="none" stroke="{col}" stroke-width="4" stroke-linejoin="round" class="mtline"/>'
+        for r in METR_SOTA:
+            g += f'<circle cx="{X(r[0]):.1f}" cy="{Y(r[idx]):.1f}" r="4.5" fill="{col}"/>'
+    for d, a, b, lab in METR_SOTA:
+        if lab:
+            ty = Y(b) - 16 if lab == "Claude Opus 4.6" else Y(a) - 10
+            g += f'<text x="{X(d) - 8:.1f}" y="{ty:.1f}" text-anchor="end" font-size="12.5" font-weight="700" fill="{K}">{lab}</text>'
+    g += (f'<line x1="{X0}" x2="{X1}" y1="{Y(960):.1f}" y2="{Y(960):.1f}" stroke="{R}" stroke-dasharray="5 5" stroke-width="1.5"/>'
+          f'<text x="{X0 + 6}" y="{Y(960) - 6:.1f}" font-size="12" fill="{R}">16시간 넘는 측정은 신뢰 낮음</text>')
+    lx, ly = X0 + 420, Y0 - 56
+    g += (f'<rect x="{lx}" y="{ly - 10}" width="14" height="4" fill="{R}"/><text x="{lx + 20}" y="{ly - 4}" font-size="13" fill="{K}" font-weight="700">절반(50%) 성공하는 작업 길이</text>'
+          f'<rect x="{lx}" y="{ly + 10}" width="14" height="4" fill="{K}"/><text x="{lx + 20}" y="{ly + 16}" font-size="13" fill="{K}" font-weight="700">80% 성공하는 작업 길이</text>'
+          f'<text x="{lx + 20}" y="{ly + 36}" font-size="12.5" fill="{R}">가운데 띠 = 믿고 맡기기까지의 차이</text>')
+    return f'<svg class="mtchart" viewBox="0 0 {W} {H}">{g}</svg>'
+
+
 def horizon():
-    """무어의 법칙처럼 · AI가 혼자 끝내는 작업 길이."""
-    mx = 18
-    bars = ""
-    for i, (m, d, h) in enumerate(HORIZON):
-        w = h / mx * 100
-        last = i == len(HORIZON) - 1
-        bars += (f'<div class="hz-r"><div class="hz-m"><b>{m}</b><span>{d}</span></div>'
-                 f'<div class="hz-b"><i style="width:{w:.0f}%" class="{"on" if last else ""}"></i><em>약 {h:.0f}시간{"+" if last else ""}</em></div></div>')
-    return page("무어의 법칙처럼 늘어나는 AI 작업 길이", two(
-        f'<div class="hz"><div class="hz-h">AI가 혼자 끝내는 작업 길이 · 사람 전문가 기준 · 절반 성공</div>{bars}</div>',
-        '<div class="hz-cmp"><div><small>무어의 법칙</small><b>약 2년</b><span>반도체 집적도 2배</span></div>'
-        '<div class="on"><small>AI 작업 길이</small><b>약 3개월</b><span>2024년 이후 2배 (METR)</span></div></div>', "w")
-        + note("그래서", "몇 분짜리 답변 → <b>몇 시간짜리 업무</b> · 검색 · 정리 · 파일 만들기를 이어서 하는 에이전트가 가능해짐", "red")
-        + note("출처", "METR Time Horizon 1.1 (2026-01-29) · metr.org/time-horizons · 소프트웨어 작업 기준 · 16시간 이상은 측정 불안정"),
-        kick="최신 흐름")
+    """무어의 법칙처럼 · AI가 맡을 수 있는 작업 길이 (posco-dx 「AI가 맡을 수 있는 작업 길이」 장)."""
+    cards = ('<div class="mtcards">'
+             '<div class="mtc hl"><b>105<small>일</small></b><span>작업 길이가 2배 되는 기간 (2024년 이후)</span></div>'
+             '<div class="mtc"><b>약 2<small>년</small></b><span>무어의 법칙 · 칩 성능 2배 주기</span></div>'
+             '<div class="mtc"><b>5.7<small>시간</small> → 54<small>분</small></b><span>GPT-5.4 · 50% 기준 vs 80% 기준</span></div></div>')
+    return page("무어의 법칙처럼 늘어나는 AI 작업 길이", f'<div class="mtwrap">{metr_chart()}{cards}</div>'
+                + note("읽는 법", "작업 길이 = 사람이 하면 걸리는 시간 · 몇 분 → 몇 시간짜리 일을 맡길 수 있게 · 출처 METR Frontier Risk Report 2026.5 · Time Horizons"),
+                kick="최신 흐름")
 
 
 def two_modes():
