@@ -134,10 +134,20 @@ def tool_use():
         + loop + f'<div class="tu-ts">{chips}</div>', kick="에이전트")
 
 
-def agent_background():
-    """오전 · 오후 공통 도입: 에이전트 배경."""
-    return [page("채팅에서 에이전트로", fig.timeline(TREND), kick="최신 흐름", sub=trend_src()),
-            two_modes(), tool_use(), horizon()]
+def today_parts(rows):
+    """연결 장: 네 가지 중 오늘 다루는 것. rows: (이름, 오늘 하는 것, 강조)."""
+    out = "".join(f'<div class="tp{" on" if on else ""}"><b>{n}</b><span>{d}</span></div>' for n, d, on in rows)
+    return page("오늘 다루는 것", f'<div class="tps">{out}</div>'
+                + note("이어서", "빨간 칸을 차례로 · 같은 모델도 무엇을 쥐여 주느냐에 따라 결과가 달라짐", "red"), kick="에이전트")
+
+
+def agent_background(focus):
+    """오전 · 오후 공통 도입: 왜 → 무엇이 → 얼마나 → 무엇으로 → 정리 → 오늘 다룰 것."""
+    return [work_stats(), two_modes(), tool_use(), horizon(),
+            page("에이전트를 이루는 네 가지", fig.agent_parts()
+                 + note("핵심", "모델은 엔진 · 나머지 셋은 장비 · <b>같은 모델도 장비에 따라 결과가 달라짐</b>", "red"), kick="에이전트"),
+            page("채팅에서 에이전트로", fig.timeline(TREND), kick="최신 흐름", sub=trend_src()),
+            today_parts(focus)]
 
 
 def tool_kinds():
