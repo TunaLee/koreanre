@@ -84,6 +84,18 @@ def block1():
         made_tools(),
         mcp_why(),
         mcp_glance(),
+        page("MCP 연결해 보기 · Microsoft Learn", two(
+            steps([("추가 화면 열기", "플러그인 화면 → <b>사용자 지정 MCP 서버 추가</b> · 안 보이면 설정 → 앱 → 고급에서 개발자 모드 켜기"),
+                   ("이름 · 연결", "이름 <b>microsoft</b> · 서버 URL<br><code>https://learn.microsoft.com/api/mcp</code><br>Microsoft 공식 문서를 찾는 공개 서버"),
+                   ("인증", "로그인이 필요 없는 공개 서버 · 목록에 <b>없음</b>이 있으면 선택"),
+                   ("생성", "「이해했으며 계속 진행하겠습니다」 체크 → <b>플러그인으로 생성</b>")]),
+            img("img/am_mcp_add.png", "ChatGPT · 사용자 지정 MCP 서버 추가", light=True), "w2"), kick="MCP 체험"),
+        page("연결한 MCP로 질문하기", two(prompt(MCP_TRY, "MCP 체험 · 요청문"),
+            table(["볼 곳", "보일 것"], [["답변 위 도구 표시", "microsoft의 <b>문서 검색</b> 도구를 부름"],
+                                     ["답변의 링크", "<b>learn.microsoft.com</b> 문서 주소"],
+                                     ["예제", "XLOOKUP 수식 1개 · 인수 설명"],
+                                     ["연결 끄고 같은 질문", "도구 표시 없음 · 링크가 없거나 일반 웹 출처"]]), "w")
+             + note("정리", "MCP 서버를 하나 붙이면 그 서버의 도구를 ChatGPT가 골라 씀 · 01의 시트 · 캘린더 연결도 같은 원리", "red"), kick="MCP 체험"),
         external_tools(),
         mcp(),
         page("대화창 지시와 저장된 지침", fig.forgetting()
@@ -337,6 +349,9 @@ def block3():
         ]) + note("그래도 안 되면", "손을 들면 튜터가 도와드림", "red")),
     ]
 
+
+MCP_TRY = """Microsoft Learn에서 Excel XLOOKUP 함수 사용법을 찾아 줘.
+사번으로 이름을 찾는 예제 수식 1개와 인수 설명, 참고한 문서 링크를 함께 알려 줘."""
 
 MY_SKILL = """내가 매주 반복하는 업무를 스킬로 만들고 싶어. skill-creator로 진행해 줘.
 아래 순서로 한 번에 하나씩 질문하고, 내 답을 모아 SKILL.md 초안을 만들어 줘.
